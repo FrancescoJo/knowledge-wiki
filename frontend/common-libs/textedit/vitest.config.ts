@@ -16,5 +16,14 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     include: ['test/**/*.test.ts'],
+    setupFiles: ['test/setup.ts'],
+    coverage: {
+      provider: 'v8',
+      include: ['src/**'],
+      exclude: [
+        'src/types.ts',   // No executable codes inside - only TypeScript interfaces
+        'src/index.ts',   // No meaningful codes inside - only for barrel packaging
+      ],
+    },
   },
 })

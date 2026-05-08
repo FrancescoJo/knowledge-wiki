@@ -7,6 +7,8 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
 
+const EXTERNAL_PREFIXES = ['@tiptap/', 'lowlight', 'highlight.js']
+
 export default defineConfig(({ command }) => ({
   root: command === 'serve' ? 'dev' : '.',
   build: {
@@ -18,5 +20,9 @@ export default defineConfig(({ command }) => ({
     },
     outDir: resolve(__dirname, 'dist'),
     emptyOutDir: true,
+    minify: 'esbuild',
+    rollupOptions: {
+      external: (id: string) => EXTERNAL_PREFIXES.some(prefix => id.startsWith(prefix)),
+    },
   },
 }))

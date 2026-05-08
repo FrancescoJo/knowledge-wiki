@@ -1,8 +1,21 @@
 {
   "permissions": {
     "allow": [
+      "Bash(npm run *)",
+      "Bash(npm install *)",
+      "Bash(npm test *)",
+      "Bash(npm list *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git commit *)",
       "Bash(git add *)",
-      "Bash(git -c 'user.name=Francesco Jo' -c user.email=nimbusob@gmail.com commit -m ' *)"
+      "Bash(git -c 'user.name=Francesco Jo' -c user.email=nimbusob@gmail.com commit -m ' *)",
+      "Bash(git rm *)",
+      "Bash(npx tsc *)",
+      "Bash(npx vitest *)",
+      "Bash(git stash *)",
+      "Bash(npm view *)",
+      "Bash(node -e \"const p = require\\('./node_modules/lowlight/package.json'\\); console.log\\('lowlight:', p.version\\)\")",
+      "Bash(node -e \"const p = require\\('./node_modules/highlight.js/package.json'\\); console.log\\('highlight.js:', p.version\\)\")"
     ]
   }
 }
