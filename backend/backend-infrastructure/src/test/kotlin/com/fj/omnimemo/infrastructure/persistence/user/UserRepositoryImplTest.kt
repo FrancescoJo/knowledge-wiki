@@ -8,6 +8,8 @@ package com.fj.omnimemo.infrastructure.persistence.user
 import com.fj.omnimemo.core.model.user.User
 import com.fj.omnimemo.core.model.user.UserId
 import com.fj.omnimemo.core.model.user.mutate
+import com.fj.omnimemo.infrastructure.security.AesGcmCipher
+import com.fj.omnimemo.infrastructure.security.HmacBlindIndex
 import com.fj.omnimemo.infrastructure.test.PostgresContainerSupport
 import com.fj.omnimemo.core.test.annotation.MediumTest
 import org.junit.jupiter.api.BeforeAll
@@ -20,7 +22,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import java.util.Base64
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -36,10 +37,8 @@ class UserRepositoryImplTest {
         @JvmField
         val postgres: PostgreSQLContainer<*> = PostgresContainerSupport.newContainer()
 
-        private val TEST_AES_KEY: String =
-            Base64.getEncoder().encodeToString(ByteArray(32) { it.toByte() })
-        private val TEST_HMAC_KEY: String =
-            Base64.getEncoder().encodeToString(ByteArray(32) { (it + 32).toByte() })
+        private val TEST_AES_CIPHER = AesGcmCipher(ByteArray(32) { it.toByte() })
+        private val TEST_HMAC_INDEX = HmacBlindIndex(ByteArray(32) { (it + 32).toByte() })
 
         private fun loadCreateTableSql(): String {
             val stream = UserRepositoryImplTest::class.java.classLoader
@@ -62,7 +61,7 @@ class UserRepositoryImplTest {
         val ds = DriverManagerDataSource(postgres.jdbcUrl, postgres.username, postgres.password)
         jdbc = JdbcTemplate(ds)
         jdbc.execute(loadCreateTableSql())
-        repo = UserRepositoryImpl(jdbc, TEST_AES_KEY, TEST_HMAC_KEY)
+        repo = UserRepositoryImpl(jdbc, TEST_AES_CIPHER, TEST_HMAC_INDEX)
     }
 
     @BeforeEach
