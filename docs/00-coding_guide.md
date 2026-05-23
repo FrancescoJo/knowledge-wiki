@@ -170,6 +170,7 @@ The following are recommendations for code quality and consistency.
     })
   });
   ```
+- When a single test subject (`xxx`) has two or more cases, always group them under a nested block. Two or more tests that share the same `xxx` but differ only in `yyy` or `zzz` must not sit flat at the same level — use `@Nested` inner class (JUnit 5 / Kotlin), `context`/`describe` block (Spock, Jest), or the equivalent construct in the test framework being used.
 
 #### Common Principles for All Tests
 
