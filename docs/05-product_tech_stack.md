@@ -33,6 +33,15 @@
 
 ---
 
+## Entity Identity
+
+- **ID type:** UUID v7
+- **Library:** `com.github.f4b6a3:uuid-creator` (MIT licence) — declared in `backend-core`; available as a transitive dependency to other modules
+- **Generation site:** domain layer (`create` factory on each entity), not the persistence layer
+- **Rationale:** UUID v7 is time-ordered, collision-resistant, and purely algorithmic. Generating IDs in the domain keeps entities complete and testable before any DB interaction, enables domain events with correct IDs before commit, and simplifies repositories (new entity always means INSERT). See `docs/01-coding_guide_backend.md § ID Generation` for full reasoning.
+
+---
+
 ## Authentication
 
 ### Login Token

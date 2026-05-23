@@ -5,6 +5,7 @@ plugins {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("com.github.f4b6a3:uuid-creator:5.3.3")
 
     // Testing
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")

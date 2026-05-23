@@ -62,6 +62,53 @@ internal data class ArticleMutator(
 ) : Article.Mutator
 ```
 
+#### Exception: Mutators with property-change side effects
+
+When a `Mutator` implementation must react to property changes — for example,
+advancing `updatedAt` on every field write — use a plain `class` with
+`Delegates.observable` instead of a `data class`. A `data class` cannot back an
+interface-overriding property with a delegate.
+
+Apply this exception only to `Mutator` implementations. The immutable counterpart
+(`XxxData`) remains a `data class`.
+
+The implementing class must carry a comment explaining the deviation:
+
+```kotlin
+// Not a data class: Delegates.observable requires a regular class because
+// data class does not support backing an interface-overriding property with
+// a delegate. equals / hashCode / toString delegate to ArticleData snapshot.
+internal class ArticleMutator(
+    override val id: UUID,
+    title: String,
+    updatedAt: Instant,
+    ...
+) : Article.Mutator {
+    override var updatedAt: Instant = updatedAt
+
+    override var title: String by Delegates.observable(title) { _, _, _ ->
+        this.updatedAt = Instant.now()
+    }
+}
+```
+
+**`equals` / `hashCode` / `toString`**
+
+Do not use KSP or annotation processors for these. KSP generates new files and
+cannot inject methods into an existing class body. Instead, delegate to a snapshot
+of the immutable counterpart:
+
+```kotlin
+private fun snapshot() = ArticleData(id, isNew, title, updatedAt, ...)
+
+override fun equals(other: Any?) = other is ArticleMutator && snapshot() == other.snapshot()
+override fun hashCode() = snapshot().hashCode()
+override fun toString() = snapshot().toString()
+```
+
+This gives compile-time safety: adding a field to `ArticleMutator` breaks the
+`snapshot()` call until `ArticleData` is updated too, and vice versa.
+
 ### Sealed Interface for Closed Hierarchies
 
 When a type has a known, closed set of subtypes, use `sealed interface`. This enables exhaustive `when` expressions and eliminates dead `else` branches.
@@ -134,6 +181,29 @@ Passing a `Mutator` to another thread or suspending across a coroutine boundary 
 | Presentation (controllers, view models) | **No** |
 
 Seeing `mutate()` in a controller or Thymeleaf helper is a sign that domain logic has leaked into the wrong layer.
+
+
+## ID Generation
+
+Entity identities are assigned by the **domain layer** (inside the entity's `create`
+factory method), not by the persistence layer.
+
+- **Algorithm:** UUID v7 via `com.github.f4b6a3:uuid-creator`
+- UUID v7 is time-ordered and collision-resistant. It is purely algorithmic and
+  requires no network or database access, making it safe to generate in domain code.
+- The `create()` companion factory generates the ID. Infrastructure receives
+  entities with IDs already assigned and performs an unconditional `INSERT`.
+- `reconstitute()` restores an entity from a persisted record with its stored ID.
+
+**Rationale:**
+- Entities are complete and testable before any persistence interaction.
+- Domain events can carry the correct ID before the persistence commit.
+- Repository implementations are simplified: `isNew == true` → INSERT, always.
+
+This decision was made over the alternative of infrastructure-generated IDs.
+The primary trade-off is that UUID v7 must be generated correctly within the domain;
+however, since UUID v7 has negligible collision probability and needs no coordination,
+this risk is accepted.
 
 
 ## Serialisation
