@@ -148,16 +148,6 @@ The following are recommendations for code quality and consistency.
 - Every package you import directly must appear in `dependencies` or `peerDependencies`. Relying on a transitive dependency is fragile and will break if the intermediary package changes.
 
 
-### Frontend Library Build Optimisation
-
-These rules apply to any frontend module that is published as a library (i.e. has a `build.lib` entry in its Vite config).
-
-- **Declare peer dependencies correctly.** Any package that the consuming application is expected to supply — typically heavy runtime dependencies such as UI frameworks, editor cores, or syntax-highlighting engines — must be listed in `peerDependencies`, not `dependencies`. Also list them in `devDependencies` so the library's own development environment installs them.
-- **Externalise peer dependencies in the bundler.** Packages listed in `peerDependencies` must be excluded from the library's bundle output. In Vite, configure `build.rollupOptions.external` to match every such package (including subpath imports such as `highlight.js/lib/languages/*`). Bundling a peer dependency causes duplicate code in the consumer's final build and inflates the library's own dist file.
-- **Enable minification explicitly.** Set `build.minify: 'esbuild'` in `vite.config.ts`. Do not rely on the bundler default, which may change across versions.
-- **Verify output size after every build change.** Record the gzip size reported by `vite build` and confirm it has not regressed unexpectedly before committing.
-
-
 ### Tests: Living Specification Documents
 
 - Tests should clearly express the specification and validation goals of the implementation.
