@@ -6,5 +6,6 @@ rootProject.name = "omnimemo"
 
 include(
     "backend-core",
+    "backend-infrastructure",
     "backend-api"
 )
