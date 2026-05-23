@@ -1,6 +1,14 @@
 spring:
   application:
     name: omnimemo
+  config:
+    import: file:./application-secret.yml
+  datasource:
+    url: jdbc:postgresql://localhost:5432/omnimemo
+    username: omnimemo
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
   web:
     resources:
       static-locations: classpath:/static/

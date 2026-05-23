@@ -38,6 +38,23 @@ tasks.named<ProcessResources>("processResources") {
     }
 }
 
+val secretConfigFile = projectDir.resolve("application-secret.yml")
+
+tasks.register("checkSecretConfig") {
+    description = "Fails the build if application-secret.yml is missing"
+    doFirst {
+        if (!secretConfigFile.exists()) {
+            throw GradleException(
+                "\napplication-secret.yml not found: ${secretConfigFile.absolutePath}" +
+                "\nCopy application-secret.yml.template and fill in the values."
+            )
+        }
+    }
+}
+
+tasks.named("bootJar") { dependsOn("checkSecretConfig") }
+tasks.named("bootRun") { dependsOn("checkSecretConfig") }
+
 dependencies {
     implementation(project(":backend-core"))
     implementation(project(":backend-infrastructure"))
@@ -48,6 +65,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.security:spring-security-oauth2-jose")
+    implementation("org.liquibase:liquibase-core")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
