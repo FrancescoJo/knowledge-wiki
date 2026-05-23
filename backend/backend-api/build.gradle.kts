@@ -33,7 +33,7 @@ tasks.named<ProcessResources>("processResources") {
         include(texteditFileName)
         into("static/lib")
     }
-    filesMatching("templates/index.html") {
+    filesMatching("templates/fragments/head.html") {
         filter { line -> line.replace("@textedit.script@", "lib/$texteditFileName") }
     }
 }

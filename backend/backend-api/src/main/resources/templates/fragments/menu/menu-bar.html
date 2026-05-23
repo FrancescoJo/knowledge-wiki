@@ -1,0 +1,22 @@
+<ul xmlns:th="http://www.thymeleaf.org" th:fragment="menuBar" class="nav-items">
+    <th:block th:each="item : ${menuBar.items}" th:if="${item.enabled}">
+        <!-- MenuItem: expandable with children -->
+        <li th:if="${item.class.simpleName == 'MenuItem'}" class="nav-item has-dropdown">
+            <a th:href="${item.href}" th:text="${item.label}">Label</a>
+            <ul class="dropdown">
+                <th:block th:each="child : ${item.children}" th:if="${child.enabled}">
+                    <li th:if="${child.class.simpleName == 'MenuDivider'}" class="dropdown-divider" role="separator"></li>
+                    <li th:unless="${child.class.simpleName == 'MenuDivider'}">
+                        <a th:href="${child.href}" th:text="${child.label}">Child</a>
+                    </li>
+                </th:block>
+            </ul>
+        </li>
+        <!-- SimpleMenuItem: leaf link -->
+        <li th:if="${item.class.simpleName == 'SimpleMenuItem'}" class="nav-item">
+            <a th:href="${item.href}" th:text="${item.label}">Label</a>
+        </li>
+        <!-- MenuDivider: vertical separator in the nav bar -->
+        <li th:if="${item.class.simpleName == 'MenuDivider'}" class="nav-divider" role="separator"></li>
+    </th:block>
+</ul>
