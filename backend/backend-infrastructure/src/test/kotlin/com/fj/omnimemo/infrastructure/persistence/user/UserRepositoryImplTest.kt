@@ -26,6 +26,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
+@MediumTest
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserRepositoryImplTest {

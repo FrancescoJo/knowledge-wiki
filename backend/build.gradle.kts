@@ -40,4 +40,51 @@ subprojects {
     tasks.withType<Test> {
         useJUnitPlatform()
     }
+
+    val testSources = extensions.getByType<SourceSetContainer>()["test"]
+    listOf("small", "medium", "large").forEach { tag ->
+        tasks.register<Test>("test${tag.replaceFirstChar { it.uppercase() }}") {
+            description = "Runs $tag tests."
+            group = "verification"
+            testClassesDirs = testSources.output.classesDirs
+            classpath = testSources.runtimeClasspath
+            useJUnitPlatform { includeTags(tag) }
+        }
+    }
+}
+
+tasks.register("test-backend-small") {
+    group = "verification"
+    description = "Runs all backend small tests."
+    dependsOn(subprojects.map { ":${it.name}:testSmall" })
+}
+
+tasks.register("test-backend-medium") {
+    group = "verification"
+    description = "Runs all backend medium tests."
+    dependsOn(subprojects.map { ":${it.name}:testMedium" })
+}
+
+tasks.register("test-backend-large") {
+    group = "verification"
+    description = "Runs all backend large tests."
+    dependsOn(subprojects.map { ":${it.name}:testLarge" })
+}
+
+tasks.register("test-backend-all") {
+    group = "verification"
+    description = "Runs all backend tests."
+    dependsOn(subprojects.map { ":${it.name}:test" })
+}
+
+tasks.register("test-all") {
+    group = "verification"
+    description = "Runs all tests."
+    dependsOn("test-backend-all")
+}
+
+tasks.register("test") {
+    group = "verification"
+    description = "Alias for test-all."
+    dependsOn("test-all")
 }

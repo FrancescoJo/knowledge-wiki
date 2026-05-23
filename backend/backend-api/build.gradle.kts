@@ -74,6 +74,7 @@ dependencies {
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation(testFixtures(project(":backend-core")))
     testImplementation(testFixtures(project(":backend-infrastructure")))
 
     // Testing - Spock

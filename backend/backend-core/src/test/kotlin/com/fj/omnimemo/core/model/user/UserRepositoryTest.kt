@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.core.model.user
 
+import com.fj.omnimemo.core.test.annotation.SmallTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -19,6 +20,7 @@ import kotlin.test.assertNull
  * @since 0.1.1
  * @version 0.1.1
  */
+@SmallTest
 class UserRepositoryTest {
 
     private val repo = MockUserRepository()
