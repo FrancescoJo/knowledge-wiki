@@ -19,20 +19,75 @@ Not all models are alike. Apply the right pattern for each category:
 
 ### Interface-First
 
-Every entity is exposed through a same-named interface. The concrete implementation is `internal` and hidden from callers.
+Every **entity** and **value object** is exposed through a same-named interface. The concrete implementation is `internal` and hidden from callers.
 
 Rationale: Kotlin interfaces support default implementations; hiding the concrete class preserves the freedom to change it without breaking call sites.
 
 ```kotlin
+// Article.kt
 interface Article {
+    val id: UUID
+    val isNew: Boolean
     val title: String
     val body: String
+    val createdAt: Instant
+    val updatedAt: Instant
+
+    interface Mutator : Article {
+        override var title: String
+        override var body: String
+    }
 
     companion object {
-        fun create(title: String, body: String): Article =
-            ArticleData(title = title, body = body)
+        fun create(title: String, body: String): Article {
+            val now = Instant.now()
+            return ArticleData(
+                id = UUID.randomUUID(),
+                isNew = true,
+                title = title,
+                body = body,
+                createdAt = now,
+                updatedAt = now,
+            )
+        }
+
+        fun reconstitute(
+            id: UUID,
+            title: String,
+            body: String,
+            createdAt: Instant,
+            updatedAt: Instant,
+        ): Article = ArticleData(
+            id = id,
+            isNew = false,
+            title = title,
+            body = body,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+        )
     }
 }
+```
+
+Value objects follow the same interface-first rule. Since they are never mutated, they have no `Mutator` and the `internal data class` provides correct `equals`, `hashCode`, and `toString` automatically:
+
+```kotlin
+// SearchQuery.kt
+interface SearchQuery {
+    val keyword: String
+    val limit: Int
+
+    companion object {
+        fun of(keyword: String, limit: Int): SearchQuery =
+            SearchQueryData(keyword, limit)
+    }
+}
+
+// SearchQueryData.kt
+internal data class SearchQueryData(
+    override val keyword: String,
+    override val limit: Int,
+) : SearchQuery
 ```
 
 ### Immutability by Default
@@ -41,26 +96,21 @@ The base interface exposes only `val` properties. Callers cannot modify a model 
 
 ### data class Implementations
 
-Use `data class` for all concrete implementations. This provides correct `equals`, `hashCode`, and `toString` without manual work.
-
-Two distinct implementations per entity:
-
-| Class | Properties | Implements |
-|---|---|---|
-| `ArticleData` | `val` | `Article` |
-| `ArticleMutator` | `var` | `Article.Mutator` |
+Use `data class` for all immutable concrete implementations. This provides correct `equals`, `hashCode`, and `toString` without manual work.
 
 ```kotlin
+// ArticleData.kt
 internal data class ArticleData(
+    override val id: UUID,
+    override val isNew: Boolean,
     override val title: String,
     override val body: String,
+    override val createdAt: Instant,
+    override val updatedAt: Instant,
 ) : Article
-
-internal data class ArticleMutator(
-    override var title: String,
-    override var body: String,
-) : Article.Mutator
 ```
+
+The mutable counterpart (`ArticleMutator`) cannot be a `data class` when it must react to property changes. See the Exception section below.
 
 #### Exception: Mutators with property-change side effects
 
@@ -72,42 +122,45 @@ interface-overriding property with a delegate.
 Apply this exception only to `Mutator` implementations. The immutable counterpart
 (`XxxData`) remains a `data class`.
 
-The implementing class must carry a comment explaining the deviation:
+The implementing class must carry a comment explaining the deviation, and must
+delegate `equals`, `hashCode`, and `toString` to a snapshot of the immutable
+counterpart:
 
 ```kotlin
+// ArticleMutator.kt
 // Not a data class: Delegates.observable requires a regular class because
 // data class does not support backing an interface-overriding property with
 // a delegate. equals / hashCode / toString delegate to ArticleData snapshot.
 internal class ArticleMutator(
     override val id: UUID,
+    override val isNew: Boolean,
     title: String,
-    updatedAt: Instant,
-    ...
+    body: String,
+    override val createdAt: Instant,
+    override var updatedAt: Instant,
 ) : Article.Mutator {
-    override var updatedAt: Instant = updatedAt
 
     override var title: String by Delegates.observable(title) { _, _, _ ->
         this.updatedAt = Instant.now()
     }
+
+    override var body: String by Delegates.observable(body) { _, _, _ ->
+        this.updatedAt = Instant.now()
+    }
+
+    private fun snapshot() = ArticleData(id, isNew, title, body, createdAt, updatedAt)
+
+    override fun equals(other: Any?) = other is ArticleMutator && snapshot() == other.snapshot()
+    override fun hashCode() = snapshot().hashCode()
+    override fun toString() = snapshot().toString()
 }
 ```
 
-**`equals` / `hashCode` / `toString`**
-
-Do not use KSP or annotation processors for these. KSP generates new files and
-cannot inject methods into an existing class body. Instead, delegate to a snapshot
-of the immutable counterpart:
-
-```kotlin
-private fun snapshot() = ArticleData(id, isNew, title, updatedAt, ...)
-
-override fun equals(other: Any?) = other is ArticleMutator && snapshot() == other.snapshot()
-override fun hashCode() = snapshot().hashCode()
-override fun toString() = snapshot().toString()
-```
+**Why snapshot delegation?**
 
 This gives compile-time safety: adding a field to `ArticleMutator` breaks the
-`snapshot()` call until `ArticleData` is updated too, and vice versa.
+`snapshot()` call until `ArticleData` is updated too, and vice versa. The two
+classes are kept in sync by the compiler.
 
 ### Sealed Interface for Closed Hierarchies
 
@@ -130,8 +183,12 @@ The `Mutator` is a nested interface inside the entity interface. It extends the 
 
 ```kotlin
 interface Article {
+    val id: UUID
+    val isNew: Boolean
     val title: String
     val body: String
+    val createdAt: Instant
+    val updatedAt: Instant
 
     interface Mutator : Article {
         override var title: String
@@ -139,8 +196,8 @@ interface Article {
     }
 
     companion object {
-        fun create(title: String, body: String): Article =
-            ArticleData(title = title, body = body)
+        fun create(title: String, body: String): Article { ... }
+        fun reconstitute(...): Article { ... }
     }
 }
 ```
@@ -152,8 +209,12 @@ interface Article {
 ```kotlin
 // ArticleExtensions.kt — same package as ArticleData / ArticleMutator
 fun Article.mutate(): Article.Mutator = ArticleMutator(
-    title = this.title,
-    body = this.body,
+    id = id,
+    isNew = isNew,
+    title = title,
+    body = body,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
 )
 ```
 
