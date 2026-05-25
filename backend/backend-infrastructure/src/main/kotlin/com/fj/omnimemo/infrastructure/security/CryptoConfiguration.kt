@@ -6,11 +6,13 @@
 package com.fj.omnimemo.infrastructure.security
 
 import com.fj.omnimemo.core.model.user.PasswordHasher
+import com.fj.omnimemo.core.model.user.TokenIssuer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import java.time.Duration
 import java.util.Base64
 import javax.crypto.spec.SecretKeySpec
 
@@ -47,4 +49,10 @@ class CryptoConfiguration {
         val keyBytes = Base64.getDecoder().decode(jwtKeyBase64)
         return JwtTokenService(SecretKeySpec(keyBytes, "HmacSHA256"))
     }
+
+    @Bean
+    fun jwtTokenIssuer(
+        tokenService: JwtTokenService,
+        @Value("\${app.security.token-ttl-seconds}") ttlSeconds: Long,
+    ): TokenIssuer = JwtTokenIssuer(tokenService, Duration.ofSeconds(ttlSeconds))
 }

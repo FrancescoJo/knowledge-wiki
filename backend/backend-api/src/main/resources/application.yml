@@ -28,3 +28,8 @@ logging:
   level:
     root: INFO
     com.fj.omnimemo: DEBUG
+
+app:
+  security:
+    token-ttl-seconds: 259200
+    refresh-token-ttl-seconds: 1209600
