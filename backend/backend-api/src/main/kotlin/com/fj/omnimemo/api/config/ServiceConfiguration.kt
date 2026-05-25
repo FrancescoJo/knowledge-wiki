@@ -5,16 +5,16 @@
  */
 package com.fj.omnimemo.api.config
 
-import com.fj.omnimemo.core.model.user.PasswordHasher
-import com.fj.omnimemo.core.model.user.RefreshTokenRepository
-import com.fj.omnimemo.core.model.user.TokenIssuer
-import com.fj.omnimemo.core.model.user.UserRepository
-import com.fj.omnimemo.core.usecase.user.CreateUserUseCase
-import com.fj.omnimemo.core.usecase.user.DeleteUserUseCase
-import com.fj.omnimemo.core.usecase.user.FindUserUseCase
-import com.fj.omnimemo.core.usecase.user.LoginUseCase
-import com.fj.omnimemo.core.usecase.user.UpdateUserEmailUseCase
-import com.fj.omnimemo.core.usecase.user.UpdateUserPasswordUseCase
+import com.fj.omnimemo.core.user.model.PasswordHasher
+import com.fj.omnimemo.core.user.model.RefreshTokenRepository
+import com.fj.omnimemo.core.user.model.TokenIssuer
+import com.fj.omnimemo.core.user.model.UserRepository
+import com.fj.omnimemo.core.user.usecase.CreateUserUseCase
+import com.fj.omnimemo.core.user.usecase.DeleteUserUseCase
+import com.fj.omnimemo.core.user.usecase.FindUserUseCase
+import com.fj.omnimemo.core.user.usecase.LoginUseCase
+import com.fj.omnimemo.core.user.usecase.UpdateUserEmailUseCase
+import com.fj.omnimemo.core.user.usecase.UpdateUserPasswordUseCase
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -277,11 +277,32 @@ this risk is accepted.
 | `backend-infrastructure` | Port implementations — DB access, encryption, JWT issuance |
 | `backend-api` | Spring Boot entry point, controllers, bean wiring |
 
+### Packaging Principle: Domain First
+
+Packages are organised **domain first, layer second**. The top-level segment after the module root identifies the business domain; the layer (`model`, `usecase`, `persistence`, …) is a sub-segment.
+
+```
+core.{domain}.model     — not core.model.{domain}
+core.{domain}.usecase   — not core.usecase.{domain}
+infrastructure.{domain}.persistence  — not infrastructure.persistence.{domain}
+```
+
+This makes the package structure "scream" what the system does — reading the top level shows the business domains, not the technical plumbing. Adding or removing a domain means touching one package subtree rather than multiple scattered packages.
+
+**Exception — cross-cutting technical concerns.** Domain-first applies where the implementation is semantically specific to a business domain. Technical concerns that are inherently cross-cutting — cryptographic primitives, security algorithms, logging, caching — are placed in their own top-level package without a domain segment, even when they currently happen to serve only one domain. The reason: the classes themselves contain no business-domain concepts — they implement algorithms or infrastructure primitives that are equally applicable to any domain.
+
+```
+infrastructure.{concern}/             — cross-cutting utilities (domain-agnostic)
+infrastructure.{domain}.persistence/  — persistence adapters (domain-specific)
+```
+
+Deciding which category a package falls into: ask whether the classes inside contain any business-domain concept. If removing all imports of `core.{domain}.*` would leave the class unchanged in meaning, it is cross-cutting.
+
 ### Package Layout
 
 ```
 backend-core
-  com.fj.omnimemo.core.model.{domain}/     ← domain model
+  com.fj.omnimemo.core.{domain}.model/     ← domain model
     {Entity}.kt                — entity interface + companion factory methods
     {Entity}Id.kt              — typed identity (value object)
     {Entity}Data.kt            — immutable implementation (internal)
@@ -290,15 +311,19 @@ backend-core
     {Entity}Repository.kt      — outbound persistence port
     {Port}.kt                  — other outbound ports (e.g. PasswordHasher)
 
-  com.fj.omnimemo.core.usecase.{domain}/   ← application layer
+  com.fj.omnimemo.core.{domain}.usecase/   ← application layer
     {Scenario}UseCase.kt       — one class per business scenario
 
+  com.fj.omnimemo.core.model/              ← cross-cutting base types (no domain)
+    Persistable.kt
+    DateTimeAuditable.kt
+
 backend-infrastructure
-  com.fj.omnimemo.infrastructure.persistence.{domain}/
+  com.fj.omnimemo.infrastructure.{domain}.persistence/
     {Entity}RepositoryImpl.kt  — implements the port defined in backend-core
 
-  com.fj.omnimemo.infrastructure.security/
-    {Impl}.kt                  — security and crypto adapters
+  com.fj.omnimemo.infrastructure.{concern}/  ← cross-cutting utilities; no domain segment
+    {Impl}.kt
 
 backend-api
   com.fj.omnimemo.api.endpoint.{domain}/
@@ -358,15 +383,15 @@ Domain services are rare. Before writing one, verify the logic truly spans multi
 Outbound port interfaces (`Repository`, `PasswordHasher`, `TokenIssuer`, etc.) live in the **domain package** alongside the entities they serve. The infrastructure module depends on `backend-core`; never the reverse.
 
 ```
-core.model.user/
+core.user.model/
   UserRepository.kt        ← port interface defined in the domain
   PasswordHasher.kt        ← port interface defined in the domain
 
-infrastructure.persistence.user/
+infrastructure.user.persistence/
   UserRepositoryImpl.kt    ← implements UserRepository
 
-infrastructure.security/
-  PasswordHasherImpl.kt    ← implements PasswordHasher
+infrastructure.security/   ← cross-cutting; no domain segment
+  PasswordHasherImpl.kt    ← implements PasswordHasher (algorithm is domain-agnostic)
 ```
 
 This placement makes the dependency inversion visible in the package structure without a separate `port/` package.

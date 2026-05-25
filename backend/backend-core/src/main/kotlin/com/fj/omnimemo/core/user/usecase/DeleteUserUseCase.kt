@@ -1,0 +1,22 @@
+/*
+ * DeleteUserUseCase.kt
+ *
+ * $Since: 2026-05-25T00:00:00Z
+ */
+package com.fj.omnimemo.core.user.usecase
+
+import com.fj.omnimemo.core.user.model.UserId
+import com.fj.omnimemo.core.user.model.UserRepository
+
+/**
+ * Removes a user account from the system.
+ *
+ * @author Francesco Jo
+ * @since 0.1.1
+ * @version 0.1.1
+ */
+class DeleteUserUseCase(
+    private val repository: UserRepository,
+) {
+    fun delete(id: UserId) = repository.delete(id)
+}

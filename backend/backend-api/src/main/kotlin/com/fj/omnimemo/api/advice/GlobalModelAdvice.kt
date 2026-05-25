@@ -5,8 +5,8 @@
  */
 package com.fj.omnimemo.api.advice
 
-import com.fj.omnimemo.core.model.menu.MenuBar
-import com.fj.omnimemo.core.model.menu.SimpleMenuItem
+import com.fj.omnimemo.core.menu.model.MenuBar
+import com.fj.omnimemo.core.menu.model.SimpleMenuItem
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ModelAttribute
 

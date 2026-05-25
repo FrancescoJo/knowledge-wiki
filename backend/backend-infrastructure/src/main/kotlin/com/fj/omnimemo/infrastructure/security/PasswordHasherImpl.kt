@@ -5,7 +5,7 @@
  */
 package com.fj.omnimemo.infrastructure.security
 
-import com.fj.omnimemo.core.model.user.PasswordHasher
+import com.fj.omnimemo.core.user.model.PasswordHasher
 import org.springframework.security.crypto.password.PasswordEncoder
 
 /**

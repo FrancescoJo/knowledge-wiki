@@ -5,7 +5,7 @@
  */
 package com.fj.omnimemo.infrastructure.security
 
-import com.fj.omnimemo.core.model.user.TokenIssuer
+import com.fj.omnimemo.core.user.model.TokenIssuer
 import java.time.Duration
 import java.time.Instant
 
