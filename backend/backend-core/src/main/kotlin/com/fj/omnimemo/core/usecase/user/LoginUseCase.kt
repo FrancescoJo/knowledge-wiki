@@ -1,16 +1,23 @@
 /*
- * LoginService.kt
+ * LoginUseCase.kt
  *
  * $Since: 2026-05-25T00:00:00Z
  */
-package com.fj.omnimemo.core.model.user
+package com.fj.omnimemo.core.usecase.user
 
+import com.fj.omnimemo.core.model.user.LoginResult
+import com.fj.omnimemo.core.model.user.PasswordHasher
+import com.fj.omnimemo.core.model.user.RefreshToken
+import com.fj.omnimemo.core.model.user.RefreshTokenRepository
+import com.fj.omnimemo.core.model.user.TokenIssuer
+import com.fj.omnimemo.core.model.user.UserId
+import com.fj.omnimemo.core.model.user.UserRepository
 import java.time.Duration
 import java.time.Instant
 import java.util.UUID
 
 /**
- * Application service for authenticating users and managing session tokens.
+ * Authenticates users and manages session tokens.
  *
  * Both [login] and [refresh] return [null] on any failure to prevent user
  * enumeration. Each successful [refresh] rotates the refresh token: the
@@ -20,7 +27,7 @@ import java.util.UUID
  * @since 0.1.1
  * @version 0.1.1
  */
-class LoginService(
+class LoginUseCase(
     private val repository: UserRepository,
     private val hasher: PasswordHasher,
     private val tokenIssuer: TokenIssuer,

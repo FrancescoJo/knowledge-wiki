@@ -267,6 +267,111 @@ however, since UUID v7 has negligible collision probability and needs no coordin
 this risk is accepted.
 
 
+## Layer Structure
+
+### Module Responsibilities
+
+| Module | Responsibility |
+|---|---|
+| `backend-core` | Domain model, business logic, outbound port interfaces |
+| `backend-infrastructure` | Port implementations — DB access, encryption, JWT issuance |
+| `backend-api` | Spring Boot entry point, controllers, bean wiring |
+
+### Package Layout
+
+```
+backend-core
+  com.fj.omnimemo.core.model.{domain}/     ← domain model
+    {Entity}.kt                — entity interface + companion factory methods
+    {Entity}Id.kt              — typed identity (value object)
+    {Entity}Data.kt            — immutable implementation (internal)
+    {Entity}Mutator.kt         — mutable implementation (internal)
+    {Entity}Extensions.kt      — extension functions (e.g. mutate())
+    {Entity}Repository.kt      — outbound persistence port
+    {Port}.kt                  — other outbound ports (e.g. PasswordHasher)
+
+  com.fj.omnimemo.core.usecase.{domain}/   ← application layer
+    {Scenario}UseCase.kt       — one class per business scenario
+
+backend-infrastructure
+  com.fj.omnimemo.infrastructure.persistence.{domain}/
+    {Entity}RepositoryImpl.kt  — implements the port defined in backend-core
+
+  com.fj.omnimemo.infrastructure.security/
+    {Impl}.kt                  — security and crypto adapters
+
+backend-api
+  com.fj.omnimemo.api.endpoint.{domain}/
+    {Resource}ApiController.kt
+    {Resource}ViewController.kt
+  com.fj.omnimemo.api.config/
+    {Category}Configuration.kt — Spring bean wiring
+```
+
+
+## Application Layer — Use Cases
+
+Application services follow the **use case** pattern: one class per business scenario.
+
+### Naming
+
+`{Scenario}UseCase` — the scenario describes a specific business operation in active terms.
+
+```kotlin
+// Correct — named after the scenario
+class CreateUserUseCase(...)
+class LoginUseCase(...)
+class UpdateUserEmailUseCase(...)
+
+// Incorrect — named after the entity; grows unboundedly and obscures intent
+class UserService(...)
+```
+
+### Method Naming
+
+When a use case has a single method, name it with a descriptive verb phrase rather than a generic `execute()`. For use cases that group closely related query paths (e.g. `FindUserUseCase`), use the natural query verb for each variant.
+
+```kotlin
+class CreateUserUseCase(...) {
+    fun create(email: String, rawPassword: String): User = ...
+}
+
+class FindUserUseCase(...) {
+    fun findById(id: UserId): User? = ...
+    fun findByEmail(email: String): User? = ...
+}
+```
+
+### Service Naming Conventions Across Layers
+
+| Layer | Suffix | Example | Notes |
+|---|---|---|---|
+| Application | `UseCase` | `CreateUserUseCase`, `LoginUseCase` | One class per business scenario |
+| Domain | `Service` | `ArticleStatisticsService` | Cross-aggregate business logic; rare — name after the activity, not the aggregate |
+| Infrastructure | `Service` | `JwtTokenService` | Technical concerns not covered by a core port |
+
+Domain services are rare. Before writing one, verify the logic truly spans multiple aggregates and cannot live on any single entity.
+
+
+## Outbound Ports
+
+Outbound port interfaces (`Repository`, `PasswordHasher`, `TokenIssuer`, etc.) live in the **domain package** alongside the entities they serve. The infrastructure module depends on `backend-core`; never the reverse.
+
+```
+core.model.user/
+  UserRepository.kt        ← port interface defined in the domain
+  PasswordHasher.kt        ← port interface defined in the domain
+
+infrastructure.persistence.user/
+  UserRepositoryImpl.kt    ← implements UserRepository
+
+infrastructure.security/
+  PasswordHasherImpl.kt    ← implements PasswordHasher
+```
+
+This placement makes the dependency inversion visible in the package structure without a separate `port/` package.
+
+
 ## Serialisation
 
 The core domain model has no knowledge of serialisation formats (JSON, Protobuf, etc.). Annotations such as `@JsonProperty` or `@Serializable` must not appear on entity interfaces or their implementations.

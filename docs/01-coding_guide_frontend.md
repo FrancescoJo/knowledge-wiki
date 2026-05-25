@@ -109,6 +109,24 @@ Failing to remove listeners by reference (e.g., using inline lambdas) causes mem
 
 ## Naming
 
+### Operation-Centric Naming
+
+**Functions and command objects are named after the operation they perform, not the entity they operate on.**
+
+```typescript
+// Preferred — named after the operation
+function insertTable(editor: Editor): void { ... }
+function resizeColumn(view: EditorView, colIndex: number, delta: number): void { ... }
+
+// Avoid — entity-centric name; grows unboundedly and obscures intent
+class TableService {
+  insert(): void { ... }
+  resizeColumn(): void { ... }
+}
+```
+
+When a group of related operations on the same conceptual unit is large enough to warrant a class, name it after the **role or activity**, not the entity type: `TableResizeController`, not `TableService`.
+
 ### CSS Classes
 
 Use kebab-case with a short module prefix. The prefix prevents class name collisions when the module is embedded in a host application.

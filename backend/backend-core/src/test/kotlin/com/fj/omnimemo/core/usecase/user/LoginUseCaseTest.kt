@@ -1,10 +1,16 @@
 /*
- * LoginServiceTest.kt
+ * LoginUseCaseTest.kt
  *
  * $Since: 2026-05-25T00:00:00Z
  */
-package com.fj.omnimemo.core.model.user
+package com.fj.omnimemo.core.usecase.user
 
+import com.fj.omnimemo.core.model.user.MockPasswordHasher
+import com.fj.omnimemo.core.model.user.MockRefreshTokenRepository
+import com.fj.omnimemo.core.model.user.MockTokenIssuer
+import com.fj.omnimemo.core.model.user.MockUserRepository
+import com.fj.omnimemo.core.model.user.RefreshToken
+import com.fj.omnimemo.core.model.user.User
 import com.fj.omnimemo.core.test.annotation.SmallTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -16,13 +22,13 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 @SmallTest
-class LoginServiceTest {
+class LoginUseCaseTest {
 
     private val repo = MockUserRepository()
     private val hasher = MockPasswordHasher()
     private val tokenIssuer = MockTokenIssuer()
     private val refreshTokenRepo = MockRefreshTokenRepository()
-    private val service = LoginService(repo, hasher, tokenIssuer, refreshTokenRepo, Duration.ofDays(14))
+    private val useCase = LoginUseCase(repo, hasher, tokenIssuer, refreshTokenRepo, Duration.ofDays(14))
 
     @BeforeEach
     fun setUp() {
@@ -37,7 +43,7 @@ class LoginServiceTest {
             val user = User.create("alice@example.com", hasher.hash("secret"))
             repo.save(user)
 
-            val result = service.login("alice@example.com", "secret")
+            val result = useCase.login("alice@example.com", "secret")
 
             assertEquals("token:${user.id.value}", result?.accessToken)
             assertNotNull(result?.refreshToken)
@@ -45,7 +51,7 @@ class LoginServiceTest {
 
         @Test
         fun `should return null when email does not exist`() {
-            assertNull(service.login("nobody@example.com", "secret"))
+            assertNull(useCase.login("nobody@example.com", "secret"))
         }
 
         @Test
@@ -53,7 +59,7 @@ class LoginServiceTest {
             val user = User.create("alice@example.com", hasher.hash("secret"))
             repo.save(user)
 
-            assertNull(service.login("alice@example.com", "wrong-secret"))
+            assertNull(useCase.login("alice@example.com", "wrong-secret"))
         }
     }
 
@@ -63,9 +69,9 @@ class LoginServiceTest {
         fun `should return new LoginResult for a valid refresh token`() {
             val user = User.create("alice@example.com", hasher.hash("secret"))
             repo.save(user)
-            val initial = service.login("alice@example.com", "secret")!!
+            val initial = useCase.login("alice@example.com", "secret")!!
 
-            val result = service.refresh(initial.refreshToken)
+            val result = useCase.refresh(initial.refreshToken)
 
             assertNotNull(result)
             assertEquals("token:${user.id.value}", result.accessToken)
@@ -75,16 +81,16 @@ class LoginServiceTest {
         fun `should rotate refresh token on use`() {
             val user = User.create("alice@example.com", hasher.hash("secret"))
             repo.save(user)
-            val initial = service.login("alice@example.com", "secret")!!
-            val rotated = service.refresh(initial.refreshToken)!!
+            val initial = useCase.login("alice@example.com", "secret")!!
+            val rotated = useCase.refresh(initial.refreshToken)!!
 
-            assertNull(service.refresh(initial.refreshToken))
-            assertNotNull(service.refresh(rotated.refreshToken))
+            assertNull(useCase.refresh(initial.refreshToken))
+            assertNotNull(useCase.refresh(rotated.refreshToken))
         }
 
         @Test
         fun `should return null for an unknown refresh token`() {
-            assertNull(service.refresh("unknown-token"))
+            assertNull(useCase.refresh("unknown-token"))
         }
 
         @Test
@@ -99,7 +105,7 @@ class LoginServiceTest {
             )
             refreshTokenRepo.save(expired)
 
-            assertNull(service.refresh("expired-token"))
+            assertNull(useCase.refresh("expired-token"))
             assertNull(refreshTokenRepo.findByToken("expired-token"))
         }
     }
