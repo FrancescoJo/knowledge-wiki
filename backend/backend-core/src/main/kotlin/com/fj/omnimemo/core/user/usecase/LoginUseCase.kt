@@ -54,6 +54,10 @@ class LoginUseCase(
         )
     }
 
+    fun logout(refreshToken: String) {
+        refreshTokenRepository.delete(refreshToken)
+    }
+
     private fun issueRefreshToken(userId: UserId): RefreshToken =
         refreshTokenRepository.save(
             RefreshToken.create(

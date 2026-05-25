@@ -64,6 +64,25 @@ class LoginUseCaseTest {
     }
 
     @Nested
+    inner class Logout {
+        @Test
+        fun `should delete refresh token on logout`() {
+            val user = User.create("alice@example.com", hasher.hash("secret"))
+            repo.save(user)
+            val loginResult = useCase.login("alice@example.com", "secret")!!
+
+            useCase.logout(loginResult.refreshToken)
+
+            assertNull(refreshTokenRepo.findByToken(loginResult.refreshToken))
+        }
+
+        @Test
+        fun `should not throw when refresh token does not exist`() {
+            useCase.logout("unknown-token")
+        }
+    }
+
+    @Nested
     inner class Refresh {
         @Test
         fun `should return new LoginResult for a valid refresh token`() {
