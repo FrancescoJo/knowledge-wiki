@@ -1,15 +1,25 @@
+import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.springframework.boot") version "3.3.0" apply false
     id("io.spring.dependency-management") version "1.1.5" apply false
-    kotlin("jvm") version "1.9.24" apply false
-    kotlin("plugin.spring") version "1.9.24" apply false
+    // Pinned to 1.9.23 to match detekt 1.23.6's embedded Kotlin version.
+    // Detekt reads KotlinVersion.CURRENT from the KGP, not from kotlinCompilerClasspath,
+    // so the KGP version must align. Kotlin 1.9.23 → 1.9.24 is a patch-only diff; no
+    // breaking changes. Upgrade both together when detekt supports a newer version.
+    kotlin("jvm") version "1.9.23" apply false
+    kotlin("plugin.spring") version "1.9.23" apply false
+    id("io.gitlab.arturbosch.detekt") version "1.23.6" apply false
 }
 
 allprojects {
     group = "com.fj.omnimemo"
     version = "0.1.1"
+
+    // Ensures Spring Boot BOM resolves Kotlin artefacts at 1.9.23 rather than its
+    // default managed version, keeping all Kotlin artefacts on a single patch version.
+    extra["kotlin.version"] = "1.9.23"
 
     repositories {
         mavenCentral()
@@ -19,10 +29,23 @@ allprojects {
 subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "java")
+    apply(plugin = "io.gitlab.arturbosch.detekt")
 
     configure<JavaPluginExtension> {
         toolchain {
             languageVersion.set(JavaLanguageVersion.of(25))
+        }
+    }
+
+    tasks.withType<Detekt>().configureEach {
+        // Project toolchain targets JDK 25; detekt only supports up to JVM 21.
+        jvmTarget = "21"
+        config.setFrom("${rootProject.projectDir}/config/detekt/detekt.yml")
+        buildUponDefaultConfig = true
+        reports {
+            html.required.set(false)
+            xml.required.set(false)
+            sarif.required.set(false)
         }
     }
 
@@ -31,6 +54,10 @@ subprojects {
             freeCompilerArgs = listOf("-Xjsr305=strict")
             jvmTarget = "21"
         }
+    }
+
+    tasks.named("check") {
+        dependsOn(tasks.withType<Detekt>())
     }
 
     tasks.withType<JavaCompile> {

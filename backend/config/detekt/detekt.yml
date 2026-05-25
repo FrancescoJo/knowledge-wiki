@@ -1,0 +1,72 @@
+# detekt configuration
+# Builds upon the default ruleset; only explicit overrides are listed here.
+
+build:
+  maxIssues: 0
+
+config:
+  validation: true
+  warningsAsErrors: false
+
+complexity:
+  CyclomaticComplexMethod:
+    threshold: 15
+  LargeClass:
+    threshold: 600
+  LongMethod:
+    threshold: 60
+  TooManyFunctions:
+    active: true
+    thresholdInFiles: 20
+    thresholdInClasses: 15
+
+exceptions:
+  # JWT token verification intentionally catches the broad Exception type from
+  # the Nimbus JOSE library which does not declare typed checked exceptions.
+  TooGenericExceptionCaught:
+    active: false
+  SwallowedException:
+    active: false
+
+naming:
+  FunctionNaming:
+    active: true
+    # Allow backtick test function names (e.g. `should return X when Y`)
+    ignoreAnnotated:
+      - 'Test'
+      - 'ParameterizedTest'
+      - 'RepeatedTest'
+      - 'TestFactory'
+      - 'Spek'
+    functionPattern: '[a-zA-Z][a-zA-Z0-9]*'
+
+style:
+  ReturnCount:
+    # Guard-clause early returns (e.g. `val x = y ?: return null`) are idiomatic
+    # Kotlin and should not count toward the return-statement limit.
+    excludeGuardClauses: true
+  # Named constants are enforced by code review, not by detekt, because detekt
+  # cannot distinguish intentional literals from accidental magic numbers in all
+  # contexts (e.g. status codes in tests).
+  MagicNumber:
+    active: false
+  MaxLineLength:
+    maxLineLength: 120
+    excludePackageStatements: true
+    excludeImportStatements: true
+  ForbiddenComment:
+    active: false
+  WildcardImport:
+    active: true
+    excludeImports:
+      - 'kotlin.*'
+      - 'kotlinx.*'
+  UnusedPrivateMember:
+    active: true
+
+performance:
+  # Spring Boot's runApplication<T>(*args) is idiomatic and unavoidable; the one-time
+  # startup copy is not a meaningful performance concern.
+  SpreadOperator:
+    active: false
+

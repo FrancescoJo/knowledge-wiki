@@ -36,10 +36,6 @@ class AuthApiController(
     @param:Value("\${app.security.refresh-token-ttl-seconds}") private val refreshTtlSeconds: Int,
 ) {
 
-    companion object {
-        const val REFRESH_TOKEN_COOKIE = "refresh_token"
-    }
-
     @PostMapping("/login")
     fun login(@RequestBody request: LoginRequest, response: HttpServletResponse) {
         val result = loginUseCase.login(request.email, request.password)
@@ -91,5 +87,9 @@ class AuthApiController(
         path = "/"
         maxAge = 0
         setAttribute("SameSite", "Strict")
+    }
+
+    companion object {
+        const val REFRESH_TOKEN_COOKIE = "refresh_token"
     }
 }

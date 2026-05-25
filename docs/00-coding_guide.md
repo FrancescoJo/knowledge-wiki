@@ -286,3 +286,102 @@ Each sub-package has a fixed responsibility:
 | `{domain}` (package level) | Extension functions and other utilities that operate on domain types but are not model definitions. |
 
 Concern-specific sub-packages follow the same naming convention as the concern itself. For example, `{domain}.security` holds security-related port interfaces for that domain. These packages are created only when the domain actually has that kind of dependency — not as a template applied to every domain.
+
+
+### Kotlin-specific Conventions
+
+- `companion object` blocks must appear at the **bottom** of a class body. This matches the [official Kotlin coding conventions](https://kotlinlang.org/docs/coding-conventions.html#class-layout).
+
+
+### Backend Layer Conventions
+
+#### Controller Package Separation
+
+View controllers (serving HTML/templates) and REST API controllers must reside in separate, clearly named packages. Mixing them in a single package creates ambiguity as the surface area grows.
+
+| Package | Contents |
+|---|---|
+| `{root}.view` | `@Controller` classes that return views or `ModelAndView` |
+| `{root}.api.endpoint.{domain}` | `@RestController` interfaces and their implementations |
+
+#### REST API Controller Design
+
+Every REST API controller must be defined as an interface and implemented in a separate `impl` sub-package. This separation enables clean OpenAPI documentation annotations on the interface, keeps the implementation free of documentation noise, and makes the contract explicit.
+
+```
+{root}.api.endpoint.{domain}/Controller.kt      — interface (annotations, contract)
+{root}.api.endpoint.{domain}/impl/ControllerImpl.kt — @RestController implementation
+```
+
+Rules for the interface:
+- Declare all `@RequestMapping`, `@Operation`, `@ApiResponse`, and `@Tag` annotations here.
+- Do not reference implementation details.
+
+Rules for the implementation:
+- Annotate the class with `@RestController` and mark it `internal`.
+- Override every method from the interface; add no extra public surface.
+- Keep all Spring-documentation annotations off the implementation class.
+
+#### API Versioning
+
+Expose all REST API endpoints under a version prefix in the URL path. The current version prefix is `/v1`. Example: `/api/v1/users`.
+
+When a new major version is introduced, add a new prefix (e.g., `/v2`) rather than modifying existing versioned paths.
+
+#### API Documentation
+
+Use **Springdoc-OpenAPI** as the API documentation tool. Annotations belong on the controller interface, not on the implementation. Annotate every endpoint with `@Operation` and `@ApiResponse`; annotate every controller interface with `@Tag`.
+
+#### DTO Package Layout
+
+Request, response, and shared DTO types for a controller domain must be organised under a dedicated `dto` sub-package:
+
+| Package | Contents |
+|---|---|
+| `{endpoint}.dto` | Shared/common DTO types |
+| `{endpoint}.dto.request` | Request DTOs |
+| `{endpoint}.dto.response` | Response DTOs |
+
+
+### Static Analysis
+
+Use **Detekt** for Kotlin static analysis. Configure it to run before the `compileKotlin` task so that violations are caught at build time.
+
+- Address every Detekt finding. Prefer fixing the root cause over suppressing.
+- When suppression is unavoidable, use `@Suppress("RuleId")` with a 1–2 line comment directly above it explaining the reason. A suppression without explanation is not acceptable.
+
+
+### Utility Conventions
+
+A utility is a stateless, context-free, pure function (or a group of closely related pure functions) that can be called from anywhere without external setup.
+
+- Place utilities in a dedicated `util` package within the core module (e.g., `{core}.util`).
+- Group related utilities into sub-packages by concern: `{core}.util.io`, `{core}.util.math`, etc. Utilities that do not fit a named concern live directly in `{core}.util`.
+- Before writing a new utility, check whether an equivalent already exists. Reuse before creating.
+- Before extending or modifying an existing utility, discuss the rationale. Utilities carry high dependency weight — a change affects every call site.
+- Every utility must have exhaustive Small Tests that serve as its living specification.
+
+#### Utility Index
+
+Maintain an index file at the root of the `util` package. Its purpose is to allow a reader to discover available utilities without having to browse individual files. Use the following format:
+
+```
+// Class- or object-scoped utilities
+// (Name or call path)   (Description, max 2 lines)
+FooUtil.bar            : Does X given Y
+
+// Global-scope utilities
+baz                    : Does Z
+```
+
+Keep the index up to date whenever a utility is added, changed, or removed.
+
+
+### Infrastructure Layer Testing
+
+Any layer that integrates with infrastructure concerns — including repositories, persistence adapters, and REST API controllers wired into a real application context — must be covered by both Small Tests and Medium Tests.
+
+- **Small Tests** verify logic in isolation using test doubles.
+- **Medium Tests** verify the integration with the actual infrastructure component (a real database, a real HTTP stack via `@WebMvcTest`, etc.).
+
+Large Tests should also be considered when the scenario requires end-to-end fidelity that Medium Tests cannot provide.

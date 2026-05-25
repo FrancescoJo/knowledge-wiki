@@ -37,6 +37,9 @@ class JwtTokenService(private val signingKey: SecretKey) {
         return jwt.serialize()
     }
 
+    // Each early return corresponds to a distinct, named JWT failure mode (signature invalid,
+    // missing expiry, expired). Collapsing them would obscure the failure semantics.
+    @Suppress("ReturnCount")
     fun verify(token: String): String? {
         return try {
             val jwt = SignedJWT.parse(token)
