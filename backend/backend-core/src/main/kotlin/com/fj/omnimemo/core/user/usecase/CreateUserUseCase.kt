@@ -5,9 +5,9 @@
  */
 package com.fj.omnimemo.core.user.usecase
 
-import com.fj.omnimemo.core.user.model.PasswordHasher
 import com.fj.omnimemo.core.user.model.User
-import com.fj.omnimemo.core.user.model.UserRepository
+import com.fj.omnimemo.core.user.repository.UserRepository
+import com.fj.omnimemo.core.user.security.PasswordHasher
 
 /**
  * Creates a new user account.

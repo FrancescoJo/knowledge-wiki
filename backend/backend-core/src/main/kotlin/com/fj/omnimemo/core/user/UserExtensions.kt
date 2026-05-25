@@ -3,7 +3,10 @@
  *
  * $Since: 2026-05-23T00:00:00Z
  */
-package com.fj.omnimemo.core.user.model
+package com.fj.omnimemo.core.user
+
+import com.fj.omnimemo.core.user.model.User
+import com.fj.omnimemo.core.user.model.snapshot.UserMutator
 
 /**
  * Returns a [User.Mutator] pre-populated from this instance.

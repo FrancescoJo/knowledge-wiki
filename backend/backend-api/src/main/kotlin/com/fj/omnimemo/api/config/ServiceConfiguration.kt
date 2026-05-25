@@ -5,10 +5,10 @@
  */
 package com.fj.omnimemo.api.config
 
-import com.fj.omnimemo.core.user.model.PasswordHasher
-import com.fj.omnimemo.core.user.model.RefreshTokenRepository
-import com.fj.omnimemo.core.user.model.TokenIssuer
-import com.fj.omnimemo.core.user.model.UserRepository
+import com.fj.omnimemo.core.security.TokenIssuer
+import com.fj.omnimemo.core.user.repository.RefreshTokenRepository
+import com.fj.omnimemo.core.user.repository.UserRepository
+import com.fj.omnimemo.core.user.security.PasswordHasher
 import com.fj.omnimemo.core.user.usecase.CreateUserUseCase
 import com.fj.omnimemo.core.user.usecase.DeleteUserUseCase
 import com.fj.omnimemo.core.user.usecase.FindUserUseCase

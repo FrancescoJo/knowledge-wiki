@@ -3,8 +3,10 @@
  *
  * $Since: 2026-05-23T00:00:00Z
  */
-package com.fj.omnimemo.core.user.model
+package com.fj.omnimemo.core.user.model.snapshot
 
+import com.fj.omnimemo.core.user.model.User
+import com.fj.omnimemo.core.user.model.UserId
 import java.time.Instant
 
 /**

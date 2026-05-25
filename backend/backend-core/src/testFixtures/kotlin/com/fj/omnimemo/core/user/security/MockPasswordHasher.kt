@@ -3,7 +3,7 @@
  *
  * $Since: 2026-05-25T00:00:00Z
  */
-package com.fj.omnimemo.core.user.model
+package com.fj.omnimemo.core.user.security
 
 /**
  * In-memory fake of [PasswordHasher] for use in Small tests.

@@ -3,9 +3,11 @@
  *
  * $Since: 2026-05-23T00:00:00Z
  */
-package com.fj.omnimemo.core.user.model
+package com.fj.omnimemo.core.user.repository
 
 import com.fj.omnimemo.core.test.annotation.SmallTest
+import com.fj.omnimemo.core.user.model.User
+import com.fj.omnimemo.core.user.model.UserId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test

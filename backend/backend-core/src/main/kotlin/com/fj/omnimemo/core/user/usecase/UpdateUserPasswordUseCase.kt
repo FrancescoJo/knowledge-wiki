@@ -5,11 +5,11 @@
  */
 package com.fj.omnimemo.core.user.usecase
 
-import com.fj.omnimemo.core.user.model.PasswordHasher
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.model.UserId
-import com.fj.omnimemo.core.user.model.UserRepository
-import com.fj.omnimemo.core.user.model.mutate
+import com.fj.omnimemo.core.user.mutate
+import com.fj.omnimemo.core.user.repository.UserRepository
+import com.fj.omnimemo.core.user.security.PasswordHasher
 
 /**
  * Updates the password of an existing user.

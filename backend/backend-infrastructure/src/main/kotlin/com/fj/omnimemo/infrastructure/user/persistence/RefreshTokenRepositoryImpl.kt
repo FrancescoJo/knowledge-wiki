@@ -6,7 +6,7 @@
 package com.fj.omnimemo.infrastructure.user.persistence
 
 import com.fj.omnimemo.core.user.model.RefreshToken
-import com.fj.omnimemo.core.user.model.RefreshTokenRepository
+import com.fj.omnimemo.core.user.repository.RefreshTokenRepository
 import com.fj.omnimemo.core.user.model.UserId
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper

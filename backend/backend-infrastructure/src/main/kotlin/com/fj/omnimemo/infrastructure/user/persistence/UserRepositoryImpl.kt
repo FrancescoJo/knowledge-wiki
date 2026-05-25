@@ -7,7 +7,7 @@ package com.fj.omnimemo.infrastructure.user.persistence
 
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.model.UserId
-import com.fj.omnimemo.core.user.model.UserRepository
+import com.fj.omnimemo.core.user.repository.UserRepository
 import com.fj.omnimemo.infrastructure.security.AesGcmCipher
 import com.fj.omnimemo.infrastructure.security.HmacBlindIndex
 import org.springframework.jdbc.core.JdbcTemplate

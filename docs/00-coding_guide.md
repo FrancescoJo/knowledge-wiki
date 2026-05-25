@@ -269,3 +269,20 @@ Test sizes are defined as Small, Medium, and Large.
   * Minimum test scope: The higher the fidelity, the greater the cost and instability. Design Large Tests to target as narrow a System Under Test (SUT) as possible. Multiple small Large Tests are better than one giant Large Test.
   * Accepting non-determinism: Large Tests can produce different results under the same conditions due to external dependencies. Do not ignore intermittent failures (flaky tests) — identify the root cause and isolate it, or explicitly define the acceptable range.
   * Privacy compliance: When using or copying production data, be careful not to include personally identifiable or other sensitive data.
+
+
+### Package Structure
+
+Within a domain module, sub-packages are created only when there is content that belongs there — no package is required to exist in every domain.
+
+Each sub-package has a fixed responsibility:
+
+| Sub-package | Contents |
+|---|---|
+| `{domain}.model` | Domain interfaces and domain-language types (typed IDs, value objects). No concrete classes. |
+| `{domain}.model.snapshot` | `internal` concrete implementations of model interfaces (immutable data classes, mutable scratchpad classes). Never referenced from outside the module. |
+| `{domain}.repository` | Persistence port interfaces. One interface per aggregate root. |
+| `{domain}.usecase` | Application-layer use cases. |
+| `{domain}` (package level) | Extension functions and other utilities that operate on domain types but are not model definitions. |
+
+Concern-specific sub-packages follow the same naming convention as the concern itself. For example, `{domain}.security` holds security-related port interfaces for that domain. These packages are created only when the domain actually has that kind of dependency — not as a template applied to every domain.

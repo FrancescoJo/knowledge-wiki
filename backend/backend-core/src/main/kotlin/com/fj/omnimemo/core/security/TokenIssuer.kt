@@ -3,7 +3,7 @@
  *
  * $Since: 2026-05-25T00:00:00Z
  */
-package com.fj.omnimemo.core.user.model
+package com.fj.omnimemo.core.security
 
 /**
  * Contract for issuing authentication tokens.

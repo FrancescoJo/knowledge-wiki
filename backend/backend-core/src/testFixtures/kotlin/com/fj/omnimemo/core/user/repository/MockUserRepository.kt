@@ -3,7 +3,10 @@
  *
  * $Since: 2026-05-23T00:00:00Z
  */
-package com.fj.omnimemo.core.user.model
+package com.fj.omnimemo.core.user.repository
+
+import com.fj.omnimemo.core.user.model.User
+import com.fj.omnimemo.core.user.model.UserId
 
 /**
  * In-memory fake of [UserRepository] for use in Small tests.

@@ -5,8 +5,8 @@
  */
 package com.fj.omnimemo.infrastructure.security
 
-import com.fj.omnimemo.core.user.model.PasswordHasher
-import com.fj.omnimemo.core.user.model.TokenIssuer
+import com.fj.omnimemo.core.security.TokenIssuer
+import com.fj.omnimemo.core.user.security.PasswordHasher
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

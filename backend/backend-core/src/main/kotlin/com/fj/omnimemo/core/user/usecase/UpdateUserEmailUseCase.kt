@@ -7,8 +7,8 @@ package com.fj.omnimemo.core.user.usecase
 
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.model.UserId
-import com.fj.omnimemo.core.user.model.UserRepository
-import com.fj.omnimemo.core.user.model.mutate
+import com.fj.omnimemo.core.user.mutate
+import com.fj.omnimemo.core.user.repository.UserRepository
 
 /**
  * Updates the email address of an existing user.

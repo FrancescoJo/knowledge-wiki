@@ -5,6 +5,8 @@
  */
 package com.fj.omnimemo.core.user.model
 
+import com.fj.omnimemo.core.user.model.snapshot.LoginResultData
+
 /**
  * Holds the access and refresh tokens produced by a successful login or token refresh.
  *

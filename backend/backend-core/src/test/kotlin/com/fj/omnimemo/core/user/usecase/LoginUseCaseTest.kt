@@ -5,13 +5,13 @@
  */
 package com.fj.omnimemo.core.user.usecase
 
-import com.fj.omnimemo.core.user.model.MockPasswordHasher
-import com.fj.omnimemo.core.user.model.MockRefreshTokenRepository
-import com.fj.omnimemo.core.user.model.MockTokenIssuer
-import com.fj.omnimemo.core.user.model.MockUserRepository
+import com.fj.omnimemo.core.security.MockTokenIssuer
+import com.fj.omnimemo.core.test.annotation.SmallTest
 import com.fj.omnimemo.core.user.model.RefreshToken
 import com.fj.omnimemo.core.user.model.User
-import com.fj.omnimemo.core.test.annotation.SmallTest
+import com.fj.omnimemo.core.user.repository.MockRefreshTokenRepository
+import com.fj.omnimemo.core.user.repository.MockUserRepository
+import com.fj.omnimemo.core.user.security.MockPasswordHasher
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test

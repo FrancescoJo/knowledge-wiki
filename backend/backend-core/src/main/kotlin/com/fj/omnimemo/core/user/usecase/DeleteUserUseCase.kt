@@ -6,7 +6,7 @@
 package com.fj.omnimemo.core.user.usecase
 
 import com.fj.omnimemo.core.user.model.UserId
-import com.fj.omnimemo.core.user.model.UserRepository
+import com.fj.omnimemo.core.user.repository.UserRepository
 
 /**
  * Removes a user account from the system.
