@@ -3,7 +3,7 @@
  *
  * $Since: 2026-05-20T00:00:00Z
  */
-package com.fj.omnimemo.api.endpoint.view
+package com.fj.omnimemo.view
 
 import com.fj.omnimemo.core.model.HealthStatus
 import org.springframework.stereotype.Controller

@@ -32,8 +32,8 @@ import org.springframework.web.server.ResponseStatusException
 @RequestMapping("/api/auth")
 class AuthApiController(
     private val loginUseCase: LoginUseCase,
-    @Value("\${app.security.token-ttl-seconds}") private val tokenTtlSeconds: Int,
-    @Value("\${app.security.refresh-token-ttl-seconds}") private val refreshTtlSeconds: Int,
+    @param:Value("\${app.security.token-ttl-seconds}") private val tokenTtlSeconds: Int,
+    @param:Value("\${app.security.refresh-token-ttl-seconds}") private val refreshTtlSeconds: Int,
 ) {
 
     companion object {

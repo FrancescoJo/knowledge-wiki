@@ -3,7 +3,7 @@
  *
  * $Since: 2026-05-22T00:00:00Z
  */
-package com.fj.omnimemo.api.endpoint.view
+package com.fj.omnimemo.view
 
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
