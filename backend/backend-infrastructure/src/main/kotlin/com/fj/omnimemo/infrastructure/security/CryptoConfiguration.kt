@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.Base64
+import javax.crypto.spec.SecretKeySpec
 
 /**
  * Spring configuration for cryptographic service beans.
@@ -34,4 +35,12 @@ class CryptoConfiguration {
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+
+    @Bean
+    fun jwtTokenService(
+        @Value("\${app.security.jwt-signing-key}") jwtKeyBase64: String
+    ): JwtTokenService {
+        val keyBytes = Base64.getDecoder().decode(jwtKeyBase64)
+        return JwtTokenService(SecretKeySpec(keyBytes, "HmacSHA256"))
+    }
 }
