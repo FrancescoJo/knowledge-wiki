@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.infrastructure.security
 
+import com.fj.omnimemo.core.model.user.PasswordHasher
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -35,6 +36,9 @@ class CryptoConfiguration {
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+
+    @Bean
+    fun passwordHasher(encoder: PasswordEncoder): PasswordHasher = PasswordHasherImpl(encoder)
 
     @Bean
     fun jwtTokenService(
