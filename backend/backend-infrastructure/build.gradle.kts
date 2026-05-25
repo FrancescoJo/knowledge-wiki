@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":backend-core"))
     implementation("org.springframework:spring-context")
     implementation("org.springframework:spring-jdbc")
+    implementation("org.springframework.security:spring-security-crypto")
     runtimeOnly("org.postgresql:postgresql")
 
     testFixturesApi("org.testcontainers:testcontainers")

@@ -8,6 +8,8 @@ package com.fj.omnimemo.infrastructure.security
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.Base64
 
 /**
@@ -29,4 +31,7 @@ class CryptoConfiguration {
     @Bean
     fun hmacBlindIndex(@Value("\${app.security.hmac-key}") hmacKeyBase64: String): HmacBlindIndex =
         HmacBlindIndex(Base64.getDecoder().decode(hmacKeyBase64))
+
+    @Bean
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 }
