@@ -3,7 +3,7 @@
  *
  * $Since: 2026-05-23T00:00:00Z
  */
-package com.fj.omnimemo.core.model
+package com.fj.omnimemo.core.data.model
 
 /**
  * Marks an entity that can be persisted to a data store.

@@ -42,7 +42,7 @@ interface Article {
         fun create(title: String, body: String): Article {
             val now = Instant.now()
             return ArticleData(
-                id = UUID.randomUUID(),
+                id = UuidCreator.getTimeOrderedEpoch(),
                 isNew = true,
                 title = title,
                 body = body,

@@ -1,9 +1,4 @@
-/*
- * HealthStatus.kt
- *
- * $Since: 2026-05-20T00:00:00Z
- */
-package com.fj.omnimemo.core.model
+package com.fj.omnimemo.core.status.model
 
 /**
  * Represents the current health state of the application at a point in time.

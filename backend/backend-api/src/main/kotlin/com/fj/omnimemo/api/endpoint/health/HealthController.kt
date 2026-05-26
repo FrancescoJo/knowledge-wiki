@@ -6,7 +6,7 @@
 package com.fj.omnimemo.api.endpoint.health
 
 import com.fj.omnimemo.api.endpoint.ApiPathsV1
-import com.fj.omnimemo.core.model.HealthStatus
+import com.fj.omnimemo.core.status.model.HealthStatus
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag

@@ -5,7 +5,7 @@
  */
 package com.fj.omnimemo.view
 
-import com.fj.omnimemo.core.model.HealthStatus
+import com.fj.omnimemo.core.status.model.HealthStatus
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.servlet.ModelAndView

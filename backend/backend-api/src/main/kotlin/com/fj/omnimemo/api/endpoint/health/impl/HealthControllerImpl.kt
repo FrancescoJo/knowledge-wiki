@@ -6,7 +6,7 @@
 package com.fj.omnimemo.api.endpoint.health.impl
 
 import com.fj.omnimemo.api.endpoint.health.HealthController
-import com.fj.omnimemo.core.model.HealthStatus
+import com.fj.omnimemo.core.status.model.HealthStatus
 import org.springframework.web.bind.annotation.RestController
 
 /**

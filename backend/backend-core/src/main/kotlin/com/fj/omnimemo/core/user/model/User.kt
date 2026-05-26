@@ -5,8 +5,8 @@
  */
 package com.fj.omnimemo.core.user.model
 
-import com.fj.omnimemo.core.model.DateTimeAuditable
-import com.fj.omnimemo.core.model.Persistable
+import com.fj.omnimemo.core.data.model.DateTimeAuditable
+import com.fj.omnimemo.core.data.model.Persistable
 import com.fj.omnimemo.core.user.model.snapshot.UserData
 import java.time.Instant
 

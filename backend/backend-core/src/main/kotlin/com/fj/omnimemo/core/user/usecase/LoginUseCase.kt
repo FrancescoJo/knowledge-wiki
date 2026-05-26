@@ -12,6 +12,7 @@ import com.fj.omnimemo.core.user.model.UserId
 import com.fj.omnimemo.core.user.repository.RefreshTokenRepository
 import com.fj.omnimemo.core.user.repository.UserRepository
 import com.fj.omnimemo.core.user.security.PasswordHasher
+import com.github.f4b6a3.uuid.UuidCreator
 import java.time.Duration
 import java.time.Instant
 import java.util.UUID
@@ -61,7 +62,7 @@ class LoginUseCase(
     private fun issueRefreshToken(userId: UserId): RefreshToken =
         refreshTokenRepository.save(
             RefreshToken.create(
-                token = UUID.randomUUID().toString(),
+                token = UuidCreator.getTimeOrderedEpoch().toString(),
                 userId = userId,
                 expiresAt = Instant.now().plus(refreshTokenTtl),
                 createdAt = Instant.now(),
