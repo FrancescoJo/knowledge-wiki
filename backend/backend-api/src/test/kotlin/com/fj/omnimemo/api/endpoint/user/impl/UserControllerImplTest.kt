@@ -1,10 +1,14 @@
 /*
- * UserApiControllerTest.kt
+ * UserControllerImplTest.kt
  *
- * $Since: 2026-05-25T00:00:00Z
+ * $Since: 2026-05-26T00:00:00Z
  */
-package com.fj.omnimemo.api.endpoint.user
+package com.fj.omnimemo.api.endpoint.user.impl
 
+import com.fj.omnimemo.api.endpoint.user.dto.request.CreateUserRequest
+import com.fj.omnimemo.api.endpoint.user.dto.request.UpdateEmailRequest
+import com.fj.omnimemo.api.endpoint.user.dto.request.UpdatePasswordRequest
+import com.fj.omnimemo.api.endpoint.user.dto.response.UserResponse
 import com.fj.omnimemo.core.test.annotation.SmallTest
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.model.UserId
@@ -27,11 +31,11 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 @SmallTest
-class UserApiControllerTest {
+class UserControllerImplTest {
 
     private val repo = MockUserRepository()
     private val hasher = MockPasswordHasher()
-    private val controller = UserApiController(
+    private val controller = UserControllerImpl(
         createUserUseCase = CreateUserUseCase(repo, hasher),
         findUserUseCase = FindUserUseCase(repo),
         updateUserEmailUseCase = UpdateUserEmailUseCase(repo),

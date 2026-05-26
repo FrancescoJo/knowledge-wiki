@@ -1,12 +1,12 @@
 /*
  * CreateUserRequest.kt
  *
- * $Since: 2026-05-25T00:00:00Z
+ * $Since: 2026-05-26T00:00:00Z
  */
-package com.fj.omnimemo.api.endpoint.user
+package com.fj.omnimemo.api.endpoint.user.dto.request
 
 /**
- * Request body for POST /api/users.
+ * Request body for POST [com.fj.omnimemo.api.endpoint.ApiPathsV1.USERS].
  *
  * @author Francesco Jo
  * @since 0.1.1

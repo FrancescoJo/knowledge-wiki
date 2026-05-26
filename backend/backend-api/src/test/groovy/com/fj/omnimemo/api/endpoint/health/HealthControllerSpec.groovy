@@ -1,10 +1,11 @@
 /*
- * HealthApiControllerSpec.groovy
+ * HealthControllerSpec.groovy
  *
- * $Since: 2026-05-20T00:00:00Z
+ * $Since: 2026-05-26T00:00:00Z
  */
-package com.fj.omnimemo.api.endpoint.api
+package com.fj.omnimemo.api.endpoint.health
 
+import com.fj.omnimemo.core.test.annotation.MediumTest
 import com.fj.omnimemo.infrastructure.test.PostgresContainerSupport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -26,9 +27,10 @@ import spock.lang.Specification
  * @since 0.1.1
  * @version 0.1.1
  */
+@MediumTest
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(initializers = [HealthApiControllerSpec.ContainerInitializer])
-class HealthApiControllerSpec extends Specification {
+@ContextConfiguration(initializers = [HealthControllerSpec.ContainerInitializer])
+class HealthControllerSpec extends Specification {
 
     static PostgreSQLContainer container = PostgresContainerSupport.newContainer()
 
@@ -58,9 +60,9 @@ class HealthApiControllerSpec extends Specification {
      * @since 0.1.1
      * @version 0.1.1
      */
-    def "GET /api/health should return HTTP 200 when the application is running"() {
+    def "GET /api/v1/health should return HTTP 200 when the application is running"() {
         when:
-        def response = restTemplate.getForEntity("/api/health", String)
+        def response = restTemplate.getForEntity("/api/v1/health", String)
 
         then:
         response.statusCode.value() == 200

@@ -1,16 +1,16 @@
 /*
  * UserResponse.kt
  *
- * $Since: 2026-05-25T00:00:00Z
+ * $Since: 2026-05-26T00:00:00Z
  */
-package com.fj.omnimemo.api.endpoint.user
+package com.fj.omnimemo.api.endpoint.user.dto.response
 
 import com.fj.omnimemo.core.user.model.User
 
 /**
  * API response representation of a [User].
  *
- * [passwordHash] is intentionally excluded from this view.
+ * [User.passwordHash] is intentionally excluded from this view.
  *
  * @author Francesco Jo
  * @since 0.1.1

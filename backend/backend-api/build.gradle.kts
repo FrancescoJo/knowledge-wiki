@@ -59,6 +59,9 @@ dependencies {
     implementation(project(":backend-core"))
     implementation(project(":backend-infrastructure"))
 
+    // API documentation
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")

@@ -1,10 +1,11 @@
 /*
- * AuthApiControllerTest.kt
+ * AuthControllerImplTest.kt
  *
- * $Since: 2026-05-25T00:00:00Z
+ * $Since: 2026-05-26T00:00:00Z
  */
-package com.fj.omnimemo.api.endpoint.auth
+package com.fj.omnimemo.api.endpoint.auth.impl
 
+import com.fj.omnimemo.api.endpoint.auth.dto.request.LoginRequest
 import com.fj.omnimemo.api.security.JwtAuthenticationFilter
 import com.fj.omnimemo.core.security.MockTokenIssuer
 import com.fj.omnimemo.core.test.annotation.SmallTest
@@ -28,14 +29,14 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 @SmallTest
-class AuthApiControllerTest {
+class AuthControllerImplTest {
 
     private val repo = MockUserRepository()
     private val hasher = MockPasswordHasher()
     private val tokenIssuer = MockTokenIssuer()
     private val refreshTokenRepo = MockRefreshTokenRepository()
     private val useCase = LoginUseCase(repo, hasher, tokenIssuer, refreshTokenRepo, Duration.ofDays(14))
-    private val controller = AuthApiController(useCase, tokenTtlSeconds = 259200, refreshTtlSeconds = 1209600)
+    private val controller = AuthControllerImpl(useCase, tokenTtlSeconds = 259200, refreshTtlSeconds = 1209600)
 
     @BeforeEach
     fun setUp() {
@@ -55,7 +56,7 @@ class AuthApiControllerTest {
             controller.login(LoginRequest("alice@example.com", "secret"), response)
 
             val accessCookie = response.getCookie(JwtAuthenticationFilter.ACCESS_TOKEN_COOKIE)
-            val refreshCookie = response.getCookie(AuthApiController.REFRESH_TOKEN_COOKIE)
+            val refreshCookie = response.getCookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE)
             assertNotNull(accessCookie)
             assertNotNull(refreshCookie)
             assertEquals(true, accessCookie.isHttpOnly)
@@ -88,14 +89,14 @@ class AuthApiControllerTest {
         fun `should clear both cookies on logout`() {
             val loginResult = useCase.login("alice@example.com", "secret")!!
             val request = MockHttpServletRequest().apply {
-                setCookies(Cookie(AuthApiController.REFRESH_TOKEN_COOKIE, loginResult.refreshToken))
+                setCookies(Cookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE, loginResult.refreshToken))
             }
             val response = MockHttpServletResponse()
 
             controller.logout(request, response)
 
             val accessCookie = response.getCookie(JwtAuthenticationFilter.ACCESS_TOKEN_COOKIE)
-            val refreshCookie = response.getCookie(AuthApiController.REFRESH_TOKEN_COOKIE)
+            val refreshCookie = response.getCookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE)
             assertNotNull(accessCookie)
             assertNotNull(refreshCookie)
             assertEquals(0, accessCookie.maxAge)
@@ -106,7 +107,7 @@ class AuthApiControllerTest {
         fun `should delete refresh token from store on logout`() {
             val loginResult = useCase.login("alice@example.com", "secret")!!
             val request = MockHttpServletRequest().apply {
-                setCookies(Cookie(AuthApiController.REFRESH_TOKEN_COOKIE, loginResult.refreshToken))
+                setCookies(Cookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE, loginResult.refreshToken))
             }
 
             controller.logout(request, MockHttpServletResponse())
@@ -121,7 +122,7 @@ class AuthApiControllerTest {
             controller.logout(MockHttpServletRequest(), response)
 
             assertNotNull(response.getCookie(JwtAuthenticationFilter.ACCESS_TOKEN_COOKIE))
-            assertNotNull(response.getCookie(AuthApiController.REFRESH_TOKEN_COOKIE))
+            assertNotNull(response.getCookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE))
         }
     }
 
@@ -132,14 +133,14 @@ class AuthApiControllerTest {
         fun `should rotate cookies for a valid refresh token`() {
             val loginResult = useCase.login("alice@example.com", "secret")!!
             val request = MockHttpServletRequest().apply {
-                setCookies(Cookie(AuthApiController.REFRESH_TOKEN_COOKIE, loginResult.refreshToken))
+                setCookies(Cookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE, loginResult.refreshToken))
             }
             val response = MockHttpServletResponse()
 
             controller.refresh(request, response)
 
             assertNotNull(response.getCookie(JwtAuthenticationFilter.ACCESS_TOKEN_COOKIE))
-            assertNotNull(response.getCookie(AuthApiController.REFRESH_TOKEN_COOKIE))
+            assertNotNull(response.getCookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE))
         }
 
         @Test
@@ -153,7 +154,7 @@ class AuthApiControllerTest {
         @Test
         fun `should throw 401 for an invalid refresh token value`() {
             val request = MockHttpServletRequest().apply {
-                setCookies(Cookie(AuthApiController.REFRESH_TOKEN_COOKIE, "invalid-token"))
+                setCookies(Cookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE, "invalid-token"))
             }
             val ex = assertFailsWith<ResponseStatusException> {
                 controller.refresh(request, MockHttpServletResponse())

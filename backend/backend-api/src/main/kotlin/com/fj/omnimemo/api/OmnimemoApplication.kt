@@ -15,7 +15,7 @@ import org.springframework.boot.runApplication
  * @since 0.0.1
  * @version 0.1.1
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = ["com.fj.omnimemo"])
 class OmnimemoApplication
 
 /**
