@@ -11,8 +11,8 @@ import com.fj.omnimemo.core.user.model.LoginResult
 import com.fj.omnimemo.core.user.usecase.LoginUseCase
 import com.fj.omnimemo.infrastructure.security.JwtTokenService
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -48,7 +48,7 @@ class AuthControllerMvcTest {
     @Test
     fun `POST auth login returns 200 and sets cookies on valid credentials`() {
         val loginResult = LoginResult.create("access-token", "refresh-token")
-        given(loginUseCase.login(any(), any())).willReturn(loginResult)
+        given(loginUseCase.login(anyArg(), anyArg())).willReturn(loginResult)
 
         mockMvc.perform(
             post("${ApiPathsV1.AUTH}/login")
@@ -63,7 +63,7 @@ class AuthControllerMvcTest {
 
     @Test
     fun `POST auth login returns 401 for invalid credentials`() {
-        given(loginUseCase.login(any(), any())).willReturn(null)
+        given(loginUseCase.login(anyArg(), anyArg())).willReturn(null)
 
         mockMvc.perform(
             post("${ApiPathsV1.AUTH}/login")
@@ -84,7 +84,7 @@ class AuthControllerMvcTest {
     @Test
     fun `POST auth refresh returns 200 and rotates cookies for a valid refresh token`() {
         val loginResult = LoginResult.create("new-access", "new-refresh")
-        given(loginUseCase.refresh(any())).willReturn(loginResult)
+        given(loginUseCase.refresh(anyArg())).willReturn(loginResult)
 
         mockMvc.perform(
             post("${ApiPathsV1.AUTH}/refresh")
@@ -99,5 +99,13 @@ class AuthControllerMvcTest {
     fun `POST auth refresh returns 401 when no refresh token cookie is present`() {
         mockMvc.perform(post("${ApiPathsV1.AUTH}/refresh"))
             .andExpect(status().isUnauthorized)
+    }
+
+    companion object {
+        // Mockito.any() returns null; T : Any would cause Kotlin to emit a runtime null-check
+        // on the cast inside this helper, throwing NPE before Mockito can intercept. Keeping T
+        // unconstrained makes the cast erasure-safe so Mockito records the matcher as intended.
+        @Suppress("UNCHECKED_CAST")
+        private fun <T> anyArg(): T = Mockito.any<Any>() as T
     }
 }

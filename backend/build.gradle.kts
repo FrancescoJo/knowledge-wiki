@@ -66,6 +66,9 @@ subprojects {
 
     tasks.withType<Test> {
         useJUnitPlatform()
+        // Byte Buddy (bundled with mockito-core) officially supports up to Java 23.
+        // Experimental mode extends support to newer JVM versions such as Java 25.
+        jvmArgs("-Dnet.bytebuddy.experimental=true")
     }
 
     val testSources = extensions.getByType<SourceSetContainer>()["test"]

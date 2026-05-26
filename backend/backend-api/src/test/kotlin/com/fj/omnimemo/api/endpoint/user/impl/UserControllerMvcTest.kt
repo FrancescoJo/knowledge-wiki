@@ -16,8 +16,8 @@ import com.fj.omnimemo.core.user.usecase.UpdateUserEmailUseCase
 import com.fj.omnimemo.core.user.usecase.UpdateUserPasswordUseCase
 import com.fj.omnimemo.infrastructure.security.JwtTokenService
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -68,9 +68,10 @@ class UserControllerMvcTest {
 
     @Test
     fun `GET users by id returns 200 with JSON user body`() {
-        given(findUserUseCase.findById(any(UserId::class.java))).willReturn(existingUser)
+        val uuid = UUID.randomUUID()
+        given(findUserUseCase.findById(UserId(uuid))).willReturn(existingUser)
 
-        mockMvc.perform(get("${ApiPathsV1.USERS}/${UUID.randomUUID()}"))
+        mockMvc.perform(get("${ApiPathsV1.USERS}/$uuid"))
             .andExpect(status().isOk)
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.email").value("alice@example.com"))
@@ -80,9 +81,10 @@ class UserControllerMvcTest {
 
     @Test
     fun `GET users by id returns 404 when user is not found`() {
-        given(findUserUseCase.findById(any(UserId::class.java))).willReturn(null)
+        val uuid = UUID.randomUUID()
+        given(findUserUseCase.findById(UserId(uuid))).willReturn(null)
 
-        mockMvc.perform(get("${ApiPathsV1.USERS}/${UUID.randomUUID()}"))
+        mockMvc.perform(get("${ApiPathsV1.USERS}/$uuid"))
             .andExpect(status().isNotFound)
     }
 
@@ -94,7 +96,7 @@ class UserControllerMvcTest {
 
     @Test
     fun `POST users returns 201 with JSON user body`() {
-        given(createUserUseCase.create(any(), any())).willReturn(existingUser)
+        given(createUserUseCase.create(anyArg(), anyArg())).willReturn(existingUser)
 
         mockMvc.perform(
             post(ApiPathsV1.USERS)
@@ -108,10 +110,11 @@ class UserControllerMvcTest {
 
     @Test
     fun `PUT users email returns 200 with updated user`() {
-        given(updateUserEmailUseCase.updateEmail(any(UserId::class.java), any())).willReturn(existingUser)
+        val uuid = UUID.randomUUID()
+        given(updateUserEmailUseCase.updateEmail(UserId(uuid), "new@example.com")).willReturn(existingUser)
 
         mockMvc.perform(
-            put("${ApiPathsV1.USERS}/${UUID.randomUUID()}/email")
+            put("${ApiPathsV1.USERS}/$uuid/email")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"email":"new@example.com"}""")
         )
@@ -121,10 +124,11 @@ class UserControllerMvcTest {
 
     @Test
     fun `PUT users password returns 200 with updated user`() {
-        given(updateUserPasswordUseCase.updatePassword(any(UserId::class.java), any())).willReturn(existingUser)
+        val uuid = UUID.randomUUID()
+        given(updateUserPasswordUseCase.updatePassword(UserId(uuid), "newpass")).willReturn(existingUser)
 
         mockMvc.perform(
-            put("${ApiPathsV1.USERS}/${UUID.randomUUID()}/password")
+            put("${ApiPathsV1.USERS}/$uuid/password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"password":"newpass"}""")
         )
@@ -135,5 +139,13 @@ class UserControllerMvcTest {
     fun `DELETE users returns 204 with no body`() {
         mockMvc.perform(delete("${ApiPathsV1.USERS}/${UUID.randomUUID()}"))
             .andExpect(status().isNoContent)
+    }
+
+    companion object {
+        // Mockito.any() returns null; T : Any would cause Kotlin to emit a runtime null-check
+        // on the cast inside this helper, throwing NPE before Mockito can intercept. Keeping T
+        // unconstrained makes the cast erasure-safe so Mockito records the matcher as intended.
+        @Suppress("UNCHECKED_CAST")
+        private fun <T> anyArg(): T = Mockito.any<Any>() as T
     }
 }
