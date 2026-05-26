@@ -125,13 +125,13 @@ class UserRepositoryImpl(
     }
 
     companion object {
-        private const val TABLE_NAME = "users"
-        private const val COL_ID = "id"
-        private const val COL_EMAIL_ENCRYPTED = "email_encrypted"
-        private const val COL_EMAIL_HMAC = "email_hmac"
-        private const val COL_PASSWORD_HASH = "password_hash"
-        private const val COL_IV = "iv"
-        private const val COL_CREATED_AT = "created_at"
-        private const val COL_UPDATED_AT = "updated_at"
+        internal const val TABLE_NAME = "users"
+        internal const val COL_ID = "id"
+        internal const val COL_EMAIL_ENCRYPTED = "email_encrypted"
+        internal const val COL_EMAIL_HMAC = "email_hmac"
+        internal const val COL_PASSWORD_HASH = "password_hash"
+        internal const val COL_IV = "iv"
+        internal const val COL_CREATED_AT = "created_at"
+        internal const val COL_UPDATED_AT = "updated_at"
     }
 }

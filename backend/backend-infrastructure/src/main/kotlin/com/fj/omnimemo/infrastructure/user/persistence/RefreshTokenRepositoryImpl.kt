@@ -63,10 +63,10 @@ class RefreshTokenRepositoryImpl(private val jdbc: JdbcTemplate) : RefreshTokenR
     }
 
     companion object {
-        private const val TABLE_NAME = "refresh_tokens"
-        private const val COL_TOKEN = "token"
-        private const val COL_USER_ID = "user_id"
-        private const val COL_EXPIRES_AT = "expires_at"
-        private const val COL_CREATED_AT = "created_at"
+        internal const val TABLE_NAME = "refresh_tokens"
+        internal const val COL_TOKEN = "token"
+        internal const val COL_USER_ID = "user_id"
+        internal const val COL_EXPIRES_AT = "expires_at"
+        internal const val COL_CREATED_AT = "created_at"
     }
 }

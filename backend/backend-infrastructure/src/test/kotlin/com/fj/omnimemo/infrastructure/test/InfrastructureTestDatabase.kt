@@ -6,14 +6,15 @@
 package com.fj.omnimemo.infrastructure.test
 
 import liquibase.Contexts
+import liquibase.GlobalConfiguration
 import liquibase.Liquibase
+import liquibase.Scope
 import liquibase.database.DatabaseFactory
 import liquibase.database.jvm.JdbcConnection
-import liquibase.resource.DirectoryResourceAccessor
+import liquibase.resource.ClassLoaderResourceAccessor
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import org.testcontainers.containers.PostgreSQLContainer
-import java.nio.file.Paths
 
 /**
  * Shared PostgreSQL container for medium tests in the backend-infrastructure module.
@@ -43,22 +44,22 @@ object InfrastructureTestDatabase {
     }
 
     private fun applySchema(ds: DriverManagerDataSource) {
-        // ClassLoaderResourceAccessor scans the entire classpath and finds duplicate copies
-        // of the changelog file (once in main resources, once in the testFixtures JAR).
-        // Resolving the URL directly from the classloader gives a single filesystem path;
-        // DirectoryResourceAccessor then restricts Liquibase's search to that directory tree.
-        val changelogUrl = checkNotNull(
-            InfrastructureTestDatabase::class.java.classLoader.getResource(CHANGELOG)
-        ) { "$CHANGELOG not found on classpath" }
-        val resourcesRoot = CHANGELOG.split("/")
-            .fold(Paths.get(changelogUrl.toURI())) { path, _ -> path.parent }
-
-        ds.connection.use { conn ->
-            val database = DatabaseFactory.getInstance()
-                .findCorrectDatabaseImplementation(JdbcConnection(conn))
-            Liquibase(CHANGELOG, DirectoryResourceAccessor(resourcesRoot), database).use {
-                it.update(Contexts())
+        // The Gradle test classpath exposes the changelog both as a directory entry (build/resources/main)
+        // and inside the testFixtures JAR, so ClassLoaderResourceAccessor finds two copies.
+        // WARN mode makes Liquibase pick the first one and continue rather than throwing.
+        val scopeAttrs = mapOf(
+            GlobalConfiguration.DUPLICATE_FILE_MODE.key to GlobalConfiguration.DuplicateFileMode.WARN,
+        )
+        try {
+            Scope.child(scopeAttrs) {
+                ds.connection.use { conn ->
+                    val database = DatabaseFactory.getInstance()
+                        .findCorrectDatabaseImplementation(JdbcConnection(conn))
+                    Liquibase(CHANGELOG, ClassLoaderResourceAccessor(), database).use { it.update(Contexts()) }
+                }
             }
+        } catch (e: Exception) {
+            throw IllegalStateException("Failed to apply schema via $CHANGELOG", e)
         }
     }
 }

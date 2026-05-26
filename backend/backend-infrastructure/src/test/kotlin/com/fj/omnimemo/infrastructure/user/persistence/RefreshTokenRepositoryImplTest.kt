@@ -40,12 +40,13 @@ class RefreshTokenRepositoryImplTest {
     private val jdbc = InfrastructureTestDatabase.jdbc
     private val userRepo = UserRepositoryImpl(jdbc, TEST_AES_CIPHER, TEST_HMAC_INDEX)
     private val repo = RefreshTokenRepositoryImpl(jdbc)
+    private val users = UserTableFixture(jdbc)
 
     private lateinit var testUser: User
 
     @BeforeEach
     fun setUp() {
-        jdbc.update("DELETE FROM users") // cascades to refresh_tokens via FK ON DELETE CASCADE
+        users.deleteAll() // cascades to refresh_tokens via FK ON DELETE CASCADE
         testUser = User.create("alice@example.com", "hash")
         userRepo.save(testUser)
     }

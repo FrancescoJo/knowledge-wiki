@@ -35,10 +35,11 @@ class UserRepositoryImplTest {
 
     private val jdbc = InfrastructureTestDatabase.jdbc
     private val repo = UserRepositoryImpl(jdbc, TEST_AES_CIPHER, TEST_HMAC_INDEX)
+    private val users = UserTableFixture(jdbc)
 
     @BeforeEach
     fun cleanUsers() {
-        jdbc.update("DELETE FROM users")
+        users.deleteAll()
     }
 
     @Nested
@@ -86,8 +87,7 @@ class UserRepositoryImplTest {
         val user = User.create("alice@example.com", "hash")
         repo.save(user)
 
-        val row = jdbc.queryForMap("SELECT email_encrypted FROM users WHERE id = ?", user.id.value)
-        val storedBytes = row["email_encrypted"] as ByteArray
+        val storedBytes = users.findEmailEncryptedBytes(user.id)
 
         assertFalse(storedBytes.contentEquals("alice@example.com".toByteArray(Charsets.UTF_8)))
     }

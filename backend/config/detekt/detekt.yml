@@ -71,8 +71,6 @@ style:
       - 'MockBean'
 
 performance:
-  # Spring Boot's runApplication<T>(*args) is idiomatic and unavoidable; the one-time
-  # startup copy is not a meaningful performance concern.
   SpreadOperator:
-    active: false
+    active: true
 
