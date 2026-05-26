@@ -24,6 +24,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":backend-core")))
 
+    testImplementation("org.liquibase:liquibase-core")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

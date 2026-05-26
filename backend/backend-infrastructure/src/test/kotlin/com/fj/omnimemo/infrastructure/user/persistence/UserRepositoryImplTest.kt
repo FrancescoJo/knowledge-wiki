@@ -5,64 +5,36 @@
  */
 package com.fj.omnimemo.infrastructure.user.persistence
 
+import com.fj.omnimemo.core.test.annotation.MediumTest
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.model.UserId
 import com.fj.omnimemo.core.user.mutate
 import com.fj.omnimemo.infrastructure.security.AesGcmCipher
 import com.fj.omnimemo.infrastructure.security.HmacBlindIndex
-import com.fj.omnimemo.infrastructure.test.PostgresContainerSupport
-import com.fj.omnimemo.core.test.annotation.MediumTest
-import org.junit.jupiter.api.BeforeAll
+import com.fj.omnimemo.infrastructure.test.InfrastructureTestDatabase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.datasource.DriverManagerDataSource
-import org.testcontainers.containers.PostgreSQLContainer
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
+/**
+ * Medium Tests for [UserRepositoryImpl]: verifies persistence behaviour against
+ * a real PostgreSQL instance shared via [InfrastructureTestDatabase].
+ *
+ * @author Francesco Jo
+ * @since 0.1.1
+ * @version 0.1.1
+ */
 @MediumTest
-@Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserRepositoryImplTest {
 
-    companion object {
-        @Container
-        @JvmField
-        val postgres: PostgreSQLContainer<*> = PostgresContainerSupport.newContainer()
-
-        private val TEST_AES_CIPHER = AesGcmCipher(ByteArray(32) { it.toByte() })
-        private val TEST_HMAC_INDEX = HmacBlindIndex(ByteArray(32) { (it + 32).toByte() })
-
-        private fun loadCreateTableSql(): String {
-            val stream = UserRepositoryImplTest::class.java.classLoader
-                .getResourceAsStream("db/changelog/v0.1/create-users-table.sql")
-                ?: error("create-users-table.sql not found on classpath")
-            return stream.bufferedReader().use { reader ->
-                reader.readLines()
-                    .filter { !it.startsWith("--liquibase") && !it.startsWith("--changeset") }
-                    .joinToString("\n")
-                    .trim()
-            }
-        }
-    }
-
-    private lateinit var jdbc: JdbcTemplate
-    private lateinit var repo: UserRepositoryImpl
-
-    @BeforeAll
-    fun setUpDatabase() {
-        val ds = DriverManagerDataSource(postgres.jdbcUrl, postgres.username, postgres.password)
-        jdbc = JdbcTemplate(ds)
-        jdbc.execute(loadCreateTableSql())
-        repo = UserRepositoryImpl(jdbc, TEST_AES_CIPHER, TEST_HMAC_INDEX)
-    }
+    private val jdbc = InfrastructureTestDatabase.jdbc
+    private val repo = UserRepositoryImpl(jdbc, TEST_AES_CIPHER, TEST_HMAC_INDEX)
 
     @BeforeEach
     fun cleanUsers() {
@@ -139,5 +111,10 @@ class UserRepositoryImplTest {
         repo.delete(user.id)
 
         assertNull(repo.findById(user.id))
+    }
+
+    companion object {
+        private val TEST_AES_CIPHER = AesGcmCipher(ByteArray(32) { it.toByte() })
+        private val TEST_HMAC_INDEX = HmacBlindIndex(ByteArray(32) { (it + 32).toByte() })
     }
 }
