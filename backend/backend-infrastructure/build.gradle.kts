@@ -21,6 +21,8 @@ dependencies {
 
     testFixturesApi("org.testcontainers:testcontainers")
     testFixturesApi("org.testcontainers:postgresql")
+    testFixturesImplementation(project(":backend-core"))
+    testFixturesImplementation("org.springframework:spring-jdbc")
 
     testImplementation(testFixtures(project(":backend-core")))
 

@@ -5,7 +5,8 @@
  */
 package com.fj.omnimemo.api.endpoint.health
 
-import com.fj.omnimemo.core.test.annotation.MediumTest
+import com.fj.omnimemo.api.endpoint.test.health.HealthApiClient
+import com.fj.omnimemo.core.test.annotation.LargeTest
 import com.fj.omnimemo.infrastructure.test.PostgresContainerSupport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -27,9 +28,9 @@ import spock.lang.Specification
  * @since 0.1.1
  * @version 0.1.1
  */
-@MediumTest
+@LargeTest
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(initializers = [HealthControllerSpec.ContainerInitializer])
+@ContextConfiguration(initializers = [ContainerInitializer])
 class HealthControllerSpec extends Specification {
 
     static PostgreSQLContainer container = PostgresContainerSupport.newContainer()
@@ -51,18 +52,17 @@ class HealthControllerSpec extends Specification {
         }
     }
 
-    @Autowired
-    TestRestTemplate restTemplate
+    @Autowired TestRestTemplate restTemplate
 
-    /**
-     * Asserts that the health endpoint is reachable and returns a successful HTTP response.
-     *
-     * @since 0.1.1
-     * @version 0.1.1
-     */
+    HealthApiClient healthApiClient
+
+    def setup() {
+        healthApiClient = new HealthApiClient(restTemplate)
+    }
+
     def "GET /api/v1/health should return HTTP 200 when the application is running"() {
         when:
-        def response = restTemplate.getForEntity("/api/v1/health", String)
+        def response = healthApiClient.health()
 
         then:
         response.statusCode.value() == 200

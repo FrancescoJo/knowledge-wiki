@@ -100,6 +100,7 @@ The following are recommendations for code quality and consistency.
 
 ### Simplicity Is Best
 
+- Before writing any static helper, utility, or shared function, search the codebase for an existing equivalent. Reuse before creating.
 - Write only the minimum amount of code needed to solve the problem.
 - Do not include speculative code.
 - Do not add features beyond what was requested.
@@ -253,6 +254,8 @@ Test sizes are defined as Small, Medium, and Large.
       → Yes (isolated)      : Allowed
   ```
 
+- **Full-context boundary:** A test that starts the full Spring application context — for example via `@SpringBootTest(webEnvironment = RANDOM_PORT)` — is classified as **Large** even when every dependency (database, loopback server) is locally controlled. Full context startup exercises the entire wiring, security configuration, and migration stack; this fidelity belongs to the Large Test category. Apply the Q1/Q2 tree only to partial-context tests such as `@WebMvcTest` or `@DataJpaTest`.
+
 ##### Large Test
 
 - Commonly called an **End-to-End Test**, but tests like performance tests or chaos engineering that do not validate full scenarios still qualify as Large if they use real external dependencies.
@@ -384,4 +387,32 @@ Any layer that integrates with infrastructure concerns — including repositorie
 - **Small Tests** verify logic in isolation using test doubles.
 - **Medium Tests** verify the integration with the actual infrastructure component (a real database, a real HTTP stack via `@WebMvcTest`, etc.).
 
-Large Tests should also be considered when the scenario requires end-to-end fidelity that Medium Tests cannot provide.
+For REST API modules, at least one Spock `@SpringBootTest` Large Test (smoke test) must be written per controller group. The smoke test must verify at least one happy-path scenario end-to-end with a fully loaded Spring context. Exhaustive case coverage — boundary conditions and error paths — belongs in Small and Medium Tests, not in the smoke test.
+
+#### Large Test Utility Conventions
+
+Large Test helper code lives in `{root}.api.endpoint.test` and is never included in production source sets.
+
+**API clients** — wrap all HTTP calls for a controller group in a single class. One client class per controller group:
+
+| Class | Location |
+|---|---|
+| `HealthApiClient` | `…/test/health/HealthApiClient.kt` |
+| `AuthApiClient` | `…/test/auth/AuthApiClient.kt` |
+| `UserApiClient` | `…/test/user/UserApiClient.kt` |
+
+Rules for API clients:
+- Accept HTTP client and serialiser dependencies as constructor parameters; do not instantiate them internally.
+- Reference URL paths through centralised path constants. Hardcoded URL strings are not permitted.
+- Serialise request bodies through a shared mechanism. Inline string literals for structured payloads are not permitted.
+- Manage protocol-level headers (authentication, CSRF, etc.) internally; callers must not construct headers manually.
+
+**Shared helpers** — stateless utilities used internally by API clients or directly by specs for assertions:
+
+- Helpers that manage protocol-level concerns (e.g. authentication headers, security tokens) must have restricted visibility so that only API clients use them. Specs must go through the API client, never construct protocol headers directly.
+- Helpers that inspect responses for use in spec assertions (e.g. cookie extraction, status parsing) may be `public`. When specs are written in a different language from the helpers, apply the interoperability annotation required by the language boundary (e.g. `@JvmStatic` for Groovy calling a Kotlin `object`).
+
+**Fixture** — encapsulates database reset and test data creation:
+
+- A fixture class combines infrastructure cleanup (e.g. table truncation) with use-case-level setup (e.g. creating a test user) so that each spec's `setup` block can delegate its entire preparation to a single call.
+- Specs must not contain direct database manipulation calls. All data preparation must go through a fixture.

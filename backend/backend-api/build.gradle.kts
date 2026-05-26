@@ -93,3 +93,9 @@ tasks.withType<GroovyCompile>().configureEach {
         languageVersion.set(JavaLanguageVersion.of(21))
     })
 }
+
+// Groovy test compilation must see Kotlin test classes (e.g. API client helpers).
+tasks.named<GroovyCompile>("compileTestGroovy") {
+    dependsOn("compileTestKotlin")
+    classpath += files(layout.buildDirectory.dir("classes/kotlin/test"))
+}
