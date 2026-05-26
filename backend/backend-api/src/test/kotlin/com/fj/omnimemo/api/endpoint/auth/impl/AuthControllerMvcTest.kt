@@ -23,6 +23,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import jakarta.servlet.http.Cookie
 
@@ -65,6 +66,7 @@ class AuthControllerMvcTest {
             .andExpect(cookie().exists("access_token"))
             .andExpect(cookie().exists(AuthControllerImpl.REFRESH_TOKEN_COOKIE))
             .andExpect(cookie().httpOnly("access_token", true))
+            .andExpect(header().string("HX-Redirect", "/"))
     }
 
     @Test

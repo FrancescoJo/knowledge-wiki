@@ -74,6 +74,15 @@ class AuthControllerImplTest {
         }
 
         @Test
+        fun `should set HX-Redirect header to root on valid credentials`() {
+            val response = MockHttpServletResponse()
+
+            controller.login(LoginRequest("alice@example.com", "secret"), response)
+
+            response.getHeader("HX-Redirect") shouldBe "/"
+        }
+
+        @Test
         fun `should propagate PasswordMismatchException for invalid password`() {
             shouldThrow<PasswordMismatchException> {
                 controller.login(LoginRequest("alice@example.com", "wrong"), MockHttpServletResponse())

@@ -33,6 +33,7 @@ internal class AuthControllerImpl(
         val result = loginUseCase.login(request.email, request.password)
         response.addCookie(accessTokenCookie(result.accessToken))
         response.addCookie(refreshTokenCookie(result.refreshToken))
+        response.setHeader("HX-Redirect", "/")
     }
 
     override fun logout(request: HttpServletRequest, response: HttpServletResponse) {
