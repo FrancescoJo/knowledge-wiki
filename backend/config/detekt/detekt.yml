@@ -63,6 +63,12 @@ style:
       - 'kotlinx.*'
   UnusedPrivateMember:
     active: true
+  # Spring's @Autowired and @MockBean set lateinit var properties via reflection;
+  # lateinit val is not valid Kotlin syntax, so this suggestion is always a false positive.
+  VarCouldBeVal:
+    ignoreAnnotated:
+      - 'Autowired'
+      - 'MockBean'
 
 performance:
   # Spring Boot's runApplication<T>(*args) is idiomatic and unavoidable; the one-time

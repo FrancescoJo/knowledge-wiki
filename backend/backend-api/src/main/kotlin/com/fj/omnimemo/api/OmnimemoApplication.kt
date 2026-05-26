@@ -26,5 +26,8 @@ class OmnimemoApplication
  * @version 0.1.1
  */
 fun main(args: Array<String>) {
+    // Spring Boot's runApplication<T>(*args) is idiomatic and unavoidable; the one-time
+    // startup copy is not a meaningful performance concern.
+    @Suppress("SpreadOperator")
     runApplication<OmnimemoApplication>(*args)
 }

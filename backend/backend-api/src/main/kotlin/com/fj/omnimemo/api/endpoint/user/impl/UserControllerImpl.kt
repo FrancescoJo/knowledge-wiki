@@ -13,6 +13,7 @@ import com.fj.omnimemo.api.endpoint.user.dto.response.UserResponse
 import com.fj.omnimemo.api.endpoint.user.dto.response.toResponse
 import com.fj.omnimemo.core.user.model.UserId
 import com.fj.omnimemo.core.user.usecase.CreateUserUseCase
+import com.fj.omnimemo.core.util.parseUuidOrNull
 import com.fj.omnimemo.core.user.usecase.DeleteUserUseCase
 import com.fj.omnimemo.core.user.usecase.FindUserUseCase
 import com.fj.omnimemo.core.user.usecase.UpdateUserEmailUseCase
@@ -20,7 +21,6 @@ import com.fj.omnimemo.core.user.usecase.UpdateUserPasswordUseCase
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
-import java.util.UUID
 
 /**
  * @author Francesco Jo
@@ -55,6 +55,6 @@ internal class UserControllerImpl(
         deleteUserUseCase.delete(parseUserId(id))
 
     private fun parseUserId(raw: String): UserId =
-        try { UserId(UUID.fromString(raw)) }
-        catch (e: IllegalArgumentException) { throw ResponseStatusException(HttpStatus.BAD_REQUEST) }
+        parseUuidOrNull(raw)?.let { UserId(it) }
+            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 }
