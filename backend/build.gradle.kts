@@ -1,25 +1,25 @@
 import io.gitlab.arturbosch.detekt.Detekt
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.springframework.boot") version "3.3.0" apply false
     id("io.spring.dependency-management") version "1.1.5" apply false
-    // Pinned to 1.9.23 to match detekt 1.23.6's embedded Kotlin version.
+    // Pinned to 2.0.21 to match detekt 1.23.8's embedded Kotlin version.
     // Detekt reads KotlinVersion.CURRENT from the KGP, not from kotlinCompilerClasspath,
-    // so the KGP version must align. Kotlin 1.9.23 → 1.9.24 is a patch-only diff; no
-    // breaking changes. Upgrade both together when detekt supports a newer version.
-    kotlin("jvm") version "1.9.23" apply false
-    kotlin("plugin.spring") version "1.9.23" apply false
-    id("io.gitlab.arturbosch.detekt") version "1.23.6" apply false
+    // so the KGP version must align. Upgrade both together when detekt supports a newer version.
+    kotlin("jvm") version "2.0.21" apply false
+    kotlin("plugin.spring") version "2.0.21" apply false
+    id("io.gitlab.arturbosch.detekt") version "1.23.8" apply false
 }
 
 allprojects {
     group = "com.fj.omnimemo"
     version = "0.1.1"
 
-    // Ensures Spring Boot BOM resolves Kotlin artefacts at 1.9.23 rather than its
+    // Ensures Spring Boot BOM resolves Kotlin artefacts at 2.0.21 rather than its
     // default managed version, keeping all Kotlin artefacts on a single patch version.
-    extra["kotlin.version"] = "1.9.23"
+    extra["kotlin.version"] = "2.0.21"
 
     repositories {
         mavenCentral()
@@ -50,9 +50,9 @@ subprojects {
     }
 
     tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "21"
+        compilerOptions {
+            freeCompilerArgs.add("-Xjsr305=strict")
+            jvmTarget.set(JvmTarget.JVM_21)
         }
     }
 
