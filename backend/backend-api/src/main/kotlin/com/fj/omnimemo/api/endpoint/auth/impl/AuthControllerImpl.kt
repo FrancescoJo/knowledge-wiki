@@ -31,7 +31,6 @@ internal class AuthControllerImpl(
 
     override fun login(request: LoginRequest, response: HttpServletResponse) {
         val result = loginUseCase.login(request.email, request.password)
-            ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         response.addCookie(accessTokenCookie(result.accessToken))
         response.addCookie(refreshTokenCookie(result.refreshToken))
     }
@@ -53,7 +52,6 @@ internal class AuthControllerImpl(
             ?.value
             ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         val result = loginUseCase.refresh(refreshToken)
-            ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         response.addCookie(accessTokenCookie(result.accessToken))
         response.addCookie(refreshTokenCookie(result.refreshToken))
     }

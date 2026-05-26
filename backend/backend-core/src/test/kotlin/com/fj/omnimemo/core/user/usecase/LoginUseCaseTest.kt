@@ -5,6 +5,9 @@
  */
 package com.fj.omnimemo.core.user.usecase
 
+import com.fj.omnimemo.core.user.exception.PasswordMismatchException
+import com.fj.omnimemo.core.user.exception.RefreshTokenNotFoundException
+import com.fj.omnimemo.core.user.exception.TokenExpiredException
 import com.fj.omnimemo.core.security.MockTokenIssuer
 import com.fj.omnimemo.core.test.annotation.SmallTest
 import com.fj.omnimemo.core.user.model.RefreshToken
@@ -13,6 +16,7 @@ import com.fj.omnimemo.core.user.repository.MockRefreshTokenRepository
 import com.fj.omnimemo.core.user.repository.MockUserRepository
 import com.fj.omnimemo.core.user.security.MockPasswordHasher
 import io.kotest.assertions.assertSoftly
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.BeforeEach
@@ -46,22 +50,26 @@ class LoginUseCaseTest {
             val result = useCase.login("alice@example.com", "secret")
 
             assertSoftly {
-                result?.accessToken shouldBe "token:${user.id.value}"
-                result?.refreshToken shouldNotBe null
+                result.accessToken shouldBe "token:${user.id.value}"
+                result.refreshToken shouldNotBe null
             }
         }
 
         @Test
-        fun `should return null when email does not exist`() {
-            useCase.login("nobody@example.com", "secret") shouldBe null
+        fun `should throw PasswordMismatchException when email does not exist`() {
+            shouldThrow<PasswordMismatchException> {
+                useCase.login("nobody@example.com", "secret")
+            }
         }
 
         @Test
-        fun `should return null when password is wrong`() {
+        fun `should throw PasswordMismatchException when password is wrong`() {
             val user = User.create("alice@example.com", hasher.hash("secret"))
             repo.save(user)
 
-            useCase.login("alice@example.com", "wrong-secret") shouldBe null
+            shouldThrow<PasswordMismatchException> {
+                useCase.login("alice@example.com", "wrong-secret")
+            }
         }
     }
 
@@ -71,7 +79,7 @@ class LoginUseCaseTest {
         fun `should delete refresh token on logout`() {
             val user = User.create("alice@example.com", hasher.hash("secret"))
             repo.save(user)
-            val loginResult = useCase.login("alice@example.com", "secret")!!
+            val loginResult = useCase.login("alice@example.com", "secret")
 
             useCase.logout(loginResult.refreshToken)
 
@@ -90,36 +98,33 @@ class LoginUseCaseTest {
         fun `should return new LoginResult for a valid refresh token`() {
             val user = User.create("alice@example.com", hasher.hash("secret"))
             repo.save(user)
-            val initial = useCase.login("alice@example.com", "secret")!!
+            val initial = useCase.login("alice@example.com", "secret")
 
             val result = useCase.refresh(initial.refreshToken)
 
-            assertSoftly {
-                result shouldNotBe null
-                result?.accessToken shouldBe "token:${user.id.value}"
-            }
+            result.accessToken shouldBe "token:${user.id.value}"
         }
 
         @Test
         fun `should rotate refresh token on use`() {
             val user = User.create("alice@example.com", hasher.hash("secret"))
             repo.save(user)
-            val initial = useCase.login("alice@example.com", "secret")!!
-            val rotated = useCase.refresh(initial.refreshToken)!!
+            val initial = useCase.login("alice@example.com", "secret")
+            val rotated = useCase.refresh(initial.refreshToken)
 
-            assertSoftly {
-                useCase.refresh(initial.refreshToken) shouldBe null
-                useCase.refresh(rotated.refreshToken) shouldNotBe null
+            shouldThrow<RefreshTokenNotFoundException> { useCase.refresh(initial.refreshToken) }
+            useCase.refresh(rotated.refreshToken).accessToken shouldBe "token:${user.id.value}"
+        }
+
+        @Test
+        fun `should throw RefreshTokenNotFoundException for an unknown refresh token`() {
+            shouldThrow<RefreshTokenNotFoundException> {
+                useCase.refresh("unknown-token")
             }
         }
 
         @Test
-        fun `should return null for an unknown refresh token`() {
-            useCase.refresh("unknown-token") shouldBe null
-        }
-
-        @Test
-        fun `should return null and delete an expired refresh token`() {
+        fun `should throw TokenExpiredException and delete an expired refresh token`() {
             val user = User.create("alice@example.com", hasher.hash("secret"))
             repo.save(user)
             val expired = RefreshToken.create(
@@ -131,7 +136,7 @@ class LoginUseCaseTest {
             refreshTokenRepo.save(expired)
 
             assertSoftly {
-                useCase.refresh("expired-token") shouldBe null
+                shouldThrow<TokenExpiredException> { useCase.refresh("expired-token") }
                 refreshTokenRepo.findByToken("expired-token") shouldBe null
             }
         }

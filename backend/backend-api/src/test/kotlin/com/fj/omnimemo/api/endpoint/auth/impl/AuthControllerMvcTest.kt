@@ -6,6 +6,8 @@
 package com.fj.omnimemo.api.endpoint.auth.impl
 
 import com.fj.omnimemo.api.endpoint.ApiPathsV1
+import com.fj.omnimemo.core.user.exception.PasswordMismatchException
+import com.fj.omnimemo.core.user.exception.RefreshTokenNotFoundException
 import com.fj.omnimemo.core.test.annotation.MediumTest
 import com.fj.omnimemo.core.user.model.LoginResult
 import com.fj.omnimemo.core.user.usecase.LoginUseCase
@@ -27,6 +29,10 @@ import jakarta.servlet.http.Cookie
 /**
  * Medium Tests for [AuthControllerImpl]: verifies HTTP path routing, cookie handling,
  * and status codes via the Spring MVC stack.
+ *
+ * Error paths that originate from domain exceptions are translated to HTTP status codes
+ * by [com.fj.omnimemo.api.advice.DomainExceptionAdvice], which is auto-loaded by
+ * [WebMvcTest].
  *
  * @author Francesco Jo
  * @since 0.1.1
@@ -63,7 +69,7 @@ class AuthControllerMvcTest {
 
     @Test
     fun `POST auth login returns 401 for invalid credentials`() {
-        given(loginUseCase.login(anyArg(), anyArg())).willReturn(null)
+        given(loginUseCase.login(anyArg(), anyArg())).willThrow(PasswordMismatchException())
 
         mockMvc.perform(
             post("${ApiPathsV1.AUTH}/login")
@@ -98,6 +104,17 @@ class AuthControllerMvcTest {
     @Test
     fun `POST auth refresh returns 401 when no refresh token cookie is present`() {
         mockMvc.perform(post("${ApiPathsV1.AUTH}/refresh"))
+            .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `POST auth refresh returns 401 for an invalid refresh token`() {
+        given(loginUseCase.refresh(anyArg())).willThrow(RefreshTokenNotFoundException())
+
+        mockMvc.perform(
+            post("${ApiPathsV1.AUTH}/refresh")
+                .cookie(Cookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE, "bad-token"))
+        )
             .andExpect(status().isUnauthorized)
     }
 

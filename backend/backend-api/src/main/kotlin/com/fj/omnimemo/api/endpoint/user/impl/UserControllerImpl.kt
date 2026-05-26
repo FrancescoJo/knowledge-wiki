@@ -44,12 +44,10 @@ internal class UserControllerImpl(
         createUserUseCase.create(request.email, request.password).toResponse()
 
     override fun updateEmail(id: String, request: UpdateEmailRequest): UserResponse =
-        updateUserEmailUseCase.updateEmail(parseUserId(id), request.email)?.toResponse()
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        updateUserEmailUseCase.updateEmail(parseUserId(id), request.email).toResponse()
 
     override fun updatePassword(id: String, request: UpdatePasswordRequest): UserResponse =
-        updateUserPasswordUseCase.updatePassword(parseUserId(id), request.password)?.toResponse()
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        updateUserPasswordUseCase.updatePassword(parseUserId(id), request.password).toResponse()
 
     override fun delete(id: String) =
         deleteUserUseCase.delete(parseUserId(id))

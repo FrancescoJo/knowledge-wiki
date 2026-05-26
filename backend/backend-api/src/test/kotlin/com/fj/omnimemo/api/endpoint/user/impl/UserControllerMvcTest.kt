@@ -6,6 +6,7 @@
 package com.fj.omnimemo.api.endpoint.user.impl
 
 import com.fj.omnimemo.api.endpoint.ApiPathsV1
+import com.fj.omnimemo.core.user.exception.UserNotFoundException
 import com.fj.omnimemo.core.test.annotation.MediumTest
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.model.UserId
@@ -133,6 +134,20 @@ class UserControllerMvcTest {
                 .content("""{"password":"newpass"}""")
         )
             .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `PUT users email returns 404 when user does not exist`() {
+        val uuid = UUID.randomUUID()
+        given(updateUserEmailUseCase.updateEmail(UserId(uuid), "new@example.com"))
+            .willThrow(UserNotFoundException(UserId(uuid)))
+
+        mockMvc.perform(
+            put("${ApiPathsV1.USERS}/$uuid/email")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"email":"new@example.com"}""")
+        )
+            .andExpect(status().isNotFound)
     }
 
     @Test

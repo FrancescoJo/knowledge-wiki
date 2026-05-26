@@ -6,6 +6,7 @@
 package com.fj.omnimemo.api.endpoint.bootstrap.impl
 
 import com.fj.omnimemo.api.endpoint.ApiPathsV1
+import com.fj.omnimemo.core.user.exception.RedundantBootstrapProhibitedException
 import com.fj.omnimemo.core.test.annotation.MediumTest
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.usecase.BootstrapUserUseCase
@@ -68,7 +69,8 @@ class BootstrapControllerMvcTest {
 
     @Test
     fun `POST bootstrap users returns 409 when users already exist`() {
-        given(bootstrapUserUseCase.bootstrap(anyArg(), anyArg())).willReturn(null)
+        given(bootstrapUserUseCase.bootstrap(anyArg(), anyArg()))
+            .willThrow(RedundantBootstrapProhibitedException())
 
         mockMvc.perform(
             post(ApiPathsV1.BOOTSTRAP_USERS)

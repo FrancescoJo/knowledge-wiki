@@ -6,6 +6,7 @@
 package com.fj.omnimemo.api.endpoint.bootstrap.impl
 
 import com.fj.omnimemo.api.endpoint.bootstrap.dto.request.BootstrapUserRequest
+import com.fj.omnimemo.core.user.exception.RedundantBootstrapProhibitedException
 import com.fj.omnimemo.core.test.annotation.SmallTest
 import com.fj.omnimemo.core.user.repository.MockUserRepository
 import com.fj.omnimemo.core.user.security.MockPasswordHasher
@@ -17,8 +18,6 @@ import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpStatus
-import org.springframework.web.server.ResponseStatusException
 
 @SmallTest
 class BootstrapControllerImplTest {
@@ -34,7 +33,7 @@ class BootstrapControllerImplTest {
     inner class BootstrapUser {
 
         @Test
-        fun `should return 201 with user response when repository is empty`() {
+        fun `should return user response when repository is empty`() {
             val response = controller.bootstrapUser(BootstrapUserRequest("alice@example.com", "secret"))
 
             assertSoftly {
@@ -44,12 +43,12 @@ class BootstrapControllerImplTest {
         }
 
         @Test
-        fun `should throw 409 when at least one user already exists`() {
+        fun `should propagate RedundantBootstrapProhibitedException when users already exist`() {
             controller.bootstrapUser(BootstrapUserRequest("alice@example.com", "secret"))
 
-            shouldThrow<ResponseStatusException> {
+            shouldThrow<RedundantBootstrapProhibitedException> {
                 controller.bootstrapUser(BootstrapUserRequest("bob@example.com", "pass"))
-            }.statusCode shouldBe HttpStatus.CONFLICT
+            }
         }
     }
 }

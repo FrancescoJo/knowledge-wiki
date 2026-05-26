@@ -98,6 +98,17 @@ The following are recommendations for code quality and consistency.
   ...
   ```
 
+### Domain Exception Design
+
+Failures that occur inside domain logic must be communicated through the type system, not through special return values.
+
+- **Do not use `null` or sentinel values to represent error conditions.** Returning `null` as a substitute for "not found" or "operation failed" forces callers to handle failures through control flow rather than types, and makes the failure reason invisible at the call site.
+- **Define an explicit exception class for every distinct failure mode.** Each exception class is a first-class specification of the condition that caused it.
+- **Reserve `null` returns for legitimate absent-value semantics.** A query method that may yield no result (`findById`, `findByEmail`) may return `null` to mean "nothing was found and that is normal." Command and mutation operations — those that change state — must always throw on failure; returning `null` from them is never appropriate.
+- **Domain exceptions must not carry protocol concepts.** Domain logic has no knowledge of HTTP, gRPC, or any other transport. Responsibility for translating domain exceptions into protocol-level responses belongs to the outermost layer (e.g., a REST controller advice in the API module).
+- **Follow the project exception hierarchy.** All domain exceptions extend `OmniMemoInternalException` (for invariant violations that the domain itself prohibits) or `OmniMemoExternalException` (for failures caused by external input or devices), both of which extend `OmniMemoException`. The sealed root enables exhaustive, uniform handling at the API boundary.
+
+
 ### Code Is a Liability
 
 Every line of code carries a cost. It must be read, understood, tested, maintained, and eventually deleted. The more code a codebase contains, the heavier the burden on everyone who works with it. Writing less code is always preferred over writing more. Before adding any new code, ask whether the same goal can be achieved by removing or reusing existing code instead.

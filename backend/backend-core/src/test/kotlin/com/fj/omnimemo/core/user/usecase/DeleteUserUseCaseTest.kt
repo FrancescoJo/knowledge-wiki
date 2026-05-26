@@ -5,11 +5,15 @@
  */
 package com.fj.omnimemo.core.user.usecase
 
+import com.fj.omnimemo.core.user.exception.UserNotFoundException
 import com.fj.omnimemo.core.test.annotation.SmallTest
+import com.fj.omnimemo.core.user.model.UserId
 import com.fj.omnimemo.core.user.repository.MockUserRepository
 import com.fj.omnimemo.core.user.security.MockPasswordHasher
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @SmallTest
@@ -22,11 +26,22 @@ class DeleteUserUseCaseTest {
     @BeforeEach
     fun setUp() = repo.clear()
 
-    @Test
-    fun `should remove user from repository`() {
-        val user = createUseCase.create("alice@example.com", "secret")
-        useCase.delete(user.id)
+    @Nested
+    inner class Delete {
 
-        repo.findById(user.id) shouldBe null
+        @Test
+        fun `should remove user from repository`() {
+            val user = createUseCase.create("alice@example.com", "secret")
+            useCase.delete(user.id)
+
+            repo.findById(user.id) shouldBe null
+        }
+
+        @Test
+        fun `should throw UserNotFoundException when user does not exist`() {
+            shouldThrow<UserNotFoundException> {
+                useCase.delete(UserId.generate())
+            }
+        }
     }
 }

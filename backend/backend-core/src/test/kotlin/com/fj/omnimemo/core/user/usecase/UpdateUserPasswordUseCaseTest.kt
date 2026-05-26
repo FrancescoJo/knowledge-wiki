@@ -5,12 +5,15 @@
  */
 package com.fj.omnimemo.core.user.usecase
 
+import com.fj.omnimemo.core.user.exception.UserNotFoundException
 import com.fj.omnimemo.core.test.annotation.SmallTest
 import com.fj.omnimemo.core.user.model.UserId
 import com.fj.omnimemo.core.user.repository.MockUserRepository
 import com.fj.omnimemo.core.user.security.MockPasswordHasher
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @SmallTest
@@ -24,17 +27,23 @@ class UpdateUserPasswordUseCaseTest {
     @BeforeEach
     fun setUp() = repo.clear()
 
-    @Test
-    fun `should return user with updated password hash`() {
-        val user = createUseCase.create("alice@example.com", "old-secret")
+    @Nested
+    inner class UpdatePassword {
 
-        val updated = useCase.updatePassword(user.id, "new-secret")
+        @Test
+        fun `should return user with updated password hash`() {
+            val user = createUseCase.create("alice@example.com", "old-secret")
 
-        updated?.passwordHash shouldBe "hashed:new-secret"
-    }
+            val updated = useCase.updatePassword(user.id, "new-secret")
 
-    @Test
-    fun `should return null when user does not exist`() {
-        useCase.updatePassword(UserId.generate(), "new-secret") shouldBe null
+            updated.passwordHash shouldBe "hashed:new-secret"
+        }
+
+        @Test
+        fun `should throw UserNotFoundException when user does not exist`() {
+            shouldThrow<UserNotFoundException> {
+                useCase.updatePassword(UserId.generate(), "new-secret")
+            }
+        }
     }
 }

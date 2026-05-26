@@ -7,9 +7,14 @@ package com.fj.omnimemo.api.endpoint.auth.impl
 
 import com.fj.omnimemo.api.endpoint.auth.dto.request.LoginRequest
 import com.fj.omnimemo.api.security.JwtAuthenticationFilter
+import com.fj.omnimemo.core.user.exception.PasswordMismatchException
+import com.fj.omnimemo.core.user.exception.RefreshTokenNotFoundException
+import com.fj.omnimemo.core.user.exception.TokenExpiredException
 import com.fj.omnimemo.core.security.MockTokenIssuer
 import com.fj.omnimemo.core.test.annotation.SmallTest
+import com.fj.omnimemo.core.user.model.RefreshToken
 import com.fj.omnimemo.core.user.model.User
+import com.fj.omnimemo.core.user.model.UserId
 import com.fj.omnimemo.core.user.repository.MockRefreshTokenRepository
 import com.fj.omnimemo.core.user.repository.MockUserRepository
 import com.fj.omnimemo.core.user.security.MockPasswordHasher
@@ -27,6 +32,7 @@ import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.web.server.ResponseStatusException
 import java.time.Duration
+import java.time.Instant
 
 @SmallTest
 class AuthControllerImplTest {
@@ -68,17 +74,17 @@ class AuthControllerImplTest {
         }
 
         @Test
-        fun `should throw 401 for invalid password`() {
-            shouldThrow<ResponseStatusException> {
+        fun `should propagate PasswordMismatchException for invalid password`() {
+            shouldThrow<PasswordMismatchException> {
                 controller.login(LoginRequest("alice@example.com", "wrong"), MockHttpServletResponse())
-            }.statusCode shouldBe HttpStatus.UNAUTHORIZED
+            }
         }
 
         @Test
-        fun `should throw 401 for unknown email`() {
-            shouldThrow<ResponseStatusException> {
+        fun `should propagate PasswordMismatchException for unknown email`() {
+            shouldThrow<PasswordMismatchException> {
                 controller.login(LoginRequest("nobody@example.com", "secret"), MockHttpServletResponse())
-            }.statusCode shouldBe HttpStatus.UNAUTHORIZED
+            }
         }
     }
 
@@ -87,7 +93,7 @@ class AuthControllerImplTest {
 
         @Test
         fun `should clear both cookies on logout`() {
-            val loginResult = useCase.login("alice@example.com", "secret")!!
+            val loginResult = useCase.login("alice@example.com", "secret")
             val request = MockHttpServletRequest().apply {
                 setCookies(Cookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE, loginResult.refreshToken))
             }
@@ -107,7 +113,7 @@ class AuthControllerImplTest {
 
         @Test
         fun `should delete refresh token from store on logout`() {
-            val loginResult = useCase.login("alice@example.com", "secret")!!
+            val loginResult = useCase.login("alice@example.com", "secret")
             val request = MockHttpServletRequest().apply {
                 setCookies(Cookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE, loginResult.refreshToken))
             }
@@ -135,7 +141,7 @@ class AuthControllerImplTest {
 
         @Test
         fun `should rotate cookies for a valid refresh token`() {
-            val loginResult = useCase.login("alice@example.com", "secret")!!
+            val loginResult = useCase.login("alice@example.com", "secret")
             val request = MockHttpServletRequest().apply {
                 setCookies(Cookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE, loginResult.refreshToken))
             }
@@ -157,13 +163,32 @@ class AuthControllerImplTest {
         }
 
         @Test
-        fun `should throw 401 for an invalid refresh token value`() {
+        fun `should propagate RefreshTokenNotFoundException for an invalid refresh token value`() {
             val request = MockHttpServletRequest().apply {
                 setCookies(Cookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE, "invalid-token"))
             }
-            shouldThrow<ResponseStatusException> {
+            shouldThrow<RefreshTokenNotFoundException> {
                 controller.refresh(request, MockHttpServletResponse())
-            }.statusCode shouldBe HttpStatus.UNAUTHORIZED
+            }
+        }
+
+        @Test
+        fun `should propagate TokenExpiredException for an expired refresh token`() {
+            refreshTokenRepo.save(
+                RefreshToken.create(
+                    token = "expired-token",
+                    userId = UserId.generate(),
+                    expiresAt = Instant.now().minusSeconds(1),
+                    createdAt = Instant.now().minusSeconds(100),
+                )
+            )
+            val request = MockHttpServletRequest().apply {
+                setCookies(Cookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE, "expired-token"))
+            }
+
+            shouldThrow<TokenExpiredException> {
+                controller.refresh(request, MockHttpServletResponse())
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ import com.fj.omnimemo.api.endpoint.user.dto.request.CreateUserRequest
 import com.fj.omnimemo.api.endpoint.user.dto.request.UpdateEmailRequest
 import com.fj.omnimemo.api.endpoint.user.dto.request.UpdatePasswordRequest
 import com.fj.omnimemo.api.endpoint.user.dto.response.UserResponse
+import com.fj.omnimemo.core.user.exception.UserNotFoundException
 import com.fj.omnimemo.core.test.annotation.SmallTest
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.repository.MockUserRepository
@@ -116,10 +117,10 @@ class UserControllerImplTest {
         }
 
         @Test
-        fun `should throw 404 for unknown id`() {
-            shouldThrow<ResponseStatusException> {
+        fun `should propagate UserNotFoundException for unknown id`() {
+            shouldThrow<UserNotFoundException> {
                 controller.updateEmail(UUID.randomUUID().toString(), UpdateEmailRequest("x@example.com"))
-            }.statusCode shouldBe HttpStatus.NOT_FOUND
+            }
         }
 
         @Test
@@ -144,10 +145,10 @@ class UserControllerImplTest {
         }
 
         @Test
-        fun `should throw 404 for unknown id`() {
-            shouldThrow<ResponseStatusException> {
+        fun `should propagate UserNotFoundException for unknown id`() {
+            shouldThrow<UserNotFoundException> {
                 controller.updatePassword(UUID.randomUUID().toString(), UpdatePasswordRequest("x"))
-            }.statusCode shouldBe HttpStatus.NOT_FOUND
+            }
         }
     }
 
@@ -159,6 +160,13 @@ class UserControllerImplTest {
             controller.delete(existingUser.id.value.toString())
 
             repo.findById(existingUser.id) shouldBe null
+        }
+
+        @Test
+        fun `should propagate UserNotFoundException for unknown id`() {
+            shouldThrow<UserNotFoundException> {
+                controller.delete(UUID.randomUUID().toString())
+            }
         }
 
         @Test
