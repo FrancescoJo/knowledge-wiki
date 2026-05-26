@@ -98,6 +98,10 @@ The following are recommendations for code quality and consistency.
   ...
   ```
 
+### Code Is a Liability
+
+Every line of code carries a cost. It must be read, understood, tested, maintained, and eventually deleted. The more code a codebase contains, the heavier the burden on everyone who works with it. Writing less code is always preferred over writing more. Before adding any new code, ask whether the same goal can be achieved by removing or reusing existing code instead.
+
 ### Simplicity Is Best
 
 - Before writing any static helper, utility, or shared function, search the codebase for an existing equivalent. Reuse before creating.
@@ -364,20 +368,10 @@ A utility is a stateless, context-free, pure function (or a group of closely rel
 - Before extending or modifying an existing utility, discuss the rationale. Utilities carry high dependency weight — a change affects every call site.
 - Every utility must have exhaustive Small Tests that serve as its living specification.
 
-#### Utility Index
+**Utility & helper indexes** — consult these before writing any new helper code, and keep them up to date whenever a utility is added, changed, or removed:
 
-Maintain an index file at the root of the `util` package. Its purpose is to allow a reader to discover available utilities without having to browse individual files. Use the following format:
-
-```
-// Class- or object-scoped utilities
-// (Name or call path)   (Description, max 2 lines)
-FooUtil.bar            : Does X given Y
-
-// Global-scope utilities
-baz                    : Does Z
-```
-
-Keep the index up to date whenever a utility is added, changed, or removed.
+- Backend: [`docs/02-coding_guide_utilities_and_helpers_backend.md`](02-coding_guide_utilities_and_helpers_backend.md)
+- Frontend: [`docs/02-coding_guide_utilities_and_helpers_frontend.md`](02-coding_guide_utilities_and_helpers_frontend.md)
 
 
 ### Infrastructure Layer Testing
