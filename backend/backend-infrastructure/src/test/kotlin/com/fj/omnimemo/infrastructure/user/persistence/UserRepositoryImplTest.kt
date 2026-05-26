@@ -116,6 +116,21 @@ class UserRepositoryImplTest {
         repo.findById(user.id) shouldBe null
     }
 
+    @Nested
+    inner class HasAny {
+        @Test
+        fun `should return false when no users exist`() {
+            repo.hasAny() shouldBe false
+        }
+
+        @Test
+        fun `should return true when at least one user exists`() {
+            repo.save(User.create("alice@example.com", "hash"))
+
+            repo.hasAny() shouldBe true
+        }
+    }
+
     companion object {
         private val TEST_AES_CIPHER = AesGcmCipher(ByteArray(32) { it.toByte() })
         private val TEST_HMAC_INDEX = HmacBlindIndex(ByteArray(32) { (it + 32).toByte() })

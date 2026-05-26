@@ -23,4 +23,5 @@ interface UserRepository {
     fun findByEmail(email: String): User?
     fun save(user: User): User
     fun delete(id: UserId)
+    fun hasAny(): Boolean
 }

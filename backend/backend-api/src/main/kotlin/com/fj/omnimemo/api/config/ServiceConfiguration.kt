@@ -9,6 +9,7 @@ import com.fj.omnimemo.core.security.TokenIssuer
 import com.fj.omnimemo.core.user.repository.RefreshTokenRepository
 import com.fj.omnimemo.core.user.repository.UserRepository
 import com.fj.omnimemo.core.user.security.PasswordHasher
+import com.fj.omnimemo.core.user.usecase.BootstrapUserUseCase
 import com.fj.omnimemo.core.user.usecase.CreateUserUseCase
 import com.fj.omnimemo.core.user.usecase.DeleteUserUseCase
 import com.fj.omnimemo.core.user.usecase.FindUserUseCase
@@ -29,6 +30,10 @@ import java.time.Duration
  */
 @Configuration
 class ServiceConfiguration {
+
+    @Bean
+    fun bootstrapUserUseCase(repository: UserRepository, hasher: PasswordHasher): BootstrapUserUseCase =
+        BootstrapUserUseCase(repository, hasher)
 
     @Bean
     fun createUserUseCase(repository: UserRepository, hasher: PasswordHasher): CreateUserUseCase =

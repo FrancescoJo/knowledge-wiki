@@ -21,4 +21,6 @@ object ApiPathsV1 {
     const val USERS = "$BASE/users"
     const val AUTH = "$BASE/auth"
     const val HEALTH = "$BASE/health"
+    const val BOOTSTRAP = "$BASE/bootstrap"
+    const val BOOTSTRAP_USERS = "$BOOTSTRAP/users"
 }

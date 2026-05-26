@@ -5,19 +5,24 @@
  */
 package com.fj.omnimemo.api.config
 
+import com.fj.omnimemo.api.endpoint.ApiPathsV1
 import com.fj.omnimemo.api.security.JwtAuthenticationFilter
 import com.fj.omnimemo.infrastructure.security.JwtTokenService
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
+import org.springframework.security.authorization.AuthorizationDecision
+import org.springframework.security.authorization.AuthorizationManager
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler
+import org.springframework.security.web.util.matcher.IpAddressMatcher
 
 /**
  * Configures the Spring Security filter chain for stateless JWT-based authentication.
@@ -41,6 +46,7 @@ class SecurityConfiguration(private val jwtTokenService: JwtTokenService) {
         .csrf {
             it.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .csrfTokenRequestHandler(CsrfTokenRequestAttributeHandler())
+                .ignoringRequestMatchers(ApiPathsV1.BOOTSTRAP_USERS)
         }
         .addFilterBefore(
             JwtAuthenticationFilter(jwtTokenService),
@@ -54,9 +60,21 @@ class SecurityConfiguration(private val jwtTokenService: JwtTokenService) {
                 .requestMatchers(HttpMethod.GET, "/api/v1/health").permitAll()
                 .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers(HttpMethod.POST, ApiPathsV1.BOOTSTRAP_USERS).access(localhostOnly())
                 .anyRequest().authenticated()
         }
         .formLogin { it.disable() }
         .httpBasic { it.disable() }
         .build()
+
+    private fun localhostOnly(): AuthorizationManager<RequestAuthorizationContext> {
+        val ipv4 = IpAddressMatcher("127.0.0.1")
+        val ipv6 = IpAddressMatcher("::1")
+        return AuthorizationManager { _, ctx ->
+            val addr = ctx.request.remoteAddr
+            AuthorizationDecision(
+                ipv4.matches(addr) || ipv6.matches(addr),
+            )
+        }
+    }
 }

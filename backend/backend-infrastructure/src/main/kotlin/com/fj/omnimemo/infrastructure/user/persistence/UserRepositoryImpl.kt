@@ -124,6 +124,12 @@ class UserRepositoryImpl(
         """.trimIndent(), id.value)
     }
 
+    override fun hasAny(): Boolean =
+        jdbc.queryForObject(
+            "SELECT EXISTS(SELECT 1 FROM $TABLE_NAME)",
+            Boolean::class.java,
+        ) ?: false
+
     companion object {
         internal const val TABLE_NAME = "users"
         internal const val COL_ID = "id"
