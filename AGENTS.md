@@ -56,6 +56,7 @@ docs/                          — project documentation
 frontend/
   common-libs/
     textedit/                  — standalone rich text editor (TipTap core wrapper)
+  omnimemo/                    — app-specific TypeScript (UI interactions, HTMX helpers)
 backend/                       — planned
   wiki/
   wiki-admin/                  — empty skeleton only; implementation deferred to v1.0

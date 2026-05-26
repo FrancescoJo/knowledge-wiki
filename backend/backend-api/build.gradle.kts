@@ -7,6 +7,7 @@ plugins {
 }
 
 val texteditDir = rootProject.projectDir.parentFile.resolve("frontend/common-libs/textedit")
+val omnimemoDir = rootProject.projectDir.parentFile.resolve("frontend/omnimemo")
 
 val texteditVersion = run {
     val raw = texteditDir.resolve("package.json").readText()
@@ -27,14 +28,33 @@ val buildTextedit = tasks.register<Exec>("buildTextedit") {
     outputs.dir(texteditDir.resolve("dist-bundle"))
 }
 
+val buildOmnimemo = tasks.register<Exec>("buildOmnimemo") {
+    workingDir(omnimemoDir)
+    val shell = System.getenv("SHELL") ?: "/bin/bash"
+    commandLine(shell, "-l", "-c", "npm run build:bundle")
+    inputs.dir(omnimemoDir.resolve("src"))
+    inputs.files(
+        omnimemoDir.resolve("package.json"),
+        omnimemoDir.resolve("vite.bundle.config.ts")
+    )
+    outputs.dir(omnimemoDir.resolve("dist-bundle"))
+}
+
 tasks.named<ProcessResources>("processResources") {
-    dependsOn(buildTextedit)
+    dependsOn(buildTextedit, buildOmnimemo)
     from(texteditDir.resolve("dist-bundle")) {
         include(texteditFileName)
         into("static/lib")
     }
+    from(omnimemoDir.resolve("dist-bundle")) {
+        include("omnimemo.js")
+        into("static/lib")
+    }
     filesMatching("templates/fragments/head.html") {
-        filter { line -> line.replace("@textedit.script@", "lib/$texteditFileName") }
+        filter { line ->
+            line.replace("@textedit.script@", "lib/$texteditFileName")
+                .replace("@omnimemo.script@", "lib/omnimemo.js")
+        }
     }
 }
 

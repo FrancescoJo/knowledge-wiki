@@ -31,6 +31,16 @@
 - Content serialisation: JSON
 - HTMX integration interface: to be designed at integration time
 
+### omnimemo Module
+
+- Location: `frontend/omnimemo/`
+- Language: TypeScript only
+- Responsibility: app-specific UI interactions and HTMX integration helpers
+  - Password toggle in login popup
+  - CSRF token injection (`htmx:configRequest`)
+  - Login error display (`htmx:responseError`)
+- Bundled as an IIFE and served from `static/lib/omnimemo.js`
+
 ---
 
 ## Entity Identity
@@ -110,6 +120,7 @@ backend/                         ← Gradle root project
 frontend/
   common-libs/
     textedit/                    ← standalone rich text editor module
+  omnimemo/                      ← app-specific TypeScript (UI interactions, HTMX helpers)
 ```
 
 ---

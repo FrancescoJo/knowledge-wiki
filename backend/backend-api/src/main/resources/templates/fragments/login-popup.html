@@ -31,17 +31,3 @@
         <button type="submit" class="login-submit">Log In</button>
     </form>
 </dialog>
-<script>
-(function () {
-    document.addEventListener('click', function (e) {
-        var btn = e.target.closest('.login-password-toggle');
-        if (!btn) return;
-        var input = document.getElementById(btn.dataset.target);
-        if (!input) return;
-        var isPassword = input.type === 'password';
-        input.type = isPassword ? 'text' : 'password';
-        btn.textContent = isPassword ? 'Hide' : 'Show';
-        btn.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
-    });
-}());
-</script>

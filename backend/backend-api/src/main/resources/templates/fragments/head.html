@@ -275,24 +275,5 @@
     <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx-ext-json-enc@2.0.1/json-enc.js"></script>
     <script src="@textedit.script@"></script>
-    <script>
-    (function () {
-        function getCsrfToken() {
-            var match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
-            return match ? decodeURIComponent(match[1]) : null;
-        }
-        document.body.addEventListener('htmx:configRequest', function (evt) {
-            var token = getCsrfToken();
-            if (token) evt.detail.headers['X-XSRF-TOKEN'] = token;
-        });
-        document.body.addEventListener('htmx:responseError', function (evt) {
-            if (evt.detail.elt.id !== 'login-form') return;
-            var errorEl = document.getElementById('login-error');
-            if (!errorEl) return;
-            errorEl.textContent = evt.detail.xhr.status === 401
-                ? 'Invalid email or password.'
-                : 'Login failed. Please try again.';
-        });
-    }());
-    </script>
+    <script src="@omnimemo.script@"></script>
 </head>
