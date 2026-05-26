@@ -27,6 +27,6 @@ dependencies {
     testImplementation("org.liquibase:liquibase-core")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("io.kotest:kotest-assertions-core:5.9.1")
     testImplementation("org.testcontainers:junit-jupiter")
 }

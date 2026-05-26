@@ -6,10 +6,9 @@
 package com.fj.omnimemo.infrastructure.security
 
 import com.fj.omnimemo.core.test.annotation.SmallTest
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 @SmallTest
 class HmacBlindIndexTest {
@@ -22,7 +21,7 @@ class HmacBlindIndexTest {
         fun `should produce a 32-byte digest`() {
             val digest = hmac.compute("alice@example.com")
 
-            assertTrue(digest.size == 32)
+            digest.size shouldBe 32
         }
 
         @Test
@@ -30,7 +29,7 @@ class HmacBlindIndexTest {
             val first = hmac.compute("alice@example.com")
             val second = hmac.compute("alice@example.com")
 
-            assertTrue(first.contentEquals(second))
+            first.contentEquals(second) shouldBe true
         }
 
         @Test
@@ -38,7 +37,7 @@ class HmacBlindIndexTest {
             val digestAlice = hmac.compute("alice@example.com")
             val digestBob = hmac.compute("bob@example.com")
 
-            assertFalse(digestAlice.contentEquals(digestBob))
+            digestAlice.contentEquals(digestBob) shouldBe false
         }
 
         @Test
@@ -48,7 +47,7 @@ class HmacBlindIndexTest {
             val digest = hmac.compute("alice@example.com")
             val otherDigest = otherHmac.compute("alice@example.com")
 
-            assertFalse(digest.contentEquals(otherDigest))
+            digest.contentEquals(otherDigest) shouldBe false
         }
     }
 }

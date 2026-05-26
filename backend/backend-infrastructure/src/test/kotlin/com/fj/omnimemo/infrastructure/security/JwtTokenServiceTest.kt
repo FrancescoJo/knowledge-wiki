@@ -6,12 +6,11 @@
 package com.fj.omnimemo.infrastructure.security
 
 import com.fj.omnimemo.core.test.annotation.SmallTest
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.time.Instant
 import javax.crypto.spec.SecretKeySpec
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 @SmallTest
 class JwtTokenServiceTest {
@@ -25,7 +24,7 @@ class JwtTokenServiceTest {
         fun `should return a serialised JWT with three dot-separated parts`() {
             val token = service.issue("user-1", Instant.now().plusSeconds(60))
 
-            assertEquals(2, token.count { it == '.' })
+            token.count { it == '.' } shouldBe 2
         }
     }
 
@@ -35,14 +34,14 @@ class JwtTokenServiceTest {
         fun `should return subject for a valid token`() {
             val token = service.issue("user-1", Instant.now().plusSeconds(60))
 
-            assertEquals("user-1", service.verify(token))
+            service.verify(token) shouldBe "user-1"
         }
 
         @Test
         fun `should return null for an expired token`() {
             val token = service.issue("user-1", Instant.now().minusSeconds(1))
 
-            assertNull(service.verify(token))
+            service.verify(token) shouldBe null
         }
 
         @Test
@@ -50,12 +49,12 @@ class JwtTokenServiceTest {
             val token = service.issue("user-1", Instant.now().plusSeconds(60))
             val tampered = token.dropLast(4) + "XXXX"
 
-            assertNull(service.verify(tampered))
+            service.verify(tampered) shouldBe null
         }
 
         @Test
         fun `should return null for malformed input`() {
-            assertNull(service.verify("not-a-jwt"))
+            service.verify("not-a-jwt") shouldBe null
         }
     }
 }

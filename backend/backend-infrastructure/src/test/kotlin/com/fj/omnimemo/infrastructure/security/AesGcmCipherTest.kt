@@ -6,11 +6,10 @@
 package com.fj.omnimemo.infrastructure.security
 
 import com.fj.omnimemo.core.test.annotation.SmallTest
+import io.kotest.matchers.ints.shouldBeGreaterThan
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 @SmallTest
 class AesGcmCipherTest {
@@ -24,7 +23,7 @@ class AesGcmCipherTest {
             val iv = cipher.generateIv()
             val ciphertext = cipher.encrypt("alice@example.com", iv)
 
-            assertFalse(ciphertext.contentEquals("alice@example.com".toByteArray(Charsets.UTF_8)))
+            ciphertext.contentEquals("alice@example.com".toByteArray(Charsets.UTF_8)) shouldBe false
         }
 
         @Test
@@ -34,7 +33,7 @@ class AesGcmCipherTest {
             val ciphertext1 = cipher.encrypt("alice@example.com", iv1)
             val ciphertext2 = cipher.encrypt("alice@example.com", iv2)
 
-            assertFalse(ciphertext1.contentEquals(ciphertext2))
+            ciphertext1.contentEquals(ciphertext2) shouldBe false
         }
     }
 
@@ -46,7 +45,7 @@ class AesGcmCipherTest {
             val iv = cipher.generateIv()
             val ciphertext = cipher.encrypt(plaintext, iv)
 
-            assertEquals(plaintext, cipher.decrypt(ciphertext, iv))
+            cipher.decrypt(ciphertext, iv) shouldBe plaintext
         }
 
         @Test
@@ -55,7 +54,7 @@ class AesGcmCipherTest {
             val iv = cipher.generateIv()
             val ciphertext = cipher.encrypt(plaintext, iv)
 
-            assertEquals(plaintext, cipher.decrypt(ciphertext, iv))
+            cipher.decrypt(ciphertext, iv) shouldBe plaintext
         }
     }
 
@@ -65,7 +64,7 @@ class AesGcmCipherTest {
         fun `should produce a 12-byte IV`() {
             val iv = cipher.generateIv()
 
-            assertEquals(12, iv.size)
+            iv.size shouldBe 12
         }
 
         @Test
@@ -73,7 +72,7 @@ class AesGcmCipherTest {
             val ivs = List(20) { cipher.generateIv() }
             val unique = ivs.map { it.toList() }.toSet()
 
-            assertTrue(unique.size > 1, "expected unique IVs across 20 calls")
+            unique.size shouldBeGreaterThan 1
         }
     }
 }

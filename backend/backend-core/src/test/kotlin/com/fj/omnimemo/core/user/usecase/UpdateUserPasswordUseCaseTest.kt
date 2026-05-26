@@ -9,10 +9,9 @@ import com.fj.omnimemo.core.test.annotation.SmallTest
 import com.fj.omnimemo.core.user.model.UserId
 import com.fj.omnimemo.core.user.repository.MockUserRepository
 import com.fj.omnimemo.core.user.security.MockPasswordHasher
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 @SmallTest
 class UpdateUserPasswordUseCaseTest {
@@ -31,11 +30,11 @@ class UpdateUserPasswordUseCaseTest {
 
         val updated = useCase.updatePassword(user.id, "new-secret")
 
-        assertEquals("hashed:new-secret", updated?.passwordHash)
+        updated?.passwordHash shouldBe "hashed:new-secret"
     }
 
     @Test
     fun `should return null when user does not exist`() {
-        assertNull(useCase.updatePassword(UserId.generate(), "new-secret"))
+        useCase.updatePassword(UserId.generate(), "new-secret") shouldBe null
     }
 }

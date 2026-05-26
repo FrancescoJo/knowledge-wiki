@@ -14,6 +14,10 @@ import com.fj.omnimemo.core.user.repository.MockRefreshTokenRepository
 import com.fj.omnimemo.core.user.repository.MockUserRepository
 import com.fj.omnimemo.core.user.security.MockPasswordHasher
 import com.fj.omnimemo.core.user.usecase.LoginUseCase
+import io.kotest.assertions.assertSoftly
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import jakarta.servlet.http.Cookie
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -23,10 +27,6 @@ import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.web.server.ResponseStatusException
 import java.time.Duration
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 @SmallTest
 class AuthControllerImplTest {
@@ -57,28 +57,28 @@ class AuthControllerImplTest {
 
             val accessCookie = response.getCookie(JwtAuthenticationFilter.ACCESS_TOKEN_COOKIE)
             val refreshCookie = response.getCookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE)
-            assertNotNull(accessCookie)
-            assertNotNull(refreshCookie)
-            assertEquals(true, accessCookie.isHttpOnly)
-            assertEquals(true, refreshCookie.isHttpOnly)
-            assertEquals(259200, accessCookie.maxAge)
-            assertEquals(1209600, refreshCookie.maxAge)
+            assertSoftly {
+                accessCookie shouldNotBe null
+                refreshCookie shouldNotBe null
+                accessCookie?.isHttpOnly shouldBe true
+                refreshCookie?.isHttpOnly shouldBe true
+                accessCookie?.maxAge shouldBe 259200
+                refreshCookie?.maxAge shouldBe 1209600
+            }
         }
 
         @Test
         fun `should throw 401 for invalid password`() {
-            val ex = assertFailsWith<ResponseStatusException> {
+            shouldThrow<ResponseStatusException> {
                 controller.login(LoginRequest("alice@example.com", "wrong"), MockHttpServletResponse())
-            }
-            assertEquals(HttpStatus.UNAUTHORIZED, ex.statusCode)
+            }.statusCode shouldBe HttpStatus.UNAUTHORIZED
         }
 
         @Test
         fun `should throw 401 for unknown email`() {
-            val ex = assertFailsWith<ResponseStatusException> {
+            shouldThrow<ResponseStatusException> {
                 controller.login(LoginRequest("nobody@example.com", "secret"), MockHttpServletResponse())
-            }
-            assertEquals(HttpStatus.UNAUTHORIZED, ex.statusCode)
+            }.statusCode shouldBe HttpStatus.UNAUTHORIZED
         }
     }
 
@@ -97,10 +97,12 @@ class AuthControllerImplTest {
 
             val accessCookie = response.getCookie(JwtAuthenticationFilter.ACCESS_TOKEN_COOKIE)
             val refreshCookie = response.getCookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE)
-            assertNotNull(accessCookie)
-            assertNotNull(refreshCookie)
-            assertEquals(0, accessCookie.maxAge)
-            assertEquals(0, refreshCookie.maxAge)
+            assertSoftly {
+                accessCookie shouldNotBe null
+                refreshCookie shouldNotBe null
+                accessCookie?.maxAge shouldBe 0
+                refreshCookie?.maxAge shouldBe 0
+            }
         }
 
         @Test
@@ -112,7 +114,7 @@ class AuthControllerImplTest {
 
             controller.logout(request, MockHttpServletResponse())
 
-            assertNull(refreshTokenRepo.findByToken(loginResult.refreshToken))
+            refreshTokenRepo.findByToken(loginResult.refreshToken) shouldBe null
         }
 
         @Test
@@ -121,8 +123,10 @@ class AuthControllerImplTest {
 
             controller.logout(MockHttpServletRequest(), response)
 
-            assertNotNull(response.getCookie(JwtAuthenticationFilter.ACCESS_TOKEN_COOKIE))
-            assertNotNull(response.getCookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE))
+            assertSoftly {
+                response.getCookie(JwtAuthenticationFilter.ACCESS_TOKEN_COOKIE) shouldNotBe null
+                response.getCookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE) shouldNotBe null
+            }
         }
     }
 
@@ -139,16 +143,17 @@ class AuthControllerImplTest {
 
             controller.refresh(request, response)
 
-            assertNotNull(response.getCookie(JwtAuthenticationFilter.ACCESS_TOKEN_COOKIE))
-            assertNotNull(response.getCookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE))
+            assertSoftly {
+                response.getCookie(JwtAuthenticationFilter.ACCESS_TOKEN_COOKIE) shouldNotBe null
+                response.getCookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE) shouldNotBe null
+            }
         }
 
         @Test
         fun `should throw 401 when no refresh token cookie is present`() {
-            val ex = assertFailsWith<ResponseStatusException> {
+            shouldThrow<ResponseStatusException> {
                 controller.refresh(MockHttpServletRequest(), MockHttpServletResponse())
-            }
-            assertEquals(HttpStatus.UNAUTHORIZED, ex.statusCode)
+            }.statusCode shouldBe HttpStatus.UNAUTHORIZED
         }
 
         @Test
@@ -156,10 +161,9 @@ class AuthControllerImplTest {
             val request = MockHttpServletRequest().apply {
                 setCookies(Cookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE, "invalid-token"))
             }
-            val ex = assertFailsWith<ResponseStatusException> {
+            shouldThrow<ResponseStatusException> {
                 controller.refresh(request, MockHttpServletResponse())
-            }
-            assertEquals(HttpStatus.UNAUTHORIZED, ex.statusCode)
+            }.statusCode shouldBe HttpStatus.UNAUTHORIZED
         }
     }
 }

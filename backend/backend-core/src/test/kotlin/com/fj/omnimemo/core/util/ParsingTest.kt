@@ -6,11 +6,11 @@
 package com.fj.omnimemo.core.util
 
 import com.fj.omnimemo.core.test.annotation.SmallTest
+import io.kotest.assertions.assertSoftly
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Test
 import java.util.UUID
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 @SmallTest
 class ParsingTest {
@@ -21,29 +21,31 @@ class ParsingTest {
 
         val result = parseUuidOrNull(id.toString())
 
-        assertEquals(id, result)
+        result shouldBe id
     }
 
     @Test
     fun `parseUuidOrNull returns null for an empty string`() {
-        assertNull(parseUuidOrNull(""))
+        parseUuidOrNull("") shouldBe null
     }
 
     @Test
     fun `parseUuidOrNull returns null for a non-UUID string`() {
-        assertNull(parseUuidOrNull("not-a-uuid"))
+        parseUuidOrNull("not-a-uuid") shouldBe null
     }
 
     @Test
     fun `parseUuidOrNull returns null for a partial UUID string`() {
-        assertNull(parseUuidOrNull("12345678-1234-1234"))
+        parseUuidOrNull("12345678-1234-1234") shouldBe null
     }
 
     @Test
     fun `parseUuidOrNull returns UUID for all-zero UUID`() {
         val result = parseUuidOrNull("00000000-0000-0000-0000-000000000000")
 
-        assertNotNull(result)
-        assertEquals(UUID(0, 0), result)
+        assertSoftly {
+            result shouldNotBe null
+            result shouldBe UUID(0, 0)
+        }
     }
 }

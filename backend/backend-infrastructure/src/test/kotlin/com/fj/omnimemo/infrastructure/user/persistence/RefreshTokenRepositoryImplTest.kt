@@ -12,15 +12,15 @@ import com.fj.omnimemo.core.user.model.UserId
 import com.fj.omnimemo.infrastructure.security.AesGcmCipher
 import com.fj.omnimemo.infrastructure.security.HmacBlindIndex
 import com.fj.omnimemo.infrastructure.test.InfrastructureTestDatabase
+import io.kotest.assertions.assertSoftly
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.time.Instant
 import java.util.UUID
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 /**
  * Medium Tests for [RefreshTokenRepositoryImpl]: verifies persistence behaviour
@@ -58,9 +58,11 @@ class RefreshTokenRepositoryImplTest {
 
         val found = repo.findByToken(token.token)
 
-        assertNotNull(found)
-        assertEquals(token.token, found.token)
-        assertEquals(testUser.id, found.userId)
+        assertSoftly {
+            found shouldNotBe null
+            found?.token shouldBe token.token
+            found?.userId shouldBe testUser.id
+        }
     }
 
     @Nested
@@ -72,14 +74,16 @@ class RefreshTokenRepositoryImplTest {
 
             val found = repo.findByToken(token.token)
 
-            assertNotNull(found)
-            assertEquals(token.token, found.token)
-            assertEquals(testUser.id, found.userId)
+            assertSoftly {
+                found shouldNotBe null
+                found?.token shouldBe token.token
+                found?.userId shouldBe testUser.id
+            }
         }
 
         @Test
         fun `should return null when token does not exist`() {
-            assertNull(repo.findByToken("no-such-token"))
+            repo.findByToken("no-such-token") shouldBe null
         }
     }
 
@@ -92,7 +96,7 @@ class RefreshTokenRepositoryImplTest {
 
             repo.delete(token.token)
 
-            assertNull(repo.findByToken(token.token))
+            repo.findByToken(token.token) shouldBe null
         }
 
         @Test
@@ -102,7 +106,7 @@ class RefreshTokenRepositoryImplTest {
 
             userRepo.delete(testUser.id)
 
-            assertNull(repo.findByToken(token.token))
+            repo.findByToken(token.token) shouldBe null
         }
     }
 

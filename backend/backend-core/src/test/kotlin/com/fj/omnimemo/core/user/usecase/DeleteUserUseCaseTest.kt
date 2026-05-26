@@ -8,9 +8,9 @@ package com.fj.omnimemo.core.user.usecase
 import com.fj.omnimemo.core.test.annotation.SmallTest
 import com.fj.omnimemo.core.user.repository.MockUserRepository
 import com.fj.omnimemo.core.user.security.MockPasswordHasher
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.test.assertNull
 
 @SmallTest
 class DeleteUserUseCaseTest {
@@ -27,6 +27,6 @@ class DeleteUserUseCaseTest {
         val user = createUseCase.create("alice@example.com", "secret")
         useCase.delete(user.id)
 
-        assertNull(repo.findById(user.id))
+        repo.findById(user.id) shouldBe null
     }
 }

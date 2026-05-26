@@ -12,14 +12,13 @@ import com.fj.omnimemo.core.user.mutate
 import com.fj.omnimemo.infrastructure.security.AesGcmCipher
 import com.fj.omnimemo.infrastructure.security.HmacBlindIndex
 import com.fj.omnimemo.infrastructure.test.InfrastructureTestDatabase
+import io.kotest.assertions.assertSoftly
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 /**
  * Medium Tests for [UserRepositoryImpl]: verifies persistence behaviour against
@@ -51,15 +50,17 @@ class UserRepositoryImplTest {
 
             val found = repo.findById(user.id)
 
-            assertNotNull(found)
-            assertEquals(user.id, found.id)
-            assertEquals("alice@example.com", found.email)
-            assertEquals("hash", found.passwordHash)
+            assertSoftly {
+                found shouldNotBe null
+                found?.id shouldBe user.id
+                found?.email shouldBe "alice@example.com"
+                found?.passwordHash shouldBe "hash"
+            }
         }
 
         @Test
         fun `should return null when user does not exist`() {
-            assertNull(repo.findById(UserId.generate()))
+            repo.findById(UserId.generate()) shouldBe null
         }
     }
 
@@ -72,13 +73,15 @@ class UserRepositoryImplTest {
 
             val found = repo.findByEmail("alice@example.com")
 
-            assertNotNull(found)
-            assertEquals(user.id, found.id)
+            assertSoftly {
+                found shouldNotBe null
+                found?.id shouldBe user.id
+            }
         }
 
         @Test
         fun `should return null when email does not match`() {
-            assertNull(repo.findByEmail("nobody@example.com"))
+            repo.findByEmail("nobody@example.com") shouldBe null
         }
     }
 
@@ -89,7 +92,7 @@ class UserRepositoryImplTest {
 
         val storedBytes = users.findEmailEncryptedBytes(user.id)
 
-        assertFalse(storedBytes.contentEquals("alice@example.com".toByteArray(Charsets.UTF_8)))
+        storedBytes.contentEquals("alice@example.com".toByteArray(Charsets.UTF_8)) shouldBe false
     }
 
     @Test
@@ -101,7 +104,7 @@ class UserRepositoryImplTest {
         val updated = persisted.mutate().also { it.passwordHash = "hash2" }
         repo.save(updated)
 
-        assertEquals("hash2", repo.findById(user.id)?.passwordHash)
+        repo.findById(user.id)?.passwordHash shouldBe "hash2"
     }
 
     @Test
@@ -110,7 +113,7 @@ class UserRepositoryImplTest {
         repo.save(user)
         repo.delete(user.id)
 
-        assertNull(repo.findById(user.id))
+        repo.findById(user.id) shouldBe null
     }
 
     companion object {

@@ -8,12 +8,12 @@ package com.fj.omnimemo.core.user.repository
 import com.fj.omnimemo.core.test.annotation.SmallTest
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.model.UserId
+import io.kotest.assertions.assertSoftly
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 /**
  * Small tests for [UserRepository] contract using [MockUserRepository].
@@ -37,12 +37,12 @@ class UserRepositoryTest {
             val user = User.create("alice@example.com", "hash")
             repo.save(user)
 
-            assertEquals(user, repo.findById(user.id))
+            repo.findById(user.id) shouldBe user
         }
 
         @Test
         fun `should return null when user does not exist`() {
-            assertNull(repo.findById(UserId.generate()))
+            repo.findById(UserId.generate()) shouldBe null
         }
     }
 
@@ -53,12 +53,12 @@ class UserRepositoryTest {
             val user = User.create("alice@example.com", "hash")
             repo.save(user)
 
-            assertNotNull(repo.findByEmail("alice@example.com"))
+            repo.findByEmail("alice@example.com") shouldNotBe null
         }
 
         @Test
         fun `should return null when email does not match`() {
-            assertNull(repo.findByEmail("nobody@example.com"))
+            repo.findByEmail("nobody@example.com") shouldBe null
         }
     }
 
@@ -68,7 +68,7 @@ class UserRepositoryTest {
         repo.save(user)
         repo.delete(user.id)
 
-        assertNull(repo.findById(user.id))
+        repo.findById(user.id) shouldBe null
     }
 
     @Test
@@ -76,7 +76,9 @@ class UserRepositoryTest {
         val user = User.create("alice@example.com", "hash")
         val result = repo.save(user)
 
-        assertEquals(user.id, result.id)
-        assertEquals(user.email, result.email)
+        assertSoftly {
+            result.id shouldBe user.id
+            result.email shouldBe user.email
+        }
     }
 }

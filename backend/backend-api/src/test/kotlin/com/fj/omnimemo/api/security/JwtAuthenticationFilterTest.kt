@@ -7,7 +7,11 @@ package com.fj.omnimemo.api.security
 
 import com.fj.omnimemo.core.test.annotation.SmallTest
 import com.fj.omnimemo.infrastructure.security.JwtTokenService
+import io.kotest.assertions.assertSoftly
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import jakarta.servlet.FilterChain
+import jakarta.servlet.http.Cookie
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -17,10 +21,6 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.security.core.context.SecurityContextHolder
 import java.time.Instant
 import javax.crypto.spec.SecretKeySpec
-import jakarta.servlet.http.Cookie
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 @SmallTest
 class JwtAuthenticationFilterTest {
@@ -53,8 +53,10 @@ class JwtAuthenticationFilterTest {
             filter.doFilter(request, MockHttpServletResponse(), noOpChain)
 
             val auth = SecurityContextHolder.getContext().authentication
-            assertNotNull(auth)
-            assertEquals("user-42", auth.principal)
+            assertSoftly {
+                auth shouldNotBe null
+                auth?.principal shouldBe "user-42"
+            }
         }
     }
 
@@ -65,7 +67,7 @@ class JwtAuthenticationFilterTest {
         fun `when no cookie is present`() {
             filter.doFilter(MockHttpServletRequest(), MockHttpServletResponse(), noOpChain)
 
-            assertNull(SecurityContextHolder.getContext().authentication)
+            SecurityContextHolder.getContext().authentication shouldBe null
         }
 
         @Test
@@ -76,7 +78,7 @@ class JwtAuthenticationFilterTest {
 
             filter.doFilter(request, MockHttpServletResponse(), noOpChain)
 
-            assertNull(SecurityContextHolder.getContext().authentication)
+            SecurityContextHolder.getContext().authentication shouldBe null
         }
 
         @Test
@@ -88,7 +90,7 @@ class JwtAuthenticationFilterTest {
 
             filter.doFilter(request, MockHttpServletResponse(), noOpChain)
 
-            assertNull(SecurityContextHolder.getContext().authentication)
+            SecurityContextHolder.getContext().authentication shouldBe null
         }
 
         @Test
@@ -99,7 +101,7 @@ class JwtAuthenticationFilterTest {
 
             filter.doFilter(request, MockHttpServletResponse(), noOpChain)
 
-            assertNull(SecurityContextHolder.getContext().authentication)
+            SecurityContextHolder.getContext().authentication shouldBe null
         }
     }
 }

@@ -6,12 +6,12 @@
 package com.fj.omnimemo.infrastructure.security
 
 import com.fj.omnimemo.core.test.annotation.SmallTest
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 @SmallTest
 class PasswordEncoderTest {
@@ -24,7 +24,7 @@ class PasswordEncoderTest {
         fun `should produce hash that differs from raw password`() {
             val hash = encoder.encode("secret123")
 
-            assertFalse(hash == "secret123")
+            hash shouldNotBe "secret123"
         }
 
         @Test
@@ -32,7 +32,7 @@ class PasswordEncoderTest {
             val hash1 = encoder.encode("secret123")
             val hash2 = encoder.encode("secret123")
 
-            assertFalse(hash1 == hash2)
+            hash1 shouldNotBe hash2
         }
     }
 
@@ -42,14 +42,14 @@ class PasswordEncoderTest {
         fun `should return true when password matches its hash`() {
             val hash = encoder.encode("secret123")
 
-            assertTrue(encoder.matches("secret123", hash))
+            encoder.matches("secret123", hash) shouldBe true
         }
 
         @Test
         fun `should return false when password does not match hash`() {
             val hash = encoder.encode("secret123")
 
-            assertFalse(encoder.matches("wrong-password", hash))
+            encoder.matches("wrong-password", hash) shouldBe false
         }
     }
 }

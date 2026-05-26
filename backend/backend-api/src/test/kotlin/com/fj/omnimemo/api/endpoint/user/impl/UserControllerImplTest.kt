@@ -11,7 +11,6 @@ import com.fj.omnimemo.api.endpoint.user.dto.request.UpdatePasswordRequest
 import com.fj.omnimemo.api.endpoint.user.dto.response.UserResponse
 import com.fj.omnimemo.core.test.annotation.SmallTest
 import com.fj.omnimemo.core.user.model.User
-import com.fj.omnimemo.core.user.model.UserId
 import com.fj.omnimemo.core.user.repository.MockUserRepository
 import com.fj.omnimemo.core.user.security.MockPasswordHasher
 import com.fj.omnimemo.core.user.usecase.CreateUserUseCase
@@ -19,16 +18,17 @@ import com.fj.omnimemo.core.user.usecase.DeleteUserUseCase
 import com.fj.omnimemo.core.user.usecase.FindUserUseCase
 import com.fj.omnimemo.core.user.usecase.UpdateUserEmailUseCase
 import com.fj.omnimemo.core.user.usecase.UpdateUserPasswordUseCase
+import io.kotest.assertions.assertSoftly
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldNotContain
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 import java.util.UUID
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 @SmallTest
 class UserControllerImplTest {
@@ -58,32 +58,32 @@ class UserControllerImplTest {
         fun `should return UserResponse for an existing user`() {
             val response = controller.findById(existingUser.id.value.toString())
 
-            assertEquals(existingUser.id.value.toString(), response.id)
-            assertEquals("alice@example.com", response.email)
-            assertNotNull(response.createdAt)
-            assertNotNull(response.updatedAt)
+            assertSoftly {
+                response.id shouldBe existingUser.id.value.toString()
+                response.email shouldBe "alice@example.com"
+                response.createdAt shouldNotBe null
+                response.updatedAt shouldNotBe null
+            }
         }
 
         @Test
         fun `should not expose password hash`() {
             val fields = UserResponse::class.java.declaredFields.map { it.name }
-            assert("passwordHash" !in fields)
+            fields shouldNotContain "passwordHash"
         }
 
         @Test
         fun `should throw 404 for unknown id`() {
-            val ex = assertFailsWith<ResponseStatusException> {
+            shouldThrow<ResponseStatusException> {
                 controller.findById(UUID.randomUUID().toString())
-            }
-            assertEquals(HttpStatus.NOT_FOUND, ex.statusCode)
+            }.statusCode shouldBe HttpStatus.NOT_FOUND
         }
 
         @Test
         fun `should throw 400 for malformed id`() {
-            val ex = assertFailsWith<ResponseStatusException> {
+            shouldThrow<ResponseStatusException> {
                 controller.findById("not-a-uuid")
-            }
-            assertEquals(HttpStatus.BAD_REQUEST, ex.statusCode)
+            }.statusCode shouldBe HttpStatus.BAD_REQUEST
         }
     }
 
@@ -94,9 +94,11 @@ class UserControllerImplTest {
         fun `should create and return UserResponse`() {
             val response = controller.create(CreateUserRequest("bob@example.com", "pass"))
 
-            assertNotNull(response.id)
-            assertEquals("bob@example.com", response.email)
-            assertNotNull(repo.findByEmail("bob@example.com"))
+            assertSoftly {
+                response.id shouldNotBe null
+                response.email shouldBe "bob@example.com"
+                repo.findByEmail("bob@example.com") shouldNotBe null
+            }
         }
     }
 
@@ -110,23 +112,21 @@ class UserControllerImplTest {
                 UpdateEmailRequest("new@example.com"),
             )
 
-            assertEquals("new@example.com", response.email)
+            response.email shouldBe "new@example.com"
         }
 
         @Test
         fun `should throw 404 for unknown id`() {
-            val ex = assertFailsWith<ResponseStatusException> {
+            shouldThrow<ResponseStatusException> {
                 controller.updateEmail(UUID.randomUUID().toString(), UpdateEmailRequest("x@example.com"))
-            }
-            assertEquals(HttpStatus.NOT_FOUND, ex.statusCode)
+            }.statusCode shouldBe HttpStatus.NOT_FOUND
         }
 
         @Test
         fun `should throw 400 for malformed id`() {
-            val ex = assertFailsWith<ResponseStatusException> {
+            shouldThrow<ResponseStatusException> {
                 controller.updateEmail("bad-id", UpdateEmailRequest("x@example.com"))
-            }
-            assertEquals(HttpStatus.BAD_REQUEST, ex.statusCode)
+            }.statusCode shouldBe HttpStatus.BAD_REQUEST
         }
     }
 
@@ -140,15 +140,14 @@ class UserControllerImplTest {
                 UpdatePasswordRequest("newpass"),
             )
 
-            assertEquals(existingUser.id.value.toString(), response.id)
+            response.id shouldBe existingUser.id.value.toString()
         }
 
         @Test
         fun `should throw 404 for unknown id`() {
-            val ex = assertFailsWith<ResponseStatusException> {
+            shouldThrow<ResponseStatusException> {
                 controller.updatePassword(UUID.randomUUID().toString(), UpdatePasswordRequest("x"))
-            }
-            assertEquals(HttpStatus.NOT_FOUND, ex.statusCode)
+            }.statusCode shouldBe HttpStatus.NOT_FOUND
         }
     }
 
@@ -159,15 +158,14 @@ class UserControllerImplTest {
         fun `should remove user from repository`() {
             controller.delete(existingUser.id.value.toString())
 
-            assertNull(repo.findById(existingUser.id))
+            repo.findById(existingUser.id) shouldBe null
         }
 
         @Test
         fun `should throw 400 for malformed id`() {
-            val ex = assertFailsWith<ResponseStatusException> {
+            shouldThrow<ResponseStatusException> {
                 controller.delete("bad-id")
-            }
-            assertEquals(HttpStatus.BAD_REQUEST, ex.statusCode)
+            }.statusCode shouldBe HttpStatus.BAD_REQUEST
         }
     }
 }

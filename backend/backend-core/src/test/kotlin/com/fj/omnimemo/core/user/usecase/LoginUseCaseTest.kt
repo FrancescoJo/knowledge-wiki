@@ -12,14 +12,14 @@ import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.repository.MockRefreshTokenRepository
 import com.fj.omnimemo.core.user.repository.MockUserRepository
 import com.fj.omnimemo.core.user.security.MockPasswordHasher
+import io.kotest.assertions.assertSoftly
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 @SmallTest
 class LoginUseCaseTest {
@@ -45,13 +45,15 @@ class LoginUseCaseTest {
 
             val result = useCase.login("alice@example.com", "secret")
 
-            assertEquals("token:${user.id.value}", result?.accessToken)
-            assertNotNull(result?.refreshToken)
+            assertSoftly {
+                result?.accessToken shouldBe "token:${user.id.value}"
+                result?.refreshToken shouldNotBe null
+            }
         }
 
         @Test
         fun `should return null when email does not exist`() {
-            assertNull(useCase.login("nobody@example.com", "secret"))
+            useCase.login("nobody@example.com", "secret") shouldBe null
         }
 
         @Test
@@ -59,7 +61,7 @@ class LoginUseCaseTest {
             val user = User.create("alice@example.com", hasher.hash("secret"))
             repo.save(user)
 
-            assertNull(useCase.login("alice@example.com", "wrong-secret"))
+            useCase.login("alice@example.com", "wrong-secret") shouldBe null
         }
     }
 
@@ -73,7 +75,7 @@ class LoginUseCaseTest {
 
             useCase.logout(loginResult.refreshToken)
 
-            assertNull(refreshTokenRepo.findByToken(loginResult.refreshToken))
+            refreshTokenRepo.findByToken(loginResult.refreshToken) shouldBe null
         }
 
         @Test
@@ -92,8 +94,10 @@ class LoginUseCaseTest {
 
             val result = useCase.refresh(initial.refreshToken)
 
-            assertNotNull(result)
-            assertEquals("token:${user.id.value}", result.accessToken)
+            assertSoftly {
+                result shouldNotBe null
+                result?.accessToken shouldBe "token:${user.id.value}"
+            }
         }
 
         @Test
@@ -103,13 +107,15 @@ class LoginUseCaseTest {
             val initial = useCase.login("alice@example.com", "secret")!!
             val rotated = useCase.refresh(initial.refreshToken)!!
 
-            assertNull(useCase.refresh(initial.refreshToken))
-            assertNotNull(useCase.refresh(rotated.refreshToken))
+            assertSoftly {
+                useCase.refresh(initial.refreshToken) shouldBe null
+                useCase.refresh(rotated.refreshToken) shouldNotBe null
+            }
         }
 
         @Test
         fun `should return null for an unknown refresh token`() {
-            assertNull(useCase.refresh("unknown-token"))
+            useCase.refresh("unknown-token") shouldBe null
         }
 
         @Test
@@ -124,8 +130,10 @@ class LoginUseCaseTest {
             )
             refreshTokenRepo.save(expired)
 
-            assertNull(useCase.refresh("expired-token"))
-            assertNull(refreshTokenRepo.findByToken("expired-token"))
+            assertSoftly {
+                useCase.refresh("expired-token") shouldBe null
+                refreshTokenRepo.findByToken("expired-token") shouldBe null
+            }
         }
     }
 }

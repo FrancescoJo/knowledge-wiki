@@ -9,12 +9,11 @@ import com.fj.omnimemo.core.test.annotation.SmallTest
 import com.fj.omnimemo.core.user.model.UserId
 import com.fj.omnimemo.core.user.repository.MockUserRepository
 import com.fj.omnimemo.core.user.security.MockPasswordHasher
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 @SmallTest
 class FindUserUseCaseTest {
@@ -32,12 +31,12 @@ class FindUserUseCaseTest {
         fun `should return user when user exists`() {
             val user = createUseCase.create("alice@example.com", "secret")
 
-            assertEquals(user, useCase.findById(user.id))
+            useCase.findById(user.id) shouldBe user
         }
 
         @Test
         fun `should return null when user does not exist`() {
-            assertNull(useCase.findById(UserId.generate()))
+            useCase.findById(UserId.generate()) shouldBe null
         }
     }
 
@@ -47,12 +46,12 @@ class FindUserUseCaseTest {
         fun `should return user when email matches`() {
             createUseCase.create("alice@example.com", "secret")
 
-            assertNotNull(useCase.findByEmail("alice@example.com"))
+            useCase.findByEmail("alice@example.com") shouldNotBe null
         }
 
         @Test
         fun `should return null when email does not match`() {
-            assertNull(useCase.findByEmail("nobody@example.com"))
+            useCase.findByEmail("nobody@example.com") shouldBe null
         }
     }
 }
