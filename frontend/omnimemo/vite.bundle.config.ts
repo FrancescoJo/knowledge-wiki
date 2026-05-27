@@ -1,5 +1,9 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
+import { readFileSync } from 'fs'
+
+const pkg = JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf-8'))
+const versionTag = `v${(pkg.version as string).replace(/\./g, '_')}`
 
 export default defineConfig({
   resolve: {
@@ -11,7 +15,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'Omnimemo',
-      fileName: () => 'omnimemo.js',
+      fileName: () => `omnimemo-${versionTag}.js`,
       formats: ['iife'],
     },
     outDir: resolve(__dirname, 'dist-bundle'),
