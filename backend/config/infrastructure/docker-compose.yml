@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: omnimemo-postgres
+    environment:
+      POSTGRES_DB: omnimemo
+      POSTGRES_USER: omnimemo
+      POSTGRES_PASSWORD: correct-horse-battery-staple
+    ports:
+      - "5432:5432"
+    volumes:
+      - omnimemo-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  omnimemo-postgres-data:

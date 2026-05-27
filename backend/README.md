@@ -76,6 +76,39 @@ openssl rand -base64 32
 
 ---
 
+## Infrastructure
+
+A Docker Compose file in `config/infrastructure/` starts the required services (PostgreSQL with pgvector).
+
+```bash
+bash config/infrastructure/up.sh
+# or directly:
+docker compose -f config/infrastructure/docker-compose.yml up -d
+```
+
+Default credentials (matching `application-secret.yml.template`):
+
+| Property | Value |
+|---|---|
+| Host | `localhost:5432` |
+| Database | `omnimemo` |
+| Username | `omnimemo` |
+| Password | `correct-horse-battery-staple` |
+
+To stop and remove containers (data is preserved in a named volume):
+
+```bash
+docker compose -f config/infrastructure/docker-compose.yml down
+```
+
+To also remove the data volume:
+
+```bash
+docker compose -f config/infrastructure/docker-compose.yml down -v
+```
+
+---
+
 ## Development
 
 ```bash
@@ -83,7 +116,7 @@ cd backend
 ./gradlew :backend-api:bootRun
 ```
 
-The app starts on `http://localhost:8080`. PostgreSQL must be running and accessible at the URL configured in `application.yml` (default: `localhost:5432/omnimemo`).
+The app starts on `http://localhost:8080`. Ensure the infrastructure is running first (see above).
 
 To build a runnable JAR:
 
