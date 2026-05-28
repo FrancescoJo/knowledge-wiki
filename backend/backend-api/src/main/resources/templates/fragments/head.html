@@ -98,28 +98,75 @@
 
         /* Language switcher */
         .lang-switcher {
-            display: flex;
-            align-items: center;
-            gap: 0.125rem;
+            position: relative;
             flex-shrink: 0;
         }
 
-        .lang-switcher a {
-            padding: 0.2rem 0.45rem;
-            color: rgba(255, 255, 255, 0.55);
+        .lang-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.5rem;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 4px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            line-height: 1;
+        }
+
+        .lang-btn:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+
+        .flag-icon {
+            width: 18px;
+            height: 13px;
+            object-fit: cover;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .lang-arrow {
+            font-size: 0.65rem;
+            opacity: 0.7;
+            transition: transform 0.15s ease;
+        }
+
+        .lang-switcher.open .lang-arrow { transform: rotate(180deg); }
+
+        .lang-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            right: 0;
+            min-width: 130px;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            list-style: none;
+            z-index: 300;
+            padding: 0.25rem 0;
+        }
+
+        .lang-switcher.open .lang-dropdown { display: block; }
+
+        .lang-dropdown li a {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            color: #333;
             text-decoration: none;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border-radius: 3px;
+            font-size: 0.85rem;
             white-space: nowrap;
         }
 
-        .lang-switcher a:hover { color: #fff; }
+        .lang-dropdown li a:hover { background: #f5f5f5; }
 
-        .lang-switcher a.active {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.15);
-        }
+        .lang-dropdown li.selected a { font-weight: 600; color: #1a1a2e; }
 
         /* Build phase badge */
         .build-phase-badge {
@@ -317,6 +364,13 @@
 
         .login-submit:hover { background: #5568d3; }
     </style>
+    <script>
+        document.addEventListener('click', function(e) {
+            document.querySelectorAll('.lang-switcher.open').forEach(function(el) {
+                if (!el.contains(e.target)) el.classList.remove('open');
+            });
+        });
+    </script>
     <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx-ext-json-enc@2.0.1/json-enc.js"></script>
     <script src="@textedit.script@"></script>

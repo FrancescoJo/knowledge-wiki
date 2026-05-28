@@ -3,10 +3,31 @@
     <nav class="site-nav" aria-label="Main navigation">
         <ul th:replace="~{fragments/menu/menu-bar :: menuBar}"></ul>
     </nav>
-    <nav class="lang-switcher" th:attr="aria-label=#{header.lang.select}">
-        <a href="?lang=en" th:classappend="${#locale.language == 'en'} ? ' active'" th:text="#{header.lang.en}">EN</a>
-        <a href="?lang=ko" th:classappend="${#locale.language == 'ko'} ? ' active'" th:text="#{header.lang.ko}">한국어</a>
-    </nav>
+    <div class="lang-switcher" th:attr="aria-label=#{header.lang.select}">
+        <button class="lang-btn" type="button"
+                onclick="this.closest('.lang-switcher').classList.toggle('open')"
+                th:attr="aria-expanded=${#locale.language != null ? 'false' : 'false'}">
+            <img th:src="${#locale.language == 'ko'} ? '/flags/kr.svg' : '/flags/gb.svg'"
+                 th:alt="${#locale.language == 'ko'} ? '한국어' : 'English'"
+                 class="flag-icon">
+            <span th:text="${#locale.language == 'ko'} ? #{header.lang.ko} : #{header.lang.en}">English</span>
+            <span class="lang-arrow" aria-hidden="true">▾</span>
+        </button>
+        <ul class="lang-dropdown" role="listbox">
+            <li role="option" th:classappend="${#locale.language == 'en'} ? ' selected'">
+                <a href="?lang=en" onclick="this.closest('.lang-switcher').classList.remove('open')">
+                    <img src="/flags/gb.svg" alt="English" class="flag-icon">
+                    <span th:text="#{header.lang.en}">English</span>
+                </a>
+            </li>
+            <li role="option" th:classappend="${#locale.language == 'ko'} ? ' selected'">
+                <a href="?lang=ko" onclick="this.closest('.lang-switcher').classList.remove('open')">
+                    <img src="/flags/kr.svg" alt="한국어" class="flag-icon">
+                    <span th:text="#{header.lang.ko}">한국어</span>
+                </a>
+            </li>
+        </ul>
+    </div>
     <span th:if="${buildPhase != 'release'}"
           class="build-phase-badge"
           th:classappend="'build-phase-' + ${buildPhase}"
