@@ -90,6 +90,13 @@ class AuthControllerMvcTest {
     }
 
     @Test
+    fun `POST auth logout returns HX-Redirect to root`() {
+        mockMvc.perform(post("${ApiPathsV1.AUTH}/logout"))
+            .andExpect(status().isOk)
+            .andExpect(header().string("HX-Redirect", "/"))
+    }
+
+    @Test
     fun `POST auth refresh returns 200 and rotates cookies for a valid refresh token`() {
         val loginResult = LoginResult.create("new-access", "new-refresh")
         given(loginUseCase.refresh(anyArg())).willReturn(loginResult)

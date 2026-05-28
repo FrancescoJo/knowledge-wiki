@@ -32,7 +32,22 @@
           class="build-phase-badge"
           th:classappend="'build-phase-' + ${buildPhase}"
           th:text="${buildPhase}"></span>
-    <button class="login-btn" type="button"
+    <div th:if="${currentUserEmail}" class="user-menu">
+        <button class="user-btn" type="button"
+                onclick="this.closest('.user-menu').classList.toggle('open')"
+                aria-haspopup="true" aria-expanded="false">
+            <span class="user-email" th:text="${currentUserEmail}">user@example.com</span>
+            <span class="user-arrow" aria-hidden="true">▾</span>
+        </button>
+        <ul class="user-dropdown" role="menu">
+            <li role="none">
+                <button class="user-dropdown-item" role="menuitem"
+                        hx-post="/api/v1/auth/logout"
+                        th:text="#{user.logout}">Logout</button>
+            </li>
+        </ul>
+    </div>
+    <button th:unless="${currentUserEmail}" class="login-btn" type="button"
             onclick="document.getElementById('login-popup').showModal()"
             th:text="#{header.login}">Log In</button>
 </header>

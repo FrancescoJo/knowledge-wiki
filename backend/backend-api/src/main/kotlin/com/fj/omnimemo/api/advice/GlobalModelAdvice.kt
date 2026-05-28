@@ -7,11 +7,15 @@ package com.fj.omnimemo.api.advice
 
 import com.fj.omnimemo.core.menu.model.MenuBar
 import com.fj.omnimemo.core.menu.model.SimpleMenuItem
+import com.fj.omnimemo.core.user.model.UserId
+import com.fj.omnimemo.core.user.usecase.FindUserUseCase
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.MessageSource
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ModelAttribute
 import java.util.Locale
+import java.util.UUID
 
 /**
  * Supplies common model attributes to every view render.
@@ -23,6 +27,7 @@ import java.util.Locale
 class GlobalModelAdvice(
     @Value("\${app.build-phase}") private val buildPhase: String,
     private val messageSource: MessageSource,
+    private val findUserUseCase: FindUserUseCase,
 ) {
 
     @ModelAttribute("menuBar")
@@ -34,4 +39,16 @@ class GlobalModelAdvice(
 
     @ModelAttribute("buildPhase")
     fun buildPhase(): String = buildPhase
+
+    @ModelAttribute("currentUserEmail")
+    fun currentUserEmail(): String? {
+        val auth = SecurityContextHolder.getContext().authentication ?: return null
+        if (!auth.isAuthenticated || auth.principal == "anonymousUser") return null
+        return try {
+            val userId = UserId(UUID.fromString(auth.principal as String))
+            findUserUseCase.findById(userId)?.email
+        } catch (_: Exception) {
+            null
+        }
+    }
 }

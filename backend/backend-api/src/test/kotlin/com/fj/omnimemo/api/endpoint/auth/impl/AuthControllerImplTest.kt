@@ -143,6 +143,15 @@ class AuthControllerImplTest {
                 response.getCookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE) shouldNotBe null
             }
         }
+
+        @Test
+        fun `should set HX-Redirect header to root on logout`() {
+            val response = MockHttpServletResponse()
+
+            controller.logout(MockHttpServletRequest(), response)
+
+            response.getHeader("HX-Redirect") shouldBe "/"
+        }
     }
 
     @Nested

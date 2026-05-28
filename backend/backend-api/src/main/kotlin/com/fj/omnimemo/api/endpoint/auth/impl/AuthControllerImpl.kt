@@ -45,6 +45,7 @@ internal class AuthControllerImpl(
         }
         response.addCookie(clearCookie(JwtAuthenticationFilter.ACCESS_TOKEN_COOKIE))
         response.addCookie(clearCookie(REFRESH_TOKEN_COOKIE))
+        response.setHeader("HX-Redirect", "/")
     }
 
     override fun refresh(request: HttpServletRequest, response: HttpServletResponse) {
