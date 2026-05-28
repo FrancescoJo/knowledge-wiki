@@ -7,7 +7,7 @@
 # The endpoint is localhost-only and only succeeds when no users exist yet.
 #
 # Usage:
-#   ./scripts/create-user.sh [BASE_URL]
+#   ./config/scripts/create-user.sh [BASE_URL]
 #
 # Arguments:
 #   BASE_URL  Base URL of the running backend (default: http://localhost:8080)
@@ -20,9 +20,35 @@ set -euo pipefail
 BASE_URL="${1:-http://localhost:8080}"
 ENDPOINT="${BASE_URL}/api/v1/bootstrap/users"
 
+probe_exit=0
+curl -s --connect-timeout 5 --max-time 5 -o /dev/null "${ENDPOINT}" 2>/dev/null || probe_exit=$?
+if [[ $probe_exit -ne 0 ]]; then
+    echo "Error: cannot reach ${ENDPOINT} — is the server running?" >&2
+    exit 1
+fi
+
 read -r -p "Email: " email
-read -r -s -p "Password: " password
-echo
+
+max_attempts=3
+attempt=0
+while true; do
+    attempt=$((attempt + 1))
+    read -r -s -p "Password: " password
+    echo
+    read -r -s -p "Verify password: " password_verify
+    echo
+
+    if [[ "$password" == "$password_verify" ]]; then
+        break
+    fi
+
+    echo "Error: passwords do not match." >&2
+    if [[ $attempt -ge $max_attempts ]]; then
+        echo "Error: maximum attempts reached. Aborting." >&2
+        exit 1
+    fi
+    echo "Please try again (attempt ${attempt}/${max_attempts})." >&2
+done
 
 payload=$(python3 -c "
 import json, sys

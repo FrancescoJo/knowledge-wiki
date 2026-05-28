@@ -29,3 +29,7 @@ spring-shell.log
 # OS
 .DS_Store
 Thumbs.db
+
+# Application files
+application-secret.yml
+.env

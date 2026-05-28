@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_DB: omnimemo
       POSTGRES_USER: omnimemo
-      POSTGRES_PASSWORD: correct-horse-battery-staple
+      POSTGRES_PASSWORD: ${OMNIMEMO_DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:

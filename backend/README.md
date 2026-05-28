@@ -79,21 +79,27 @@ openssl rand -base64 32
 ## Infrastructure
 
 A Docker Compose file in `config/infrastructure/` starts the required services (PostgreSQL with pgvector).
+The PostgreSQL password is not hardcoded — it is read from `config/infrastructure/.env` (gitignored).
+
+**First-time setup:**
+
+```bash
+cp config/infrastructure/.env.template config/infrastructure/.env
+# Edit .env and set OMNIMEMO_DB_PASSWORD to match spring.datasource.password in application-secret.yml
+```
+
+**Start:**
 
 ```bash
 bash config/infrastructure/up.sh
-# or directly:
-docker compose -f config/infrastructure/docker-compose.yml up -d
 ```
-
-Default credentials (matching `application-secret.yml.template`):
 
 | Property | Value |
 |---|---|
 | Host | `localhost:5432` |
 | Database | `omnimemo` |
 | Username | `omnimemo` |
-| Password | `correct-horse-battery-staple` |
+| Password | value of `OMNIMEMO_DB_PASSWORD` in `.env` |
 
 To stop and remove containers (data is preserved in a named volume):
 
@@ -111,12 +117,20 @@ docker compose -f config/infrastructure/docker-compose.yml down -v
 
 ## Development
 
+Prerequisites: complete [Local Setup](#local-setup) and start the [Infrastructure](#infrastructure) first.
+
 ```bash
 cd backend
 ./gradlew :backend-api:bootRun
 ```
 
-The app starts on `http://localhost:8080`. Ensure the infrastructure is running first (see above).
+The app starts on `http://localhost:8080`.
+
+| URL | Description |
+|---|---|
+| `http://localhost:8080` | Application root |
+| `http://localhost:8080/swagger-ui/index.html` | Swagger UI (API explorer) |
+| `http://localhost:8080/v3/api-docs` | OpenAPI specification (JSON) |
 
 To build a runnable JAR:
 
