@@ -1,9 +1,9 @@
 <div xmlns:th="http://www.thymeleaf.org" th:fragment="breadcrumb" class="breadcrumb-bar">
     <nav class="breadcrumb" aria-label="Breadcrumb">
-        <span>Home</span>
+        <span th:text="#{breadcrumb.home}">Home</span>
     </nav>
     <div class="search-box">
-        <input type="search" name="q" placeholder="Search All" aria-label="Search">
-        <button type="submit">Search</button>
+        <input type="search" name="q" th:placeholder="#{search.placeholder}" th:attr="aria-label=#{search.submit}">
+        <button type="submit" th:text="#{search.submit}">Search</button>
     </div>
 </div>

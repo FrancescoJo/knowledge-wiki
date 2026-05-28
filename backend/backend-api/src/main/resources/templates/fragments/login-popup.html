@@ -5,29 +5,29 @@
           hx-target="#login-error"
           hx-swap="innerHTML">
         <header class="login-dialog-header">
-            <h2 id="login-popup-title" class="login-dialog-title">Log In</h2>
-            <button type="button" class="login-dialog-close" aria-label="Close login dialog"
+            <h2 id="login-popup-title" class="login-dialog-title" th:text="#{login.title}">Log In</h2>
+            <button type="button" class="login-dialog-close" th:attr="aria-label=#{login.close}"
                     onclick="document.getElementById('login-popup').close()">&#x2715;</button>
         </header>
 
         <div class="login-field">
-            <label for="login-email" class="login-label">Email</label>
+            <label for="login-email" class="login-label" th:text="#{login.email}">Email</label>
             <input id="login-email" name="email" type="email" class="login-input"
                    autocomplete="email" required>
         </div>
 
         <div class="login-field">
-            <label for="login-password" class="login-label">Password</label>
+            <label for="login-password" class="login-label" th:text="#{login.password}">Password</label>
             <div class="login-password-wrapper">
                 <input id="login-password" name="password" type="password" class="login-input"
                        autocomplete="current-password" required>
                 <button type="button" class="login-password-toggle" aria-label="Show password"
-                        data-target="login-password">Show</button>
+                        data-target="login-password" th:text="#{login.password.show}">Show</button>
             </div>
         </div>
 
         <p id="login-error" class="login-error" aria-live="polite"></p>
 
-        <button type="submit" class="login-submit">Log In</button>
+        <button type="submit" class="login-submit" th:text="#{login.submit}">Log In</button>
     </form>
 </dialog>

@@ -3,15 +3,17 @@
       th:replace="~{layout/base :: layout(~{::main})}">
 <main>
     <section class="health-panel">
-        <h2>Server Status</h2>
+        <h2 th:text="#{status.title}">Server Status</h2>
         <div class="status-row">
             <span id="status"
                   hx-get="/health"
                   hx-trigger="load"
-                  hx-swap="outerHTML">Checking...</span>
+                  hx-swap="outerHTML"
+                  th:text="#{status.checking}">Checking…</span>
             <button hx-get="/health"
                     hx-target="#status"
-                    hx-swap="outerHTML">Refresh</button>
+                    hx-swap="outerHTML"
+                    th:text="#{status.refresh}">Refresh</button>
         </div>
     </section>
 </main>
