@@ -5,23 +5,26 @@
  */
 package com.fj.omnimemo.api.advice
 
-import com.fj.omnimemo.core.user.exception.PasswordMismatchException
-import com.fj.omnimemo.core.user.exception.RedundantBootstrapProhibitedException
-import com.fj.omnimemo.core.user.exception.RefreshTokenNotFoundException
-import com.fj.omnimemo.core.user.exception.TokenExpiredException
-import com.fj.omnimemo.core.user.exception.UserNotFoundException
+import com.fj.omnimemo.api.response.ErrorResponse
+import com.fj.omnimemo.core.exception.OmniMemoErrorCode
+import com.fj.omnimemo.core.exception.OmniMemoException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.server.ResponseStatusException
+import kotlin.reflect.jvm.jvmName
 
 /**
  * Translates domain exceptions into HTTP responses.
  *
- * The core module has no knowledge of HTTP; this advice is the single place
- * where that translation happens. Every [com.fj.omnimemo.core.exception.OmniMemoException]
- * subtype must have a handler here so that domain failures always produce a
- * well-defined HTTP status code.
+ * The HTTP status and error code for every [OmniMemoException] are derived from
+ * [OmniMemoErrorCode], keeping the mapping in a single, auditable place.
+ * [ResponseStatusException] thrown at the controller layer (e.g. missing auth
+ * cookie, malformed ID) is handled separately with a generic error code.
+ *
+ * All responses are subsequently wrapped in a [com.fj.omnimemo.api.response.ResponseEnvelope]
+ * by [ResponseEnvelopeAdvice].
  *
  * @author Francesco Jo
  * @since 0.1.1
@@ -30,19 +33,37 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 @RestControllerAdvice
 class DomainExceptionAdvice {
 
-    @ExceptionHandler(UserNotFoundException::class)
-    fun handleUserNotFound(): ResponseEntity<Unit> =
-        ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+    @ExceptionHandler(OmniMemoException::class)
+    fun handleDomainException(exception: OmniMemoException): ResponseEntity<ErrorResponse> {
+        val errorCode = OmniMemoErrorCode.of(exception)
+        return ResponseEntity
+            .status(errorCode.toHttpStatus())
+            .body(
+                ErrorResponse(
+                    code = errorCode.code,
+                    message = exception.message ?: errorCode.name,
+                    details = null,
+                )
+            )
+    }
 
-    @ExceptionHandler(
-        PasswordMismatchException::class,
-        RefreshTokenNotFoundException::class,
-        TokenExpiredException::class,
-    )
-    fun handleUnauthorised(): ResponseEntity<Unit> =
-        ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+    @ExceptionHandler(ResponseStatusException::class)
+    fun handleResponseStatus(exception: ResponseStatusException): ResponseEntity<ErrorResponse> =
+        ResponseEntity
+            .status(exception.statusCode)
+            .body(
+                ErrorResponse(
+                    code = exception::class.simpleName ?: exception::class.jvmName,
+                    message = exception.reason ?: exception.message,
+                    details = null,
+                )
+            )
 
-    @ExceptionHandler(RedundantBootstrapProhibitedException::class)
-    fun handleRedundantBootstrap(): ResponseEntity<Unit> =
-        ResponseEntity.status(HttpStatus.CONFLICT).build()
+    private fun OmniMemoErrorCode.toHttpStatus(): HttpStatus = when (this) {
+        OmniMemoErrorCode.PASSWORD_MISMATCH              -> HttpStatus.UNAUTHORIZED
+        OmniMemoErrorCode.REFRESH_TOKEN_NOT_FOUND        -> HttpStatus.UNAUTHORIZED
+        OmniMemoErrorCode.TOKEN_EXPIRED                  -> HttpStatus.UNAUTHORIZED
+        OmniMemoErrorCode.USER_NOT_FOUND                 -> HttpStatus.NOT_FOUND
+        OmniMemoErrorCode.REDUNDANT_BOOTSTRAP_PROHIBITED -> HttpStatus.CONFLICT
+    }
 }

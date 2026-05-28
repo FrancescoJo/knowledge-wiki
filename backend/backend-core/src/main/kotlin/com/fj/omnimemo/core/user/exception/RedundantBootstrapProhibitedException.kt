@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.core.user.exception
 
+import com.fj.omnimemo.core.exception.OmniMemoErrorCode
 import com.fj.omnimemo.core.exception.OmniMemoInternalException
 
 /**
@@ -17,4 +18,6 @@ import com.fj.omnimemo.core.exception.OmniMemoInternalException
  * @version 0.1.1
  */
 class RedundantBootstrapProhibitedException :
-    OmniMemoInternalException("Bootstrap is prohibited when users already exist")
+    OmniMemoInternalException("Bootstrap is prohibited when users already exist") {
+    override val errorCode = OmniMemoErrorCode.REDUNDANT_BOOTSTRAP_PROHIBITED
+}

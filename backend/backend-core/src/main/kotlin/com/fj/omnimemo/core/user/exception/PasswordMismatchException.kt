@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.core.user.exception
 
+import com.fj.omnimemo.core.exception.OmniMemoErrorCode
 import com.fj.omnimemo.core.exception.OmniMemoExternalException
 
 /**
@@ -17,4 +18,6 @@ import com.fj.omnimemo.core.exception.OmniMemoExternalException
  * @since 0.1.1
  * @version 0.1.1
  */
-class PasswordMismatchException : OmniMemoExternalException("Invalid credentials")
+class PasswordMismatchException : OmniMemoExternalException("Invalid credentials") {
+    override val errorCode = OmniMemoErrorCode.PASSWORD_MISMATCH
+}

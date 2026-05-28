@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.core.user.exception
 
+import com.fj.omnimemo.core.exception.OmniMemoErrorCode
 import com.fj.omnimemo.core.exception.OmniMemoExternalException
 
 /**
@@ -14,4 +15,6 @@ import com.fj.omnimemo.core.exception.OmniMemoExternalException
  * @since 0.1.1
  * @version 0.1.1
  */
-class RefreshTokenNotFoundException : OmniMemoExternalException("Refresh token not found")
+class RefreshTokenNotFoundException : OmniMemoExternalException("Refresh token not found") {
+    override val errorCode = OmniMemoErrorCode.REFRESH_TOKEN_NOT_FOUND
+}

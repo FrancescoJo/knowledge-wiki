@@ -75,9 +75,9 @@ class UserControllerMvcTest {
         mockMvc.perform(get("${ApiPathsV1.USERS}/$uuid"))
             .andExpect(status().isOk)
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.email").value("alice@example.com"))
-            .andExpect(jsonPath("$.id").isString)
-            .andExpect(jsonPath("$.passwordHash").doesNotExist())
+            .andExpect(jsonPath("$.body.email").value("alice@example.com"))
+            .andExpect(jsonPath("$.body.id").isString)
+            .andExpect(jsonPath("$.body.passwordHash").doesNotExist())
     }
 
     @Test
@@ -106,7 +106,7 @@ class UserControllerMvcTest {
         )
             .andExpect(status().isCreated)
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.email").value("alice@example.com"))
+            .andExpect(jsonPath("$.body.email").value("alice@example.com"))
     }
 
     @Test
@@ -120,7 +120,7 @@ class UserControllerMvcTest {
                 .content("""{"email":"new@example.com"}""")
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.email").value("alice@example.com"))
+            .andExpect(jsonPath("$.body.email").value("alice@example.com"))
     }
 
     @Test

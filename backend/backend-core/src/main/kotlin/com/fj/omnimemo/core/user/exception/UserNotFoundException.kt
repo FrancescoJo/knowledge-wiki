@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.core.user.exception
 
+import com.fj.omnimemo.core.exception.OmniMemoErrorCode
 import com.fj.omnimemo.core.exception.OmniMemoExternalException
 import com.fj.omnimemo.core.user.model.UserId
 
@@ -15,4 +16,6 @@ import com.fj.omnimemo.core.user.model.UserId
  * @since 0.1.1
  * @version 0.1.1
  */
-class UserNotFoundException(id: UserId) : OmniMemoExternalException("User not found: ${id.value}")
+class UserNotFoundException(id: UserId) : OmniMemoExternalException("User not found: ${id.value}") {
+    override val errorCode = OmniMemoErrorCode.USER_NOT_FOUND
+}

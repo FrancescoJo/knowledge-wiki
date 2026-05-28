@@ -16,4 +16,6 @@ package com.fj.omnimemo.core.exception
  * @since 0.1.1
  * @version 0.1.1
  */
-sealed class OmniMemoException(message: String) : RuntimeException(message)
+sealed class OmniMemoException(message: String) : RuntimeException(message) {
+    abstract val errorCode: OmniMemoErrorCode
+}
