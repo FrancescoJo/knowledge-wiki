@@ -7,6 +7,7 @@ package com.fj.omnimemo.api.advice
 
 import com.fj.omnimemo.core.menu.model.MenuBar
 import com.fj.omnimemo.core.menu.model.SimpleMenuItem
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ModelAttribute
 
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute
  * @since 0.1.1
  */
 @ControllerAdvice
-class GlobalModelAdvice {
+class GlobalModelAdvice(@Value("\${app.build-phase}") private val buildPhase: String) {
 
     @ModelAttribute("menuBar")
     fun menuBar(): MenuBar = MenuBar(
@@ -25,4 +26,7 @@ class GlobalModelAdvice {
             SimpleMenuItem(label = "Home", href = "/", priority = 0)
         )
     )
+
+    @ModelAttribute("buildPhase")
+    fun buildPhase(): String = buildPhase
 }

@@ -6,6 +6,12 @@ plugins {
     groovy
 }
 
+val buildPhase: String = (project.findProperty("buildPhase") as String? ?: "local").also { phase ->
+    val valid = setOf("local", "alpha", "beta", "release")
+    require(phase in valid) { "Invalid buildPhase '$phase'. Must be one of: ${valid.joinToString()}" }
+}
+val docEnabled = buildPhase in setOf("local", "alpha")
+
 apply(from = "build-frontend.gradle.kts")
 
 val secretConfigFile = projectDir.resolve("application-secret.yml")
@@ -25,12 +31,22 @@ tasks.register("checkSecretConfig") {
 tasks.named("bootJar") { dependsOn("checkSecretConfig") }
 tasks.named("bootRun") { dependsOn("checkSecretConfig") }
 
+tasks.named<ProcessResources>("processResources") {
+    filesMatching("application.yml") {
+        filter { line -> line.replace("@buildPhase@", buildPhase) }
+    }
+}
+
 dependencies {
     implementation(project(":backend-core"))
     implementation(project(":backend-infrastructure"))
 
-    // API documentation
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+    // API documentation — included in local/alpha only; excluded from beta/release binary
+    if (docEnabled) {
+        implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+    } else {
+        compileOnly("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+    }
 
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web")

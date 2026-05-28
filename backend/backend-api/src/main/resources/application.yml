@@ -30,6 +30,7 @@ logging:
     com.fj.omnimemo: DEBUG
 
 app:
+  build-phase: "@buildPhase@"
   security:
     token-ttl-seconds: 259200
     refresh-token-ttl-seconds: 1209600

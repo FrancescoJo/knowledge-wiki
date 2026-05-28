@@ -3,6 +3,10 @@
     <nav class="site-nav" aria-label="Main navigation">
         <ul th:replace="~{fragments/menu/menu-bar :: menuBar}"></ul>
     </nav>
+    <span th:if="${buildPhase != 'release'}"
+          class="build-phase-badge"
+          th:classappend="'build-phase-' + ${buildPhase}"
+          th:text="${buildPhase}"></span>
     <button class="login-btn" type="button"
             onclick="document.getElementById('login-popup').showModal()">Log In</button>
 </header>
