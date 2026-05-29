@@ -11,6 +11,7 @@ import com.fj.omnimemo.api.endpoint.user.dto.request.UpdateEmailRequest
 import com.fj.omnimemo.api.endpoint.user.dto.request.UpdatePasswordRequest
 import com.fj.omnimemo.api.endpoint.user.dto.response.UserResponse
 import com.fj.omnimemo.api.endpoint.user.dto.response.toResponse
+import com.fj.omnimemo.core.user.UserProfileCache
 import com.fj.omnimemo.core.user.model.UserId
 import com.fj.omnimemo.core.user.usecase.CreateUserUseCase
 import com.fj.omnimemo.core.util.parseUuidOrNull
@@ -34,6 +35,7 @@ internal class UserControllerImpl(
     private val updateUserEmailUseCase: UpdateUserEmailUseCase,
     private val updateUserPasswordUseCase: UpdateUserPasswordUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
+    private val userProfileCache: UserProfileCache,
 ) : UserController {
 
     override fun findById(id: String): UserResponse =
@@ -43,14 +45,21 @@ internal class UserControllerImpl(
     override fun create(request: CreateUserRequest): UserResponse =
         createUserUseCase.create(request.email, request.password).toResponse()
 
-    override fun updateEmail(id: String, request: UpdateEmailRequest): UserResponse =
-        updateUserEmailUseCase.updateEmail(parseUserId(id), request.email).toResponse()
+    override fun updateEmail(id: String, request: UpdateEmailRequest): UserResponse {
+        val userId = parseUserId(id)
+        val updated = updateUserEmailUseCase.updateEmail(userId, request.email)
+        userProfileCache.invalidate(userId)
+        return updated.toResponse()
+    }
 
     override fun updatePassword(id: String, request: UpdatePasswordRequest): UserResponse =
         updateUserPasswordUseCase.updatePassword(parseUserId(id), request.password).toResponse()
 
-    override fun delete(id: String) =
-        deleteUserUseCase.delete(parseUserId(id))
+    override fun delete(id: String) {
+        val userId = parseUserId(id)
+        deleteUserUseCase.delete(userId)
+        userProfileCache.invalidate(userId)
+    }
 
     private fun parseUserId(raw: String): UserId =
         parseUuidOrNull(raw)?.let { UserId(it) }

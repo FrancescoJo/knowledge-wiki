@@ -5,11 +5,11 @@
  */
 package com.fj.omnimemo.api.advice
 
+import com.fj.omnimemo.api.user.LruUserProfileCache
 import com.fj.omnimemo.core.test.annotation.SmallTest
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.model.UserId
 import com.fj.omnimemo.core.user.repository.MockUserRepository
-import com.fj.omnimemo.core.user.usecase.FindUserUseCase
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -29,11 +29,11 @@ import java.util.UUID
 class GlobalModelAdviceTest {
 
     private val userRepo = MockUserRepository()
-    private val findUserUseCase = FindUserUseCase(userRepo)
+    private val profileCache = LruUserProfileCache(userRepo)
     private val messageSource = StaticMessageSource().apply {
         addMessage("nav.home", Locale.ENGLISH, "Home")
     }
-    private val advice = GlobalModelAdvice("local", messageSource, findUserUseCase)
+    private val advice = GlobalModelAdvice("local", messageSource, profileCache)
 
     @AfterEach
     fun tearDown() {

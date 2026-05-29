@@ -10,7 +10,7 @@ import com.fj.omnimemo.core.user.exception.PasswordMismatchException
 import com.fj.omnimemo.core.user.exception.RefreshTokenNotFoundException
 import com.fj.omnimemo.core.test.annotation.MediumTest
 import com.fj.omnimemo.core.user.model.LoginResult
-import com.fj.omnimemo.core.user.usecase.FindUserUseCase
+import com.fj.omnimemo.core.user.UserProfileCache
 import com.fj.omnimemo.core.user.usecase.LoginUseCase
 import com.fj.omnimemo.infrastructure.security.JwtTokenService
 import org.junit.jupiter.api.Test
@@ -55,7 +55,7 @@ class AuthControllerMvcTest {
     @MockBean private lateinit var jwtTokenService: JwtTokenService
     // Required by GlobalModelAdvice; not referenced in test methods directly.
     @Suppress("UnusedPrivateProperty")
-    @MockBean private lateinit var findUserUseCase: FindUserUseCase
+    @MockBean private lateinit var userProfileCache: UserProfileCache
 
     @Test
     fun `POST auth login returns 200 and sets cookies on valid credentials`() {

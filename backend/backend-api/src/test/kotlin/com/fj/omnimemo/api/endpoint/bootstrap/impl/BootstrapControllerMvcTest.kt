@@ -10,7 +10,7 @@ import com.fj.omnimemo.core.user.exception.RedundantBootstrapProhibitedException
 import com.fj.omnimemo.core.test.annotation.MediumTest
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.usecase.BootstrapUserUseCase
-import com.fj.omnimemo.core.user.usecase.FindUserUseCase
+import com.fj.omnimemo.core.user.UserProfileCache
 import com.fj.omnimemo.infrastructure.security.JwtTokenService
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
@@ -47,9 +47,9 @@ class BootstrapControllerMvcTest {
     private lateinit var mockMvc: MockMvc
 
     @MockBean private lateinit var bootstrapUserUseCase: BootstrapUserUseCase
-    // Required by GlobalModelAdvice and SecurityConfiguration; not referenced in test methods directly.
+    // Required by GlobalModelAdvice; not referenced in test methods directly.
     @Suppress("UnusedPrivateProperty")
-    @MockBean private lateinit var findUserUseCase: FindUserUseCase
+    @MockBean private lateinit var userProfileCache: UserProfileCache
     @Suppress("UnusedPrivateProperty")
     @MockBean private lateinit var jwtTokenService: JwtTokenService
 

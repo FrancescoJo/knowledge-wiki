@@ -8,6 +8,7 @@ package com.fj.omnimemo.api.endpoint.user.impl
 import com.fj.omnimemo.api.endpoint.ApiPathsV1
 import com.fj.omnimemo.core.user.exception.UserNotFoundException
 import com.fj.omnimemo.core.test.annotation.MediumTest
+import com.fj.omnimemo.core.user.UserProfileCache
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.model.UserId
 import com.fj.omnimemo.core.user.usecase.CreateUserUseCase
@@ -61,6 +62,8 @@ class UserControllerMvcTest {
     // Injected into controller via Spring DI; not referenced in test methods directly.
     @Suppress("UnusedPrivateProperty")
     @MockBean private lateinit var deleteUserUseCase: DeleteUserUseCase
+    @Suppress("UnusedPrivateProperty")
+    @MockBean private lateinit var userProfileCache: UserProfileCache
     // Required by SecurityConfiguration; not referenced in test methods directly.
     @Suppress("UnusedPrivateProperty")
     @MockBean private lateinit var jwtTokenService: JwtTokenService

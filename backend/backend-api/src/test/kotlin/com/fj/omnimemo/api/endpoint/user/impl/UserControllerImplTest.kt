@@ -11,7 +11,9 @@ import com.fj.omnimemo.api.endpoint.user.dto.request.UpdatePasswordRequest
 import com.fj.omnimemo.api.endpoint.user.dto.response.UserResponse
 import com.fj.omnimemo.core.user.exception.UserNotFoundException
 import com.fj.omnimemo.core.test.annotation.SmallTest
+import com.fj.omnimemo.core.user.MockUserProfileCache
 import com.fj.omnimemo.core.user.model.User
+import com.fj.omnimemo.core.user.model.UserProfile
 import com.fj.omnimemo.core.user.repository.MockUserRepository
 import com.fj.omnimemo.core.user.security.MockPasswordHasher
 import com.fj.omnimemo.core.user.usecase.CreateUserUseCase
@@ -21,6 +23,7 @@ import com.fj.omnimemo.core.user.usecase.UpdateUserEmailUseCase
 import com.fj.omnimemo.core.user.usecase.UpdateUserPasswordUseCase
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -36,12 +39,14 @@ class UserControllerImplTest {
 
     private val repo = MockUserRepository()
     private val hasher = MockPasswordHasher()
+    private val profileCache = MockUserProfileCache()
     private val controller = UserControllerImpl(
         createUserUseCase = CreateUserUseCase(repo, hasher),
         findUserUseCase = FindUserUseCase(repo),
         updateUserEmailUseCase = UpdateUserEmailUseCase(repo),
         updateUserPasswordUseCase = UpdateUserPasswordUseCase(repo, hasher),
         deleteUserUseCase = DeleteUserUseCase(repo),
+        userProfileCache = profileCache,
     )
 
     private lateinit var existingUser: User
@@ -49,6 +54,7 @@ class UserControllerImplTest {
     @BeforeEach
     fun setUp() {
         repo.clear()
+        profileCache.clear()
         existingUser = repo.save(User.create("alice@example.com", hasher.hash("secret")))
     }
 
@@ -117,6 +123,27 @@ class UserControllerImplTest {
         }
 
         @Test
+        fun `should invalidate cache entry after successful email update`() {
+            profileCache.put(UserProfile(existingUser.id, "alice@example.com"))
+
+            controller.updateEmail(existingUser.id.value.toString(), UpdateEmailRequest("new@example.com"))
+
+            profileCache.invalidatedIds shouldContain existingUser.id
+            profileCache.get(existingUser.id) shouldBe null
+        }
+
+        @Test
+        fun `should not invalidate cache when user is not found`() {
+            val unknownId = UUID.randomUUID().toString()
+
+            shouldThrow<UserNotFoundException> {
+                controller.updateEmail(unknownId, UpdateEmailRequest("x@example.com"))
+            }
+
+            profileCache.invalidatedIds shouldBe emptyList()
+        }
+
+        @Test
         fun `should propagate UserNotFoundException for unknown id`() {
             shouldThrow<UserNotFoundException> {
                 controller.updateEmail(UUID.randomUUID().toString(), UpdateEmailRequest("x@example.com"))
@@ -160,6 +187,27 @@ class UserControllerImplTest {
             controller.delete(existingUser.id.value.toString())
 
             repo.findById(existingUser.id) shouldBe null
+        }
+
+        @Test
+        fun `should invalidate cache entry after successful deletion`() {
+            profileCache.put(UserProfile(existingUser.id, "alice@example.com"))
+
+            controller.delete(existingUser.id.value.toString())
+
+            profileCache.invalidatedIds shouldContain existingUser.id
+            profileCache.get(existingUser.id) shouldBe null
+        }
+
+        @Test
+        fun `should not invalidate cache when user is not found`() {
+            val unknownId = UUID.randomUUID().toString()
+
+            shouldThrow<UserNotFoundException> {
+                controller.delete(unknownId)
+            }
+
+            profileCache.invalidatedIds shouldBe emptyList()
         }
 
         @Test

@@ -6,9 +6,9 @@
 package com.fj.omnimemo.api.view
 
 import com.fj.omnimemo.core.test.annotation.MediumTest
-import com.fj.omnimemo.core.user.model.User
+import com.fj.omnimemo.core.user.UserProfileCache
+import com.fj.omnimemo.core.user.model.UserProfile
 import com.fj.omnimemo.core.user.model.UserId
-import com.fj.omnimemo.core.user.usecase.FindUserUseCase
 import com.fj.omnimemo.infrastructure.security.JwtTokenService
 import com.fj.omnimemo.view.RootViewController
 import org.hamcrest.CoreMatchers.containsString
@@ -30,7 +30,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.RequestPostProcessor
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.time.Instant
 
 /**
  * Medium tests for [RootViewController]: verifies HTML output reflects the
@@ -55,7 +54,7 @@ class RootViewControllerMvcTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    @MockBean private lateinit var findUserUseCase: FindUserUseCase
+    @MockBean private lateinit var userProfileCache: UserProfileCache
     // Required by SecurityConfiguration.
     @Suppress("UnusedPrivateProperty")
     @MockBean private lateinit var jwtTokenService: JwtTokenService
@@ -76,14 +75,7 @@ class RootViewControllerMvcTest {
     @Test
     fun `GET root shows user email and logout option in header when authenticated`() {
         val userId = UserId.generate()
-        val user = User.reconstitute(
-            id = userId,
-            email = "alice@example.com",
-            passwordHash = "hash",
-            createdAt = Instant.now(),
-            updatedAt = Instant.now(),
-        )
-        given(findUserUseCase.findById(userId)).willReturn(user)
+        given(userProfileCache.get(userId)).willReturn(UserProfile(userId, "alice@example.com"))
         SecurityContextHolder.getContext().authentication =
             UsernamePasswordAuthenticationToken(userId.value.toString(), null, emptyList())
 

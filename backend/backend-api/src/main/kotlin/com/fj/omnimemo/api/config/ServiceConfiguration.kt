@@ -5,7 +5,9 @@
  */
 package com.fj.omnimemo.api.config
 
+import com.fj.omnimemo.api.user.LruUserProfileCache
 import com.fj.omnimemo.core.security.TokenIssuer
+import com.fj.omnimemo.core.user.UserProfileCache
 import com.fj.omnimemo.core.user.repository.RefreshTokenRepository
 import com.fj.omnimemo.core.user.repository.UserRepository
 import com.fj.omnimemo.core.user.security.PasswordHasher
@@ -42,6 +44,10 @@ class ServiceConfiguration {
     @Bean
     fun findUserUseCase(repository: UserRepository): FindUserUseCase =
         FindUserUseCase(repository)
+
+    @Bean
+    fun userProfileCache(userRepository: UserRepository): UserProfileCache =
+        LruUserProfileCache(userRepository)
 
     @Bean
     fun updateUserEmailUseCase(repository: UserRepository): UpdateUserEmailUseCase =
