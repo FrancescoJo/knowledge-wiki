@@ -1,9 +1,8 @@
 <dialog xmlns:th="http://www.thymeleaf.org" th:fragment="loginPopup" id="login-popup" class="login-dialog" aria-labelledby="login-popup-title">
     <form id="login-form" class="login-form"
+          method="post" action="/api/v1/auth/login"
           hx-post="/api/v1/auth/login"
-          hx-ext="json-enc"
-          hx-target="#login-error"
-          hx-swap="innerHTML">
+          hx-swap="none">
         <header class="login-dialog-header">
             <h2 id="login-popup-title" class="login-dialog-title" th:text="#{login.title}">Log In</h2>
             <button type="button" class="login-dialog-close" th:attr="aria-label=#{login.close}"
@@ -13,7 +12,7 @@
         <div class="login-field">
             <label for="login-email" class="login-label" th:text="#{login.email}">Email</label>
             <input id="login-email" name="email" type="email" class="login-input"
-                   autocomplete="email" required>
+                   autocomplete="username" required>
         </div>
 
         <div class="login-field">

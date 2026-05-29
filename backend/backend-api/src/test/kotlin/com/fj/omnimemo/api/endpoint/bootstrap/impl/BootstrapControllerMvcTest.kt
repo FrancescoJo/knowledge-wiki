@@ -10,6 +10,7 @@ import com.fj.omnimemo.core.user.exception.RedundantBootstrapProhibitedException
 import com.fj.omnimemo.core.test.annotation.MediumTest
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.usecase.BootstrapUserUseCase
+import com.fj.omnimemo.core.user.usecase.FindUserUseCase
 import com.fj.omnimemo.infrastructure.security.JwtTokenService
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
@@ -46,7 +47,9 @@ class BootstrapControllerMvcTest {
     private lateinit var mockMvc: MockMvc
 
     @MockBean private lateinit var bootstrapUserUseCase: BootstrapUserUseCase
-    // Required by SecurityConfiguration; not referenced in test methods directly.
+    // Required by GlobalModelAdvice and SecurityConfiguration; not referenced in test methods directly.
+    @Suppress("UnusedPrivateProperty")
+    @MockBean private lateinit var findUserUseCase: FindUserUseCase
     @Suppress("UnusedPrivateProperty")
     @MockBean private lateinit var jwtTokenService: JwtTokenService
 
@@ -63,8 +66,8 @@ class BootstrapControllerMvcTest {
         )
             .andExpect(status().isCreated)
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.email").value("alice@example.com"))
-            .andExpect(jsonPath("$.id").isString)
+            .andExpect(jsonPath("$.body.email").value("alice@example.com"))
+            .andExpect(jsonPath("$.body.id").isString)
     }
 
     @Test

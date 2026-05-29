@@ -67,7 +67,7 @@ class AuthControllerSpec extends Specification {
     ApiFixture apiFixture
 
     def setup() {
-        authApiClient = new AuthApiClient(restTemplate, objectMapper)
+        authApiClient = new AuthApiClient(restTemplate)
         apiFixture    = new ApiFixture(createUserUseCase, jdbcTemplate)
         apiFixture.resetWithUser(TEST_EMAIL, TEST_PASSWORD)
     }
@@ -75,11 +75,14 @@ class AuthControllerSpec extends Specification {
     def "POST auth/login returns 200 and sets access and refresh token cookies"() {
         when:
         def response = authApiClient.login(TEST_EMAIL, TEST_PASSWORD)
+        def envelope = objectMapper.readValue(response.body, Map)
 
         then:
         response.statusCode.value() == 200
         CookieSupport.cookieValue(response, "access_token")  != null
         CookieSupport.cookieValue(response, "refresh_token") != null
+        envelope.body.accessToken  != null
+        envelope.body.refreshToken != null
     }
 
     def "POST auth/logout returns 200 and expires both token cookies"() {
@@ -104,10 +107,13 @@ class AuthControllerSpec extends Specification {
 
         when:
         def response = authApiClient.refresh(refreshToken)
+        def envelope = objectMapper.readValue(response.body, Map)
 
         then:
         response.statusCode.value() == 200
         CookieSupport.cookieValue(response, "access_token")  != null
         CookieSupport.cookieValue(response, "refresh_token") != null
+        envelope.body.accessToken  != null
+        envelope.body.refreshToken != null
     }
 }

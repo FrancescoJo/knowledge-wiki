@@ -1,5 +1,9 @@
 <header xmlns:th="http://www.thymeleaf.org" th:fragment="header" class="site-header">
     <a class="site-logo" href="/">Omnimemo</a>
+    <span th:if="${buildPhase != 'release'}"
+          class="build-phase-badge"
+          th:classappend="'build-phase-' + ${buildPhase}"
+          th:text="${buildPhase}"></span>
     <nav class="site-nav" aria-label="Main navigation">
         <ul th:replace="~{fragments/menu/menu-bar :: menuBar}"></ul>
     </nav>
@@ -28,10 +32,6 @@
             </li>
         </ul>
     </div>
-    <span th:if="${buildPhase != 'release'}"
-          class="build-phase-badge"
-          th:classappend="'build-phase-' + ${buildPhase}"
-          th:text="${buildPhase}"></span>
     <div th:if="${currentUserEmail}" class="user-menu">
         <button class="user-btn" type="button"
                 onclick="this.closest('.user-menu').classList.toggle('open')"
@@ -43,6 +43,8 @@
             <li role="none">
                 <button class="user-dropdown-item" role="menuitem"
                         hx-post="/api/v1/auth/logout"
+                        hx-swap="none"
+                        th:attr='hx-headers=|{"X-XSRF-TOKEN":"${_csrf.token}"}|'
                         th:text="#{user.logout}">Logout</button>
             </li>
         </ul>

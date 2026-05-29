@@ -10,6 +10,7 @@ import com.fj.omnimemo.core.user.exception.PasswordMismatchException
 import com.fj.omnimemo.core.user.exception.RefreshTokenNotFoundException
 import com.fj.omnimemo.core.test.annotation.MediumTest
 import com.fj.omnimemo.core.user.model.LoginResult
+import com.fj.omnimemo.core.user.usecase.FindUserUseCase
 import com.fj.omnimemo.core.user.usecase.LoginUseCase
 import com.fj.omnimemo.infrastructure.security.JwtTokenService
 import org.junit.jupiter.api.Test
@@ -24,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import jakarta.servlet.http.Cookie
 
@@ -51,6 +53,9 @@ class AuthControllerMvcTest {
     // Required by SecurityConfiguration; not referenced in test methods directly.
     @Suppress("UnusedPrivateProperty")
     @MockBean private lateinit var jwtTokenService: JwtTokenService
+    // Required by GlobalModelAdvice; not referenced in test methods directly.
+    @Suppress("UnusedPrivateProperty")
+    @MockBean private lateinit var findUserUseCase: FindUserUseCase
 
     @Test
     fun `POST auth login returns 200 and sets cookies on valid credentials`() {
@@ -59,14 +64,16 @@ class AuthControllerMvcTest {
 
         mockMvc.perform(
             post("${ApiPathsV1.AUTH}/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"email":"alice@example.com","password":"secret"}""")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("email", "alice@example.com")
+                .param("password", "secret")
         )
             .andExpect(status().isOk)
             .andExpect(cookie().exists("access_token"))
             .andExpect(cookie().exists(AuthControllerImpl.REFRESH_TOKEN_COOKIE))
             .andExpect(cookie().httpOnly("access_token", true))
-            .andExpect(header().string("HX-Redirect", "/"))
+            .andExpect(jsonPath("$.body.accessToken").value("access-token"))
+            .andExpect(jsonPath("$.body.refreshToken").value("refresh-token"))
     }
 
     @Test
@@ -75,8 +82,9 @@ class AuthControllerMvcTest {
 
         mockMvc.perform(
             post("${ApiPathsV1.AUTH}/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"email":"alice@example.com","password":"wrong"}""")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("email", "alice@example.com")
+                .param("password", "wrong")
         )
             .andExpect(status().isUnauthorized)
     }
@@ -108,6 +116,8 @@ class AuthControllerMvcTest {
             .andExpect(status().isOk)
             .andExpect(cookie().exists("access_token"))
             .andExpect(cookie().exists(AuthControllerImpl.REFRESH_TOKEN_COOKIE))
+            .andExpect(jsonPath("$.body.accessToken").value("new-access"))
+            .andExpect(jsonPath("$.body.refreshToken").value("new-refresh"))
     }
 
     @Test

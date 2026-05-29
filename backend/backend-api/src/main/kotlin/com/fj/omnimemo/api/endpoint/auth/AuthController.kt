@@ -6,7 +6,7 @@
 package com.fj.omnimemo.api.endpoint.auth
 
 import com.fj.omnimemo.api.endpoint.ApiPathsV1
-import com.fj.omnimemo.api.endpoint.auth.dto.request.LoginRequest
+import com.fj.omnimemo.api.endpoint.auth.dto.response.AuthTokenResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -14,13 +14,14 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 
 /**
  * REST API contract for authentication: login, logout, and token refresh.
  *
- * On success, implementations must set httpOnly access and refresh token cookies.
+ * On login and refresh, implementations must set httpOnly access and refresh token cookies
+ * and return the tokens in the response body for native clients.
  * On logout, both cookies must be cleared.
  * Implementations live in the `impl` sub-package.
  *
@@ -35,12 +36,16 @@ interface AuthController {
     @Operation(
         summary = "Login",
         responses = [
-            ApiResponse(responseCode = "200", description = "Login successful; cookies set"),
+            ApiResponse(responseCode = "200", description = "Login successful; tokens in response body and cookies"),
             ApiResponse(responseCode = "401", description = "Invalid credentials"),
         ]
     )
-    @PostMapping("${ApiPathsV1.AUTH}/login", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun login(@RequestBody request: LoginRequest, response: HttpServletResponse)
+    @PostMapping("${ApiPathsV1.AUTH}/login", consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
+    fun login(
+        @RequestParam email: String,
+        @RequestParam password: String,
+        response: HttpServletResponse,
+    ): AuthTokenResponse
 
     @Operation(
         summary = "Logout",
@@ -54,10 +59,10 @@ interface AuthController {
     @Operation(
         summary = "Refresh access token",
         responses = [
-            ApiResponse(responseCode = "200", description = "Tokens rotated; new cookies set"),
+            ApiResponse(responseCode = "200", description = "Tokens rotated; new tokens in response body and cookies"),
             ApiResponse(responseCode = "401", description = "Missing or invalid refresh token"),
         ]
     )
     @PostMapping("${ApiPathsV1.AUTH}/refresh")
-    fun refresh(request: HttpServletRequest, response: HttpServletResponse)
+    fun refresh(request: HttpServletRequest, response: HttpServletResponse): AuthTokenResponse
 }

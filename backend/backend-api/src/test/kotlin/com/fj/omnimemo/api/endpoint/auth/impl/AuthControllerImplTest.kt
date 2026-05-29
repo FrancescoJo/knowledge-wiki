@@ -5,7 +5,6 @@
  */
 package com.fj.omnimemo.api.endpoint.auth.impl
 
-import com.fj.omnimemo.api.endpoint.auth.dto.request.LoginRequest
 import com.fj.omnimemo.api.security.JwtAuthenticationFilter
 import com.fj.omnimemo.core.user.exception.PasswordMismatchException
 import com.fj.omnimemo.core.user.exception.RefreshTokenNotFoundException
@@ -59,7 +58,7 @@ class AuthControllerImplTest {
         fun `should set access and refresh token cookies on valid credentials`() {
             val response = MockHttpServletResponse()
 
-            controller.login(LoginRequest("alice@example.com", "secret"), response)
+            val result = controller.login("alice@example.com", "secret", response)
 
             val accessCookie = response.getCookie(JwtAuthenticationFilter.ACCESS_TOKEN_COOKIE)
             val refreshCookie = response.getCookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE)
@@ -70,29 +69,22 @@ class AuthControllerImplTest {
                 refreshCookie?.isHttpOnly shouldBe true
                 accessCookie?.maxAge shouldBe 259200
                 refreshCookie?.maxAge shouldBe 1209600
+                result.accessToken.isNotBlank() shouldBe true
+                result.refreshToken.isNotBlank() shouldBe true
             }
-        }
-
-        @Test
-        fun `should set HX-Redirect header to root on valid credentials`() {
-            val response = MockHttpServletResponse()
-
-            controller.login(LoginRequest("alice@example.com", "secret"), response)
-
-            response.getHeader("HX-Redirect") shouldBe "/"
         }
 
         @Test
         fun `should propagate PasswordMismatchException for invalid password`() {
             shouldThrow<PasswordMismatchException> {
-                controller.login(LoginRequest("alice@example.com", "wrong"), MockHttpServletResponse())
+                controller.login("alice@example.com", "wrong", MockHttpServletResponse())
             }
         }
 
         @Test
         fun `should propagate PasswordMismatchException for unknown email`() {
             shouldThrow<PasswordMismatchException> {
-                controller.login(LoginRequest("nobody@example.com", "secret"), MockHttpServletResponse())
+                controller.login("nobody@example.com", "secret", MockHttpServletResponse())
             }
         }
     }
@@ -165,11 +157,13 @@ class AuthControllerImplTest {
             }
             val response = MockHttpServletResponse()
 
-            controller.refresh(request, response)
+            val result = controller.refresh(request, response)
 
             assertSoftly {
                 response.getCookie(JwtAuthenticationFilter.ACCESS_TOKEN_COOKIE) shouldNotBe null
                 response.getCookie(AuthControllerImpl.REFRESH_TOKEN_COOKIE) shouldNotBe null
+                result.accessToken.isNotBlank() shouldBe true
+                result.refreshToken.isNotBlank() shouldBe true
             }
         }
 

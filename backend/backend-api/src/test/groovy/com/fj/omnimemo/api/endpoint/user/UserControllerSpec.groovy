@@ -74,7 +74,7 @@ class UserControllerSpec extends Specification {
     String testUserId
 
     def setup() {
-        authApiClient = new AuthApiClient(restTemplate, objectMapper)
+        authApiClient = new AuthApiClient(restTemplate)
         userApiClient = new UserApiClient(restTemplate, objectMapper)
         apiFixture    = new ApiFixture(createUserUseCase, jdbcTemplate)
 

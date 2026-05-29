@@ -6,7 +6,7 @@
 package com.fj.omnimemo.api.endpoint.auth.impl
 
 import com.fj.omnimemo.api.endpoint.auth.AuthController
-import com.fj.omnimemo.api.endpoint.auth.dto.request.LoginRequest
+import com.fj.omnimemo.api.endpoint.auth.dto.response.AuthTokenResponse
 import com.fj.omnimemo.api.security.JwtAuthenticationFilter
 import com.fj.omnimemo.core.user.usecase.LoginUseCase
 import jakarta.servlet.http.Cookie
@@ -29,11 +29,11 @@ internal class AuthControllerImpl(
     @param:Value("\${app.security.refresh-token-ttl-seconds}") private val refreshTtlSeconds: Int,
 ) : AuthController {
 
-    override fun login(request: LoginRequest, response: HttpServletResponse) {
-        val result = loginUseCase.login(request.email, request.password)
+    override fun login(email: String, password: String, response: HttpServletResponse): AuthTokenResponse {
+        val result = loginUseCase.login(email, password)
         response.addCookie(accessTokenCookie(result.accessToken))
         response.addCookie(refreshTokenCookie(result.refreshToken))
-        response.setHeader("HX-Redirect", "/")
+        return AuthTokenResponse(result.accessToken, result.refreshToken)
     }
 
     override fun logout(request: HttpServletRequest, response: HttpServletResponse) {
@@ -48,7 +48,7 @@ internal class AuthControllerImpl(
         response.setHeader("HX-Redirect", "/")
     }
 
-    override fun refresh(request: HttpServletRequest, response: HttpServletResponse) {
+    override fun refresh(request: HttpServletRequest, response: HttpServletResponse): AuthTokenResponse {
         val refreshToken = request.cookies
             ?.find { it.name == REFRESH_TOKEN_COOKIE }
             ?.value
@@ -56,6 +56,7 @@ internal class AuthControllerImpl(
         val result = loginUseCase.refresh(refreshToken)
         response.addCookie(accessTokenCookie(result.accessToken))
         response.addCookie(refreshTokenCookie(result.refreshToken))
+        return AuthTokenResponse(result.accessToken, result.refreshToken)
     }
 
     private fun accessTokenCookie(value: String) = Cookie(JwtAuthenticationFilter.ACCESS_TOKEN_COOKIE, value).apply {
