@@ -21,7 +21,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 class UserTableFixture(private val jdbc: JdbcTemplate) {
 
     fun deleteAll() {
-        jdbc.update("DELETE FROM ${UserRepositoryImpl.TABLE_NAME}")
+        jdbc.update("TRUNCATE ${UserRepositoryImpl.TABLE_NAME} CASCADE")
     }
 
     fun findEmailEncryptedBytes(id: UserId): ByteArray =

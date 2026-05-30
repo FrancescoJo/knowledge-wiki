@@ -17,6 +17,7 @@ dependencies {
     implementation("org.springframework:spring-jdbc")
     implementation("org.springframework.security:spring-security-crypto")
     implementation("com.nimbusds:nimbus-jose-jwt:9.37.3")
+    implementation("io.github.java-diff-utils:java-diff-utils:4.15")
     runtimeOnly("org.postgresql:postgresql")
 
     testFixturesApi("org.testcontainers:testcontainers")
