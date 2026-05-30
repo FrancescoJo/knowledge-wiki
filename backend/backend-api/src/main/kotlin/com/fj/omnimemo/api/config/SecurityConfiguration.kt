@@ -77,7 +77,8 @@ class SecurityConfiguration(private val jwtTokenService: JwtTokenService) {
                 .requestMatchers("/error").permitAll()
                 .requestMatchers(
                     HttpMethod.GET,
-                    "/", "/health", *WEB_STATIC_PATHS.map { "$it/**" }.toTypedArray()
+                    "/", "/health", "/contents", "/notes", "/notes/**",
+                    *WEB_STATIC_PATHS.map { "$it/**" }.toTypedArray()
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/health").permitAll()
                 .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/v3/api-docs/**").permitAll()

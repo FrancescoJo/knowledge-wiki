@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/base :: layout(~{::main})}"
+      xmlns:th="http://www.thymeleaf.org">
+<main>
+  <section class="contents-list">
+    <h1 th:text="#{contents.title}">Contents</h1>
+    <ul class="contents-items">
+      <li class="contents-item">
+        <a href="/notes" th:text="#{nav.notes}">Notes</a>
+        <span class="contents-description" th:text="#{contents.notes.description}">Wiki notes and knowledge base</span>
+      </li>
+    </ul>
+  </section>
+</main>
+</html>

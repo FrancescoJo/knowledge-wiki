@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/base :: layout(~{::main})}"
+      xmlns:th="http://www.thymeleaf.org">
+<main class="notes-layout">
+  <aside class="notes-sidebar">
+    <div th:insert="~{fragments/notes/directory-nav :: directoryNav(${directory}, ${language})}"></div>
+  </aside>
+  <section class="notes-content">
+    <article class="note-article">
+      <input type="hidden" id="note-id" th:value="${note.id}">
+      <input type="hidden" id="note-version" th:value="${note.currentVersion}">
+
+      <header class="note-header">
+        <h1 class="note-title" th:text="${note.title}">Note Title</h1>
+        <div class="note-meta">
+          <time th:datetime="${note.updatedAt}"
+                th:text="${#strings.substring(note.updatedAt.toString(), 0, 10)}">2026-01-01</time>
+        </div>
+        <div class="note-actions" th:if="${canEdit}">
+          <button class="note-edit-btn" th:text="#{notes.edit}" onclick="enterEditMode()">Edit</button>
+        </div>
+      </header>
+
+      <div id="note-conflict-warning" class="note-conflict-warning" style="display:none;">
+        <span th:text="#{notes.conflict.warning}">Conflict warning.</span>
+      </div>
+
+      <div id="note-read-mode">
+        <div id="note-body" class="note-body"></div>
+      </div>
+
+      <div id="note-edit-mode" style="display:none;">
+        <div id="note-draft-notice" class="note-draft-notice" style="display:none;" th:text="#{notes.draft.restored}">Draft restored.</div>
+        <textarea id="note-editor-content" class="note-editor-textarea" th:text="${rawContent}"></textarea>
+        <div class="note-editor-actions">
+          <button class="note-save-btn" th:text="#{notes.save}" onclick="saveNote()">Save</button>
+          <button class="note-cancel-btn" th:text="#{notes.cancel}" onclick="exitEditMode()">Cancel</button>
+        </div>
+      </div>
+    </article>
+
+    <script>
+      function enterEditMode() {
+        document.getElementById('note-read-mode').style.display = 'none';
+        document.getElementById('note-edit-mode').style.display = 'block';
+        var noteId = document.getElementById('note-id').value;
+        var draft = localStorage.getItem('draft_' + noteId);
+        if (draft) {
+          document.getElementById('note-editor-content').value = draft;
+          document.getElementById('note-draft-notice').style.display = 'block';
+        }
+      }
+
+      function exitEditMode() {
+        document.getElementById('note-edit-mode').style.display = 'none';
+        document.getElementById('note-read-mode').style.display = 'block';
+      }
+
+      async function saveNote() {
+        var noteId = document.getElementById('note-id').value;
+        var expectedVersion = parseInt(document.getElementById('note-version').value);
+        var content = document.getElementById('note-editor-content').value;
+        var csrfMatch = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+        var csrfToken = csrfMatch ? decodeURIComponent(csrfMatch[1]) : '';
+
+        var response = await fetch('/api/v1/notes/' + noteId, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-XSRF-TOKEN': csrfToken
+          },
+          body: JSON.stringify({
+            expectedVersion: expectedVersion,
+            content: content,
+            title: null,
+            accessLevel: null,
+            status: null,
+            summary: null
+          })
+        });
+
+        if (response.ok) {
+          localStorage.removeItem('draft_' + noteId);
+          window.location.reload();
+        } else if (response.status === 409) {
+          localStorage.setItem('draft_' + noteId, content);
+          exitEditMode();
+          document.getElementById('note-conflict-warning').style.display = 'block';
+        }
+      }
+    </script>
+  </section>
+</main>
+</html>

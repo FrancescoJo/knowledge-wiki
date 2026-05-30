@@ -1,6 +1,13 @@
 <div class="breadcrumb-bar" th:fragment="breadcrumb" xmlns:th="http://www.thymeleaf.org">
   <nav aria-label="Breadcrumb" class="breadcrumb">
-    <span th:text="#{breadcrumb.home}">Home</span>
+    <th:block th:if="${breadcrumbs != null}">
+      <th:block th:each="item, stat : ${breadcrumbs}">
+        <span th:if="${!stat.first}" class="breadcrumb-sep" aria-hidden="true"> › </span>
+        <a th:if="${item.href != null}" th:href="${item.href}" th:text="${item.label}">Link</a>
+        <span th:if="${item.href == null}" th:text="${item.label}">Label</span>
+      </th:block>
+    </th:block>
+    <span th:if="${breadcrumbs == null}" th:text="#{breadcrumb.home}">Home</span>
   </nav>
   <div class="search-box">
     <input name="q" th:attr="aria-label=#{search.submit}" th:placeholder="#{search.placeholder}" type="search">

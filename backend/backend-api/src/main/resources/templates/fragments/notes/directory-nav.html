@@ -1,0 +1,16 @@
+<nav class="directory-nav" th:fragment="directoryNav(directory, language)" xmlns:th="http://www.thymeleaf.org">
+  <div class="directory-language" th:text="${language}">en</div>
+  <p class="directory-empty" th:if="${directory.isEmpty()}" th:text="#{notes.directory.empty}">No notes available.</p>
+  <ul class="directory-groups" th:unless="${directory.isEmpty()}">
+    <li class="directory-group" th:each="entry : ${directory}">
+      <span class="directory-index-label" th:text="${entry.key}">A</span>
+      <ul class="directory-note-list">
+        <li th:each="note : ${entry.value}">
+          <a class="directory-note-link"
+             th:href="'/notes/' + ${note.title}"
+             th:text="${note.title}">Note title</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>

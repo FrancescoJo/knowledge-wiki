@@ -42,17 +42,11 @@ class GlobalModelAdvice(
                     SimpleMenuItem(
                         label = messageSource.getMessage("nav.notes", null, locale),
                         href = "/notes",
-                        enabled = resolveIsAuthenticated(),
                     )
                 )
             )
         )
     )
-
-    private fun resolveIsAuthenticated(): Boolean {
-        val auth = SecurityContextHolder.getContext().authentication ?: return false
-        return auth.isAuthenticated && auth.principal != "anonymousUser"
-    }
 
     @ModelAttribute("buildPhase")
     fun buildPhase(): String = buildPhase

@@ -5,6 +5,7 @@
  */
 
 export {TextEdit} from './TextEdit'
+export {renderMarkdown} from './markdown'
 export {NodeType, MarkType} from './types'
 export type {
   TextEditContent,

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/base :: layout(~{::main})}"
+      xmlns:th="http://www.thymeleaf.org">
+<main class="notes-layout">
+  <aside class="notes-sidebar">
+    <div th:insert="~{fragments/notes/directory-nav :: directoryNav(${directory}, ${language})}"></div>
+  </aside>
+  <section class="notes-content">
+    <div th:insert="~{fragments/notes/note-content :: noteContent}"></div>
+  </section>
+</main>
+</html>
