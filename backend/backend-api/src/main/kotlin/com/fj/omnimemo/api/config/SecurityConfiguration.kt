@@ -81,6 +81,7 @@ class SecurityConfiguration(private val jwtTokenService: JwtTokenService) {
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/health").permitAll()
                 .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers(HttpMethod.GET, ApiPathsV1.NOTES, "${ApiPathsV1.NOTES}/**").permitAll()
                 .requestMatchers("${ApiPathsV1.AUTH}/**").permitAll()
                 .requestMatchers(HttpMethod.POST, ApiPathsV1.BOOTSTRAP_USERS).access(localhostOnly())
                 .anyRequest().authenticated()

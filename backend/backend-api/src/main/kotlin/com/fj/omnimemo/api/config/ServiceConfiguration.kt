@@ -6,6 +6,10 @@
 package com.fj.omnimemo.api.config
 
 import com.fj.omnimemo.api.user.LruUserProfileCache
+import com.fj.omnimemo.core.note.repository.NoteAuditRepository
+import com.fj.omnimemo.core.note.repository.NoteRepository
+import com.fj.omnimemo.core.note.repository.NoteVersionRepository
+import com.fj.omnimemo.core.note.usecase.*
 import com.fj.omnimemo.core.security.TokenIssuer
 import com.fj.omnimemo.core.user.UserProfileCache
 import com.fj.omnimemo.core.user.repository.RefreshTokenRepository
@@ -54,6 +58,34 @@ class ServiceConfiguration {
     @Bean
     fun deleteUserUseCase(repository: UserRepository): DeleteUserUseCase =
         DeleteUserUseCase(repository)
+
+    @Bean
+    fun findNoteUseCase(noteRepository: NoteRepository, noteVersionRepository: NoteVersionRepository): FindNoteUseCase =
+        FindNoteUseCase(noteRepository, noteVersionRepository)
+
+    @Bean
+    fun listNotesUseCase(noteRepository: NoteRepository): ListNotesUseCase =
+        ListNotesUseCase(noteRepository)
+
+    @Bean
+    fun createNoteUseCase(
+        noteRepository: NoteRepository,
+        noteVersionRepository: NoteVersionRepository,
+        noteAuditRepository: NoteAuditRepository,
+    ): CreateNoteUseCase = CreateNoteUseCase(noteRepository, noteVersionRepository, noteAuditRepository)
+
+    @Bean
+    fun updateNoteUseCase(
+        noteRepository: NoteRepository,
+        noteVersionRepository: NoteVersionRepository,
+        noteAuditRepository: NoteAuditRepository,
+    ): UpdateNoteUseCase = UpdateNoteUseCase(noteRepository, noteVersionRepository, noteAuditRepository)
+
+    @Bean
+    fun softDeleteNoteUseCase(
+        noteRepository: NoteRepository,
+        noteAuditRepository: NoteAuditRepository,
+    ): SoftDeleteNoteUseCase = SoftDeleteNoteUseCase(noteRepository, noteAuditRepository)
 
     @Bean
     fun loginUseCase(

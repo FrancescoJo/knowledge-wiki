@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NoteListItemResponse",
+  "description": "Lightweight note representation returned in directory listings. Content is excluded.",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "titleIndex",
+    "accessLevel",
+    "status",
+    "authorId",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier of the note.",
+      "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    },
+    "title": {
+      "type": "string",
+      "description": "Unique title of the note.",
+      "example": "Getting Started with Kotlin"
+    },
+    "titleIndex": {
+      "type": "string",
+      "description": "Index character derived from the title (e.g. 'G' for English, 'ㄱ' for Korean).",
+      "example": "G"
+    },
+    "accessLevel": {
+      "type": "string",
+      "enum": ["PUBLIC", "RESTRICTED", "PRIVATE"],
+      "description": "Who can read this note.",
+      "example": "PUBLIC"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["DRAFT", "PUBLISHED"],
+      "description": "Publication status.",
+      "example": "PUBLISHED"
+    },
+    "authorId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "User ID of the note author.",
+      "example": "f0e1d2c3-b4a5-9687-7869-5a4b3c2d1e0f"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of note creation.",
+      "example": "2026-05-30T00:00:00Z"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of the most recent update.",
+      "example": "2026-05-30T00:00:00Z"
+    }
+  }
+}

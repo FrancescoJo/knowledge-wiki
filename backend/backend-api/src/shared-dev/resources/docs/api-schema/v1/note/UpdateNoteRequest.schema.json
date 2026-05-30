@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UpdateNoteRequest",
+  "description": "Payload to update an existing wiki note. Omitted optional fields leave the current value unchanged.",
+  "type": "object",
+  "required": [
+    "expectedVersion",
+    "content"
+  ],
+  "properties": {
+    "expectedVersion": {
+      "type": "integer",
+      "description": "The currentVersion the client last observed. Returns HTTP 409 if the note has since been updated.",
+      "example": 1
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "New title for the note. Omit to leave unchanged.",
+      "example": "Getting Started with Kotlin"
+    },
+    "content": {
+      "type": "string",
+      "description": "Full Markdown content of the note.",
+      "example": "# Getting Started\n\nWelcome to the wiki."
+    },
+    "accessLevel": {
+      "type": "string",
+      "enum": ["PUBLIC", "RESTRICTED", "PRIVATE"],
+      "description": "Who can read this note. Omit to leave unchanged.",
+      "example": "PUBLIC"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["DRAFT", "PUBLISHED"],
+      "description": "Publication status. Omit to leave unchanged.",
+      "example": "PUBLISHED"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Optional short description of the change for audit purposes.",
+      "example": "Fixed typos"
+    }
+  }
+}

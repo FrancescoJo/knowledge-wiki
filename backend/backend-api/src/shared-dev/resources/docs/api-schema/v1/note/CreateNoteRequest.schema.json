@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CreateNoteRequest",
+  "description": "Payload to create a new wiki note.",
+  "type": "object",
+  "required": [
+    "language",
+    "title",
+    "content",
+    "accessLevel",
+    "status"
+  ],
+  "properties": {
+    "language": {
+      "type": "string",
+      "enum": ["en", "ko"],
+      "description": "Language of the note. Determines title-index extraction strategy.",
+      "example": "en"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Unique title of the note. Used as the URL path segment.",
+      "example": "Getting Started with Kotlin"
+    },
+    "content": {
+      "type": "string",
+      "description": "Full Markdown content of the note.",
+      "example": "# Getting Started\n\nWelcome to the wiki."
+    },
+    "accessLevel": {
+      "type": "string",
+      "enum": ["PUBLIC", "RESTRICTED", "PRIVATE"],
+      "description": "Who can read this note. PUBLIC: anyone; RESTRICTED: authenticated users; PRIVATE: author only.",
+      "example": "PUBLIC"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["DRAFT", "PUBLISHED"],
+      "description": "Publication status. DRAFT notes are visible only to the author.",
+      "example": "PUBLISHED"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Optional short description of the change for audit purposes.",
+      "example": "Initial draft"
+    }
+  }
+}

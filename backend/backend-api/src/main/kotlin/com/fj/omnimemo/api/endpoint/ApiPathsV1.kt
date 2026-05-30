@@ -21,6 +21,7 @@ import com.fj.omnimemo.api.endpoint.ApiPathsV1.BASE
 object ApiPathsV1 {
     const val BASE = "/api/v1"
     const val USERS = "$BASE/users"
+    const val NOTES = "$BASE/notes"
     const val AUTH = "$BASE/auth"
     const val HEALTH = "$BASE/health"
     const val BOOTSTRAP = "$BASE/bootstrap"
