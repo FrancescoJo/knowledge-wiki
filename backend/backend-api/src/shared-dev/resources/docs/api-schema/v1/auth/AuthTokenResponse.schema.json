@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AuthTokenResponse",
+  "description": "JWT access and refresh tokens returned on successful login or token refresh. Tokens are also set as httpOnly cookies for browser clients.",
+  "type": "object",
+  "required": ["accessToken", "refreshToken"],
+  "properties": {
+    "accessToken": {
+      "type": "string",
+      "description": "Short-lived JWT used to authenticate API requests.",
+      "example": "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIn0.signature"
+    },
+    "refreshToken": {
+      "type": "string",
+      "description": "Long-lived opaque token used to obtain a new access token.",
+      "example": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4"
+    }
+  }
+}

@@ -8,6 +8,9 @@ package com.fj.omnimemo.api.endpoint.auth
 import com.fj.omnimemo.api.endpoint.ApiPathsV1
 import com.fj.omnimemo.api.endpoint.auth.dto.response.AuthTokenResponse
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.parameters.RequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
@@ -35,10 +38,22 @@ interface AuthController {
 
     @Operation(
         summary = "Login",
+        requestBody = RequestBody(
+            content = [Content(
+                mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+                schema = Schema(ref = "#/components/schemas/v1.auth.LoginRequest"),
+            )],
+        ),
         responses = [
-            ApiResponse(responseCode = "200", description = "Login successful; tokens in response body and cookies"),
-            ApiResponse(responseCode = "401", description = "Invalid credentials"),
-        ]
+            ApiResponse(
+                responseCode = "200", description = "Login successful; tokens in response body and cookies",
+                content = [Content(schema = Schema(ref = "#/components/schemas/v1.auth.AuthTokenResponse"))],
+            ),
+            ApiResponse(
+                responseCode = "401", description = "Invalid credentials",
+                content = [Content(schema = Schema(ref = "#/components/schemas/common.ErrorResponseEnvelope"))],
+            ),
+        ],
     )
     @PostMapping("${ApiPathsV1.AUTH}/login", consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
     fun login(
@@ -51,7 +66,7 @@ interface AuthController {
         summary = "Logout",
         responses = [
             ApiResponse(responseCode = "200", description = "Logout successful; cookies cleared"),
-        ]
+        ],
     )
     @PostMapping("${ApiPathsV1.AUTH}/logout")
     fun logout(request: HttpServletRequest, response: HttpServletResponse)
@@ -59,9 +74,15 @@ interface AuthController {
     @Operation(
         summary = "Refresh access token",
         responses = [
-            ApiResponse(responseCode = "200", description = "Tokens rotated; new tokens in response body and cookies"),
-            ApiResponse(responseCode = "401", description = "Missing or invalid refresh token"),
-        ]
+            ApiResponse(
+                responseCode = "200", description = "Tokens rotated; new tokens in response body and cookies",
+                content = [Content(schema = Schema(ref = "#/components/schemas/v1.auth.AuthTokenResponse"))],
+            ),
+            ApiResponse(
+                responseCode = "401", description = "Missing or invalid refresh token",
+                content = [Content(schema = Schema(ref = "#/components/schemas/common.ErrorResponseEnvelope"))],
+            ),
+        ],
     )
     @PostMapping("${ApiPathsV1.AUTH}/refresh")
     fun refresh(request: HttpServletRequest, response: HttpServletResponse): AuthTokenResponse

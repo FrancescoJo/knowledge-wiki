@@ -32,6 +32,9 @@ logging:
     root: INFO
     com.fj.omnimemo: DEBUG
 
+springdoc:
+  paths-to-match: /api/v1/**
+
 app:
   build-phase: "@buildPhase@"
   security:

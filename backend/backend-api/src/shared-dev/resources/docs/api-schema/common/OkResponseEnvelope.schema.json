@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OkResponseEnvelope",
+  "description": "Wrapper applied to every successful API response.",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "Always `OK` for successful responses.",
+      "example": "OK"
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "Response time in UTC, formatted as ISO-8601.",
+      "example": "2026-01-01T00:00:00Z"
+    },
+    "body": {
+      "type": "object",
+      "description": "Response payload; shape varies per endpoint."
+    }
+  }
+}

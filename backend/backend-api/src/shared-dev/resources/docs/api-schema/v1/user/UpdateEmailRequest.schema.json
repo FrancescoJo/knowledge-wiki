@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UpdateEmailRequest",
+  "description": "Payload to change the email address of an existing user account.",
+  "type": "object",
+  "required": ["email"],
+  "properties": {
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "New email address. Must not already be in use.",
+      "example": "updated@example.com"
+    }
+  }
+}

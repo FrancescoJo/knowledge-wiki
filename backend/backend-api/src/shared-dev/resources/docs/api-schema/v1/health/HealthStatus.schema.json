@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HealthStatus",
+  "description": "Current health state of the application.",
+  "type": "object",
+  "required": ["status", "timestamp"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "description": "Operational state of the application.",
+      "example": "UP"
+    },
+    "timestamp": {
+      "type": "integer",
+      "format": "int64",
+      "description": "Unix epoch milliseconds at which the health check was performed.",
+      "example": 1748649600000
+    }
+  }
+}

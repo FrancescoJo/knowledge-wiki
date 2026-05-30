@@ -39,6 +39,7 @@ class ResponseEnvelopeAdvice : ResponseBodyAdvice<Any> {
         converterType: Class<out HttpMessageConverter<*>>,
     ): Boolean {
         val cls = returnType.containingClass
+        if (cls.packageName.startsWith("org.springdoc")) return false
         return cls.isAnnotationPresent(RestController::class.java) ||
             cls.isAnnotationPresent(RestControllerAdvice::class.java)
     }

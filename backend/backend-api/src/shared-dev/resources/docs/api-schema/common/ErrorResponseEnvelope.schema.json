@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ErrorResponseEnvelope",
+  "description": "Wrapper applied to every failed API response.",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "Always `ERR` for error responses.",
+      "example": "ERR"
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "Response time in UTC, formatted as ISO-8601.",
+      "example": "2026-01-01T00:00:00Z"
+    },
+    "body": {
+      "type": "object",
+      "description": "Error details.",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Hex error code that identifies the error type.",
+          "example": "0x0000000a"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable description of the error.",
+          "example": "User not found"
+        },
+        "details": {
+          "type": "object",
+          "description": "Optional structured context; null when no extra information is available.",
+          "nullable": true
+        }
+      }
+    }
+  }
+}

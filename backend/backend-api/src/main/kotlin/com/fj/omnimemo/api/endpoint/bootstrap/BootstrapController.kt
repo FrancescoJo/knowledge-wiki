@@ -9,12 +9,14 @@ import com.fj.omnimemo.api.endpoint.ApiPathsV1
 import com.fj.omnimemo.api.endpoint.bootstrap.dto.request.BootstrapUserRequest
 import com.fj.omnimemo.api.endpoint.user.dto.response.UserResponse
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.parameters.RequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 
@@ -34,13 +36,28 @@ interface BootstrapController {
 
     @Operation(
         summary = "Create the first user",
+        requestBody = RequestBody(
+            content = [Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = Schema(ref = "#/components/schemas/v1.bootstrap.BootstrapUserRequest"),
+            )],
+        ),
         responses = [
-            ApiResponse(responseCode = "201", description = "First user created"),
-            ApiResponse(responseCode = "403", description = "Request not from localhost"),
-            ApiResponse(responseCode = "409", description = "At least one user already exists"),
-        ]
+            ApiResponse(
+                responseCode = "201", description = "First user created",
+                content = [Content(schema = Schema(ref = "#/components/schemas/v1.user.UserResponse"))],
+            ),
+            ApiResponse(
+                responseCode = "403", description = "Request not from localhost",
+                content = [Content(schema = Schema(ref = "#/components/schemas/common.ErrorResponseEnvelope"))],
+            ),
+            ApiResponse(
+                responseCode = "409", description = "At least one user already exists",
+                content = [Content(schema = Schema(ref = "#/components/schemas/common.ErrorResponseEnvelope"))],
+            ),
+        ],
     )
     @PostMapping(ApiPathsV1.BOOTSTRAP_USERS, consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
-    fun bootstrapUser(@RequestBody request: BootstrapUserRequest): UserResponse
+    fun bootstrapUser(@org.springframework.web.bind.annotation.RequestBody request: BootstrapUserRequest): UserResponse
 }

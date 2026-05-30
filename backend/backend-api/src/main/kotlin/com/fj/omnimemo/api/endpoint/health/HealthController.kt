@@ -8,6 +8,8 @@ package com.fj.omnimemo.api.endpoint.health
 import com.fj.omnimemo.api.endpoint.ApiPathsV1
 import com.fj.omnimemo.core.status.model.HealthStatus
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
@@ -30,8 +32,11 @@ interface HealthController {
     @Operation(
         summary = "Health check",
         responses = [
-            ApiResponse(responseCode = "200", description = "Application is healthy"),
-        ]
+            ApiResponse(
+                responseCode = "200", description = "Application is healthy",
+                content = [Content(schema = Schema(ref = "#/components/schemas/v1.health.HealthStatus"))],
+            ),
+        ],
     )
     @GetMapping(ApiPathsV1.HEALTH)
     fun health(): HealthStatus

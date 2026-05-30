@@ -14,6 +14,15 @@ val docEnabled = buildPhase in setOf("local", "alpha")
 
 apply(from = "build-frontend.gradle.kts")
 
+if (docEnabled) {
+    sourceSets {
+        main {
+            kotlin { srcDir("src/shared-dev/kotlin") }
+            resources { srcDir("src/shared-dev/resources") }
+        }
+    }
+}
+
 val secretConfigFile = projectDir.resolve("application-secret.yml")
 
 tasks.register("checkSecretConfig") {

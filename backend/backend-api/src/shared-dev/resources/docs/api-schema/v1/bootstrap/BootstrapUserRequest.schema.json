@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BootstrapUserRequest",
+  "description": "Payload to create the first administrator account. Accepted only when the users table is empty and the request originates from localhost.",
+  "type": "object",
+  "required": ["email", "password"],
+  "properties": {
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Email address for the administrator account.",
+      "example": "admin@example.com"
+    },
+    "password": {
+      "type": "string",
+      "format": "password",
+      "description": "Password for the administrator account.",
+      "example": "adm1nS3cr3t!"
+    }
+  }
+}

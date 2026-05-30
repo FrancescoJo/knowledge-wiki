@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UserResponse",
+  "description": "API representation of a user account.",
+  "type": "object",
+  "required": ["id", "email", "createdAt", "updatedAt"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier (UUID) of the user.",
+      "example": "550e8400-e29b-41d4-a716-446655440000"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Email address of the user.",
+      "example": "user@example.com"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the account was created, formatted as ISO-8601.",
+      "example": "2026-01-01T00:00:00Z"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of the most recent account update, formatted as ISO-8601.",
+      "example": "2026-06-01T12:00:00Z"
+    }
+  }
+}
