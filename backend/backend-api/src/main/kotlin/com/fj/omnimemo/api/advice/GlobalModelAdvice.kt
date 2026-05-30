@@ -6,6 +6,7 @@
 package com.fj.omnimemo.api.advice
 
 import com.fj.omnimemo.core.menu.model.MenuBar
+import com.fj.omnimemo.core.menu.model.MenuItem
 import com.fj.omnimemo.core.menu.model.SimpleMenuItem
 import com.fj.omnimemo.core.user.UserProfileCache
 import com.fj.omnimemo.core.user.model.UserId
@@ -32,9 +33,26 @@ class GlobalModelAdvice(
     @ModelAttribute("menuBar")
     fun menuBar(locale: Locale): MenuBar = MenuBar(
         listOf(
-            SimpleMenuItem(label = messageSource.getMessage("nav.home", null, locale), href = "/", priority = 0)
+            SimpleMenuItem(label = messageSource.getMessage("nav.home", null, locale), href = "/", priority = 0),
+            MenuItem(
+                label = messageSource.getMessage("nav.contents", null, locale),
+                href = "/contents",
+                priority = 10,
+                children = listOf(
+                    SimpleMenuItem(
+                        label = messageSource.getMessage("nav.notes", null, locale),
+                        href = "/notes",
+                        enabled = resolveIsAuthenticated(),
+                    )
+                )
+            )
         )
     )
+
+    private fun resolveIsAuthenticated(): Boolean {
+        val auth = SecurityContextHolder.getContext().authentication ?: return false
+        return auth.isAuthenticated && auth.principal != "anonymousUser"
+    }
 
     @ModelAttribute("buildPhase")
     fun buildPhase(): String = buildPhase

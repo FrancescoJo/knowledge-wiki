@@ -103,6 +103,21 @@ body {
     background: #f5f5f5;
 }
 
+.nav-item > a.is-disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.dropdown li a.is-disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    color: #999;
+}
+
+.dropdown li a.is-disabled:hover {
+    background: transparent;
+}
+
 .dropdown-divider {
     border-top: 1px solid #e8e8e8;
     margin: 0.25rem 0;

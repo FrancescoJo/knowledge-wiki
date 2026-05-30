@@ -16,5 +16,6 @@ data class SimpleMenuItem(
     override val href: String,
     override val priority: Int = 0,
     override val requiredRoles: Set<String> = emptySet(),
+    override val visible: Boolean = true,
     override val enabled: Boolean = true,
 ) : LabelledMenu

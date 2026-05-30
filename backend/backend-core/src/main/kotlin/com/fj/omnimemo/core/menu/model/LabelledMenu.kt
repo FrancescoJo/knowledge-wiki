@@ -15,5 +15,6 @@ sealed interface LabelledMenu : Menu {
     val label: String
     val href: String
     val requiredRoles: Set<String>
+    val visible: Boolean
     val enabled: Boolean
 }

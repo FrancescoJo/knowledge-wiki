@@ -1,22 +1,28 @@
 <ul class="nav-items" th:fragment="menuBar" xmlns:th="http://www.thymeleaf.org">
-  <th:block th:each="item : ${menuBar.items}" th:if="${item.enabled}">
+  <th:block th:each="item : ${menuBar.items}">
+    <!-- MenuDivider: vertical separator -->
+    <li class="nav-divider" role="separator" th:if="${item.class.simpleName == 'MenuDivider'}"></li>
     <!-- MenuItem: expandable with children -->
-    <li class="nav-item has-dropdown" th:if="${item.class.simpleName == 'MenuItem'}">
-      <a th:href="${item.href}" th:text="${item.label}">Label</a>
+    <li class="nav-item has-dropdown" th:if="${item.class.simpleName == 'MenuItem' and item.visible}">
+      <a th:href="${item.href}" th:text="${item.label}"
+         th:classappend="${!item.enabled} ? ' is-disabled'"
+         th:attr="aria-disabled=${!item.enabled} ? 'true' : null">Label</a>
       <ul class="dropdown">
-        <th:block th:each="child : ${item.children}" th:if="${child.enabled}">
+        <th:block th:each="child : ${item.children}">
           <li class="dropdown-divider" role="separator" th:if="${child.class.simpleName == 'MenuDivider'}"></li>
-          <li th:unless="${child.class.simpleName == 'MenuDivider'}">
-            <a th:href="${child.href}" th:text="${child.label}">Child</a>
+          <li th:if="${child.class.simpleName != 'MenuDivider' and child.visible}">
+            <a th:href="${child.href}" th:text="${child.label}"
+               th:classappend="${!child.enabled} ? ' is-disabled'"
+               th:attr="aria-disabled=${!child.enabled} ? 'true' : null">Child</a>
           </li>
         </th:block>
       </ul>
     </li>
     <!-- SimpleMenuItem: leaf link -->
-    <li class="nav-item" th:if="${item.class.simpleName == 'SimpleMenuItem'}">
-      <a th:href="${item.href}" th:text="${item.label}">Label</a>
+    <li class="nav-item" th:if="${item.class.simpleName == 'SimpleMenuItem' and item.visible}">
+      <a th:href="${item.href}" th:text="${item.label}"
+         th:classappend="${!item.enabled} ? ' is-disabled'"
+         th:attr="aria-disabled=${!item.enabled} ? 'true' : null">Label</a>
     </li>
-    <!-- MenuDivider: vertical separator in the nav bar -->
-    <li class="nav-divider" role="separator" th:if="${item.class.simpleName == 'MenuDivider'}"></li>
   </th:block>
 </ul>
