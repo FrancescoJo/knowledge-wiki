@@ -5,3 +5,24 @@ databaseChangeLog:
   - include:
       file: db/changelog/v0.1/create-refresh-tokens-table.sql
       relativeToChangelogFile: false
+  - include:
+      file: db/changelog/v0.2/create-notes-table.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/v0.2/create-note-versions-table.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/v0.2/create-note-audits-table.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/v0.2/create-tags-table.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/v0.2/create-note-tags-table.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/v0.2/create-note-contributors-table.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/v0.2/create-note-title-history-table.sql
+      relativeToChangelogFile: false
