@@ -5,6 +5,14 @@
 `docs/00-coding_guide.md` is the authoritative coding standard for this project.
 **Read it before starting any implementation task. All code produced must comply with it.**
 
+For backend work, also read:
+- `docs/01-coding_guide_backend.md` — general Kotlin/Spring patterns
+- `docs/01-coding_guide_omnimemo_backend.md` — OmniMemo project-specific backend rules
+
+For frontend work, also read:
+- `docs/01-coding_guide_frontend.md` — general TypeScript patterns
+- `docs/01-coding_guide_omnimemo_frontend.md` — OmniMemo project-specific frontend rules
+
 Key rules from that guide that are easy to overlook:
 
 - Do not rush to code. State assumptions explicitly and surface ambiguities before writing anything.

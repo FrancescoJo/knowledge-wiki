@@ -1,7 +1,12 @@
 # Backend Coding Guide
 
-A supplement to `00-coding_guide.md` covering Kotlin backend–specific patterns.
+A supplement to `00-coding_guide.md` covering Kotlin/Spring backend–specific patterns.
 Read `00-coding_guide.md` first; the rules there take precedence where they overlap.
+
+
+## Kotlin Language Conventions
+
+- `companion object` blocks must appear at the **bottom** of a class body. This matches the [official Kotlin coding conventions](https://kotlinlang.org/docs/coding-conventions.html#class-layout).
 
 
 ## Model Design
@@ -244,94 +249,16 @@ Passing a `Mutator` to another thread or suspending across a coroutine boundary 
 Seeing `mutate()` in a controller or Thymeleaf helper is a sign that domain logic has leaked into the wrong layer.
 
 
-## ID Generation
+## Domain Exception Design
 
-Entity identities are assigned by the **domain layer** (inside the entity's `create`
-factory method), not by the persistence layer.
+Failures that occur inside domain logic must be communicated through the type system, not through special return values.
 
-- **Algorithm:** UUID v7 via `com.github.f4b6a3:uuid-creator`
-- UUID v7 is time-ordered and collision-resistant. It is purely algorithmic and
-  requires no network or database access, making it safe to generate in domain code.
-- The `create()` companion factory generates the ID. Infrastructure receives
-  entities with IDs already assigned and performs an unconditional `INSERT`.
-- `reconstitute()` restores an entity from a persisted record with its stored ID.
+- **Do not use `null` or sentinel values to represent error conditions.** Returning `null` as a substitute for "not found" or "operation failed" forces callers to handle failures through control flow rather than types, and makes the failure reason invisible at the call site.
+- **Define an explicit exception class for every distinct failure mode.** Each exception class is a first-class specification of the condition that caused it.
+- **Reserve `null` returns for legitimate absent-value semantics.** A query method that may yield no result (`findById`, `findByEmail`) may return `null` to mean "nothing was found and that is normal." Command and mutation operations — those that change state — must always throw on failure; returning `null` from them is never appropriate.
+- **Domain exceptions must not carry protocol concepts.** Domain logic has no knowledge of HTTP, gRPC, or any other transport. Responsibility for translating domain exceptions into protocol-level responses belongs to the outermost layer (e.g., a REST controller advice in the API module).
 
-**Rationale:**
-- Entities are complete and testable before any persistence interaction.
-- Domain events can carry the correct ID before the persistence commit.
-- Repository implementations are simplified: `isNew == true` → INSERT, always.
-
-This decision was made over the alternative of infrastructure-generated IDs.
-The primary trade-off is that UUID v7 must be generated correctly within the domain;
-however, since UUID v7 has negligible collision probability and needs no coordination,
-this risk is accepted.
-
-
-## Layer Structure
-
-### Module Responsibilities
-
-| Module | Responsibility |
-|---|---|
-| `backend-core` | Domain model, business logic, outbound port interfaces |
-| `backend-infrastructure` | Port implementations — DB access, encryption, JWT issuance |
-| `backend-api` | Spring Boot entry point, controllers, bean wiring |
-
-### Packaging Principle: Domain First
-
-Packages are organised **domain first, layer second**. The top-level segment after the module root identifies the business domain; the layer (`model`, `usecase`, `persistence`, …) is a sub-segment.
-
-```
-core.{domain}.model     — not core.model.{domain}
-core.{domain}.usecase   — not core.usecase.{domain}
-infrastructure.{domain}.persistence  — not infrastructure.persistence.{domain}
-```
-
-This makes the package structure "scream" what the system does — reading the top level shows the business domains, not the technical plumbing. Adding or removing a domain means touching one package subtree rather than multiple scattered packages.
-
-**Exception — cross-cutting technical concerns.** Domain-first applies where the implementation is semantically specific to a business domain. Technical concerns that are inherently cross-cutting — cryptographic primitives, security algorithms, logging, caching — are placed in their own top-level package without a domain segment, even when they currently happen to serve only one domain. The reason: the classes themselves contain no business-domain concepts — they implement algorithms or infrastructure primitives that are equally applicable to any domain.
-
-```
-infrastructure.{concern}/             — cross-cutting utilities (domain-agnostic)
-infrastructure.{domain}.persistence/  — persistence adapters (domain-specific)
-```
-
-Deciding which category a package falls into: ask whether the classes inside contain any business-domain concept. If removing all imports of `core.{domain}.*` would leave the class unchanged in meaning, it is cross-cutting.
-
-### Package Layout
-
-```
-backend-core
-  com.fj.omnimemo.core.{domain}.model/     ← domain model
-    {Entity}.kt                — entity interface + companion factory methods
-    {Entity}Id.kt              — typed identity (value object)
-    {Entity}Data.kt            — immutable implementation (internal)
-    {Entity}Mutator.kt         — mutable implementation (internal)
-    {Entity}Extensions.kt      — extension functions (e.g. mutate())
-    {Entity}Repository.kt      — outbound persistence port
-    {Port}.kt                  — other outbound ports (e.g. PasswordHasher)
-
-  com.fj.omnimemo.core.{domain}.usecase/   ← application layer
-    {Scenario}UseCase.kt       — one class per business scenario
-
-  com.fj.omnimemo.core.model/              ← cross-cutting base types (no domain)
-    Persistable.kt
-    DateTimeAuditable.kt
-
-backend-infrastructure
-  com.fj.omnimemo.infrastructure.{domain}.persistence/
-    {Entity}RepositoryImpl.kt  — implements the port defined in backend-core
-
-  com.fj.omnimemo.infrastructure.{concern}/  ← cross-cutting utilities; no domain segment
-    {Impl}.kt
-
-backend-api
-  com.fj.omnimemo.api.endpoint.{domain}/
-    {Resource}ApiController.kt
-    {Resource}ViewController.kt
-  com.fj.omnimemo.api.config/
-    {Category}Configuration.kt — Spring bean wiring
-```
+Project-specific exception hierarchy: see `01-coding_guide_omnimemo_backend.md`.
 
 
 ## Application Layer — Use Cases
@@ -404,3 +331,50 @@ The core domain model has no knowledge of serialisation formats (JSON, Protobuf,
 Serialisation is the responsibility of the infrastructure layer. Infrastructure adapters translate between domain model types and wire formats using dedicated DTO classes or custom serialisers.
 
 This boundary is enforced at the architecture level: `backend-core` must not depend on any serialisation library.
+
+
+## Controller Conventions
+
+### Controller Package Separation
+
+View controllers (serving HTML/templates) and REST API controllers must reside in separate, clearly named packages. Mixing them in a single package creates ambiguity as the surface area grows.
+
+| Package | Contents |
+|---|---|
+| `{root}.view` | `@Controller` classes that return views or `ModelAndView` |
+| `{root}.api.endpoint.{domain}` | `@RestController` interfaces and their implementations |
+
+### REST API Controller Design
+
+Every REST API controller must be defined as an interface and implemented in a separate `impl` sub-package. This separation enables clean OpenAPI documentation annotations on the interface, keeps the implementation free of documentation noise, and makes the contract explicit.
+
+```
+{root}.api.endpoint.{domain}/Controller.kt          — interface (annotations, contract)
+{root}.api.endpoint.{domain}/impl/ControllerImpl.kt — @RestController implementation
+```
+
+Rules for the interface:
+- Declare all `@RequestMapping`, `@Operation`, `@ApiResponse`, and `@Tag` annotations here.
+- Do not reference implementation details.
+
+Rules for the implementation:
+- Annotate the class with `@RestController` and mark it `internal`.
+- Override every method from the interface; add no extra public surface.
+- Keep all Spring-documentation annotations off the implementation class.
+
+### DTO Package Layout
+
+Request, response, and shared DTO types for a controller domain must be organised under a dedicated `dto` sub-package:
+
+| Package | Contents |
+|---|---|
+| `{endpoint}.dto` | Shared/common DTO types |
+| `{endpoint}.dto.request` | Request DTOs |
+| `{endpoint}.dto.response` | Response DTOs |
+
+
+## Testing Notes
+
+### Full-Context Boundary
+
+A test that starts the full Spring application context — for example via `@SpringBootTest(webEnvironment = RANDOM_PORT)` — is classified as **Large** even when every dependency (database, loopback server) is locally controlled. Full context startup exercises the entire wiring, security configuration, and migration stack; this fidelity belongs to the Large Test category. Apply the Q1/Q2 tree only to partial-context tests such as `@WebMvcTest` or `@DataJpaTest`.

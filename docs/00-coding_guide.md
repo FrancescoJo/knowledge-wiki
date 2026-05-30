@@ -98,16 +98,6 @@ The following are recommendations for code quality and consistency.
   ...
   ```
 
-### Domain Exception Design
-
-Failures that occur inside domain logic must be communicated through the type system, not through special return values.
-
-- **Do not use `null` or sentinel values to represent error conditions.** Returning `null` as a substitute for "not found" or "operation failed" forces callers to handle failures through control flow rather than types, and makes the failure reason invisible at the call site.
-- **Define an explicit exception class for every distinct failure mode.** Each exception class is a first-class specification of the condition that caused it.
-- **Reserve `null` returns for legitimate absent-value semantics.** A query method that may yield no result (`findById`, `findByEmail`) may return `null` to mean "nothing was found and that is normal." Command and mutation operations — those that change state — must always throw on failure; returning `null` from them is never appropriate.
-- **Domain exceptions must not carry protocol concepts.** Domain logic has no knowledge of HTTP, gRPC, or any other transport. Responsibility for translating domain exceptions into protocol-level responses belongs to the outermost layer (e.g., a REST controller advice in the API module).
-- **Follow the project exception hierarchy.** All domain exceptions extend `OmniMemoInternalException` (for invariant violations that the domain itself prohibits) or `OmniMemoExternalException` (for failures caused by external input or devices), both of which extend `OmniMemoException`. The sealed root enables exhaustive, uniform handling at the API boundary.
-
 
 ### Code Is a Liability
 
@@ -269,8 +259,6 @@ Test sizes are defined as Small, Medium, and Large.
       → Yes (isolated)      : Allowed
   ```
 
-- **Full-context boundary:** A test that starts the full Spring application context — for example via `@SpringBootTest(webEnvironment = RANDOM_PORT)` — is classified as **Large** even when every dependency (database, loopback server) is locally controlled. Full context startup exercises the entire wiring, security configuration, and migration stack; this fidelity belongs to the Large Test category. Apply the Q1/Q2 tree only to partial-context tests such as `@WebMvcTest` or `@DataJpaTest`.
-
 ##### Large Test
 
 - Commonly called an **End-to-End Test**, but tests like performance tests or chaos engineering that do not validate full scenarios still qualify as Large if they use real external dependencies.
@@ -287,137 +275,3 @@ Test sizes are defined as Small, Medium, and Large.
   * Minimum test scope: The higher the fidelity, the greater the cost and instability. Design Large Tests to target as narrow a System Under Test (SUT) as possible. Multiple small Large Tests are better than one giant Large Test.
   * Accepting non-determinism: Large Tests can produce different results under the same conditions due to external dependencies. Do not ignore intermittent failures (flaky tests) — identify the root cause and isolate it, or explicitly define the acceptable range.
   * Privacy compliance: When using or copying production data, be careful not to include personally identifiable or other sensitive data.
-
-
-### Package Structure
-
-Within a domain module, sub-packages are created only when there is content that belongs there — no package is required to exist in every domain.
-
-Each sub-package has a fixed responsibility:
-
-| Sub-package | Contents |
-|---|---|
-| `{domain}.model` | Domain interfaces and domain-language types (typed IDs, value objects). No concrete classes. |
-| `{domain}.model.snapshot` | `internal` concrete implementations of model interfaces (immutable data classes, mutable scratchpad classes). Never referenced from outside the module. |
-| `{domain}.repository` | Persistence port interfaces. One interface per aggregate root. |
-| `{domain}.usecase` | Application-layer use cases. |
-| `{domain}` (package level) | Extension functions and other utilities that operate on domain types but are not model definitions. |
-
-Concern-specific sub-packages follow the same naming convention as the concern itself. For example, `{domain}.security` holds security-related port interfaces for that domain. These packages are created only when the domain actually has that kind of dependency — not as a template applied to every domain.
-
-
-### Kotlin-specific Conventions
-
-- `companion object` blocks must appear at the **bottom** of a class body. This matches the [official Kotlin coding conventions](https://kotlinlang.org/docs/coding-conventions.html#class-layout).
-
-
-### Backend Layer Conventions
-
-#### Controller Package Separation
-
-View controllers (serving HTML/templates) and REST API controllers must reside in separate, clearly named packages. Mixing them in a single package creates ambiguity as the surface area grows.
-
-| Package | Contents |
-|---|---|
-| `{root}.view` | `@Controller` classes that return views or `ModelAndView` |
-| `{root}.api.endpoint.{domain}` | `@RestController` interfaces and their implementations |
-
-#### REST API Controller Design
-
-Every REST API controller must be defined as an interface and implemented in a separate `impl` sub-package. This separation enables clean OpenAPI documentation annotations on the interface, keeps the implementation free of documentation noise, and makes the contract explicit.
-
-```
-{root}.api.endpoint.{domain}/Controller.kt      — interface (annotations, contract)
-{root}.api.endpoint.{domain}/impl/ControllerImpl.kt — @RestController implementation
-```
-
-Rules for the interface:
-- Declare all `@RequestMapping`, `@Operation`, `@ApiResponse`, and `@Tag` annotations here.
-- Do not reference implementation details.
-
-Rules for the implementation:
-- Annotate the class with `@RestController` and mark it `internal`.
-- Override every method from the interface; add no extra public surface.
-- Keep all Spring-documentation annotations off the implementation class.
-
-#### API Versioning
-
-Expose all REST API endpoints under a version prefix in the URL path. The current version prefix is `/v1`. Example: `/api/v1/users`.
-
-When a new major version is introduced, add a new prefix (e.g., `/v2`) rather than modifying existing versioned paths.
-
-#### API Documentation
-
-Use **Springdoc-OpenAPI** as the API documentation tool. Annotations belong on the controller interface, not on the implementation. Annotate every endpoint with `@Operation` and `@ApiResponse`; annotate every controller interface with `@Tag`.
-
-#### DTO Package Layout
-
-Request, response, and shared DTO types for a controller domain must be organised under a dedicated `dto` sub-package:
-
-| Package | Contents |
-|---|---|
-| `{endpoint}.dto` | Shared/common DTO types |
-| `{endpoint}.dto.request` | Request DTOs |
-| `{endpoint}.dto.response` | Response DTOs |
-
-
-### Static Analysis
-
-Use **Detekt** for Kotlin static analysis. Configure it to run before the `compileKotlin` task so that violations are caught at build time.
-
-- Address every Detekt finding. Prefer fixing the root cause over suppressing.
-- When suppression is unavoidable, use `@Suppress("RuleId")` with a 1–2 line comment directly above it explaining the reason. A suppression without explanation is not acceptable.
-
-
-### Utility Conventions
-
-A utility is a stateless, context-free, pure function (or a group of closely related pure functions) that can be called from anywhere without external setup.
-
-- Place utilities in a dedicated `util` package within the core module (e.g., `{core}.util`).
-- Group related utilities into sub-packages by concern: `{core}.util.io`, `{core}.util.math`, etc. Utilities that do not fit a named concern live directly in `{core}.util`.
-- Before writing a new utility, check whether an equivalent already exists. Reuse before creating.
-- Before extending or modifying an existing utility, discuss the rationale. Utilities carry high dependency weight — a change affects every call site.
-- Every utility must have exhaustive Small Tests that serve as its living specification.
-
-**Utility & helper indexes** — consult these before writing any new helper code, and keep them up to date whenever a utility is added, changed, or removed:
-
-- Backend: [`docs/02-coding_guide_utilities_and_helpers_backend.md`](02-coding_guide_utilities_and_helpers_backend.md)
-- Frontend: [`docs/02-coding_guide_utilities_and_helpers_frontend.md`](02-coding_guide_utilities_and_helpers_frontend.md)
-
-
-### Infrastructure Layer Testing
-
-Any layer that integrates with infrastructure concerns — including repositories, persistence adapters, and REST API controllers wired into a real application context — must be covered by both Small Tests and Medium Tests.
-
-- **Small Tests** verify logic in isolation using test doubles.
-- **Medium Tests** verify the integration with the actual infrastructure component (a real database, a real HTTP stack via `@WebMvcTest`, etc.).
-
-For REST API modules, at least one Spock `@SpringBootTest` Large Test (smoke test) must be written per controller group. The smoke test must verify at least one happy-path scenario end-to-end with a fully loaded Spring context. Exhaustive case coverage — boundary conditions and error paths — belongs in Small and Medium Tests, not in the smoke test.
-
-#### Large Test Utility Conventions
-
-Large Test helper code lives in `{root}.api.endpoint.test` and is never included in production source sets.
-
-**API clients** — wrap all HTTP calls for a controller group in a single class. One client class per controller group:
-
-| Class | Location |
-|---|---|
-| `HealthApiClient` | `…/test/health/HealthApiClient.kt` |
-| `AuthApiClient` | `…/test/auth/AuthApiClient.kt` |
-| `UserApiClient` | `…/test/user/UserApiClient.kt` |
-
-Rules for API clients:
-- Accept HTTP client and serialiser dependencies as constructor parameters; do not instantiate them internally.
-- Reference URL paths through centralised path constants. Hardcoded URL strings are not permitted.
-- Serialise request bodies through a shared mechanism. Inline string literals for structured payloads are not permitted.
-- Manage protocol-level headers (authentication, CSRF, etc.) internally; callers must not construct headers manually.
-
-**Shared helpers** — stateless utilities used internally by API clients or directly by specs for assertions:
-
-- Helpers that manage protocol-level concerns (e.g. authentication headers, security tokens) must have restricted visibility so that only API clients use them. Specs must go through the API client, never construct protocol headers directly.
-- Helpers that inspect responses for use in spec assertions (e.g. cookie extraction, status parsing) may be `public`. When specs are written in a different language from the helpers, apply the interoperability annotation required by the language boundary (e.g. `@JvmStatic` for Groovy calling a Kotlin `object`).
-
-**Fixture** — encapsulates database reset and test data creation:
-
-- A fixture class combines infrastructure cleanup (e.g. table truncation) with use-case-level setup (e.g. creating a test user) so that each spec's `setup` block can delegate its entire preparation to a single call.
-- Specs must not contain direct database manipulation calls. All data preparation must go through a fixture.

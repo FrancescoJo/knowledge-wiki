@@ -175,51 +175,6 @@ export type { BlockObjectType } from './extensions'
 Do not export implementation details. Helper functions, internal constants, and overlay classes stay unexported.
 
 
-## TipTap / ProseMirror Patterns
-
-### Extension Pattern
-
-Extend built-in TipTap extensions using `.extend()`. Always call `this.parent?.()` to chain the parent's behaviour; omitting it silently discards the parent's plugins or attributes.
-
-```typescript
-export const CustomTable = Table.extend({
-  addAttributes() {
-    return {
-      ...this.parent?.(),       // preserve existing attributes
-      fixedColumnWidths: {
-        default: false,
-        parseHTML: el => el.getAttribute('data-fixed-column-widths') === 'true',
-        renderHTML: attrs => attrs.fixedColumnWidths
-          ? { 'data-fixed-column-widths': 'true' }
-          : {},
-      },
-    }
-  },
-})
-```
-
-### Plugin View Lifecycle
-
-ProseMirror plugin views must implement `update()` and `destroy()`. Floating UI elements (tooltips, overlays) attach to `document.body`, not to the editor container — this avoids clipping by `overflow: hidden` ancestors.
-
-```typescript
-class MyOverlayView {
-  readonly dom: HTMLElement
-
-  constructor(private readonly editorView: EditorView) {
-    this.dom = document.createElement('div')
-    document.body.appendChild(this.dom)   // attach to body, not editor
-  }
-
-  update(): void { /* react to editor state changes */ }
-
-  destroy(): void {
-    this.dom.remove()
-  }
-}
-```
-
-
 ## Test Patterns
 
 All frontend tests are **Small** (see `00-coding_guide.md` for the full definition): no network, no filesystem, no database. Run under jsdom via Vitest.
