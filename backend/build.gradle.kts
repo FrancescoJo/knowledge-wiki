@@ -11,6 +11,7 @@ plugins {
     kotlin("jvm") version "2.0.21" apply false
     kotlin("plugin.spring") version "2.0.21" apply false
     id("io.gitlab.arturbosch.detekt") version "1.23.8" apply false
+    id("org.jetbrains.kotlinx.kover") version "0.8.3"
 }
 
 allprojects {
@@ -30,6 +31,7 @@ subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "java")
     apply(plugin = "io.gitlab.arturbosch.detekt")
+    apply(plugin = "org.jetbrains.kotlinx.kover")
 
     configure<JavaPluginExtension> {
         toolchain {
@@ -81,6 +83,12 @@ subprojects {
             useJUnitPlatform { includeTags(tag) }
         }
     }
+}
+
+dependencies {
+    kover(project(":backend-core"))
+    kover(project(":backend-infrastructure"))
+    kover(project(":backend-api"))
 }
 
 tasks.register("test-backend-small") {
