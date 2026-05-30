@@ -12,6 +12,8 @@ import com.fj.omnimemo.core.note.usecase.FindNoteUseCase
 import com.fj.omnimemo.core.note.usecase.ListNotesUseCase
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.context.MessageSource
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -57,7 +59,10 @@ class NotesViewController(
 
     @GetMapping("/notes/**")
     fun note(request: HttpServletRequest, locale: Locale, model: Model): String {
-        val title = request.requestURI.removePrefix(request.contextPath).removePrefix("/notes/")
+        val title = URLDecoder.decode(
+            request.requestURI.removePrefix(request.contextPath).removePrefix("/notes/"),
+            StandardCharsets.UTF_8,
+        )
         if (title.isBlank()) return directory(locale, model)
 
         val language = resolveLanguage(locale)
