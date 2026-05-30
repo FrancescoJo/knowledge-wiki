@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.core.note.model.snapshot
 
+import com.fj.omnimemo.core.annotation.NamedArguments
 import com.fj.omnimemo.core.note.model.Note
 import com.fj.omnimemo.core.note.model.NoteAccessLevel
 import com.fj.omnimemo.core.note.model.NoteId
@@ -26,7 +27,7 @@ import java.time.Instant
  * @since 0.2.0
  * @version 0.2.0
  */
-internal class NoteMutator(
+internal class NoteMutator @NamedArguments constructor(
     override val id: NoteId,
     override val isNew: Boolean,
     override val language: NoteLanguage,

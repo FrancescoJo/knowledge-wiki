@@ -136,12 +136,54 @@ When a new major version is introduced, add a new prefix (e.g., `/v2`) rather th
 Use **Springdoc-OpenAPI** as the API documentation tool. Annotations belong on the controller interface, not on the implementation. Annotate every endpoint with `@Operation` and `@ApiResponse`; annotate every controller interface with `@Tag`.
 
 
+## Use Case Method Design
+
+Use-case methods must not accumulate more parameters than the `LongParameterList` threshold (functions: 6, constructors: 7). When a use case naturally requires more — typically because it drives a multi-field write operation — address it with one of the following:
+
+1. **Command object** — extract a data class that groups the parameters. Prefer this when the use case is invoked from more than one call site, or when the parameter set is likely to grow.
+2. **`@NamedArguments` annotation** — annotate the function with `@NamedArguments` to signal that every call site _must_ use named-argument syntax. The detekt `LongParameterList` rule is suppressed for annotated functions. Prefer this for internal domain methods (e.g. `reconstitute`, `create` factory methods) that would require significant refactoring but are always called with named arguments.
+
+Adding `@NamedArguments` does **not** enforce named-argument usage at the language level; that is a code-review and convention concern.
+
+**Rule:** Every call site of a function or constructor annotated with `@NamedArguments` **must** use named-argument syntax for all parameters. No positional arguments are permitted at such call sites, even when the parameter order appears obvious. This makes parameter intent visible at the call site and eliminates positional-swap bugs that the compiler would otherwise miss.
+
+
 ## Static Analysis
 
-Use **Detekt** for Kotlin static analysis. Configure it to run before the `compileKotlin` task so that violations are caught at build time.
+Use **Detekt** for Kotlin static analysis. The `test-backend-all` Gradle task runs `check` (not just `test`) for every subproject, so detekt is part of the standard test pipeline.
 
 - Address every Detekt finding. Prefer fixing the root cause over suppressing.
 - When suppression is unavoidable, use `@Suppress("RuleId")` with a 1–2 line comment directly above it explaining the reason. A suppression without explanation is not acceptable.
+
+
+## Testing
+
+### Kotlin Value Classes and Mockito
+
+Kotlin non-null `@JvmInline value class` types (e.g. `NoteId`, `UserId`) are inlined to their underlying primitive at non-null JVM call sites. Mockito matchers such as `anyArg()` return `null`, which triggers a `NullPointerException` in the unboxing call before the mock proxy is reached.
+
+**Rule:** In `@WebMvcTest` stub setup, use **concrete argument values** for every parameter that is a non-null value class or an enum. Do not use any Mockito matcher (`any()`, `anyArg()`, `eq()`) for these parameters. If any argument in a `given(…)` call uses a matcher, _all_ arguments must use matchers — mixing concrete values with matchers raises `InvalidUseOfMatchersException`.
+
+```kotlin
+// Good — all concrete values; no matchers
+given(findNoteUseCase.findById(noteId, authorId)).willReturn(result)
+
+// Bad — anyArg() returns null, causes NPE before mock intercepts
+given(findNoteUseCase.findById(anyArg(), anyArg())).willReturn(result)
+```
+
+### Test Fixtures
+
+Realistic random test data is generated with **DataFaker** (`net.datafaker:datafaker`). Top-level fixture functions live in `backend-core/src/testFixtures/` and are shared across all modules via the `testFixtures` configuration.
+
+Available fixtures:
+- `com.fj.omnimemo.core.note.randomNote(...)` — creates an unpersisted `Note` with a faker book title
+- `com.fj.omnimemo.core.note.randomNoteContent()` — returns a faker lorem sentence
+- `com.fj.omnimemo.core.user.randomUser(...)` — creates an unpersisted `User` with a faker email
+- `com.fj.omnimemo.core.user.randomEmail()` — returns a faker email address
+- `com.fj.omnimemo.core.user.randomUserId()` — returns a new `UserId`
+
+Use these in Small Tests and Medium Tests instead of hand-written magic strings. Fixture-monkey is **not** used in this project: domain model objects require companion factory methods not accessible via reflection without custom introspectors, making datafaker + existing factories the simpler choice.
 
 
 ## Utility Conventions

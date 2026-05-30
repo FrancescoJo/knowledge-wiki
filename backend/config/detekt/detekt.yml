@@ -15,6 +15,16 @@ complexity:
     threshold: 600
   LongMethod:
     threshold: 60
+  LongParameterList:
+    functionThreshold: 6
+    constructorThreshold: 7
+    ignoreDefaultParameters: false
+    ignoreDataClasses: true
+    # Functions annotated with @NamedArguments are always called with named-argument syntax.
+    # Named arguments make each parameter self-documenting at the call site and eliminate
+    # positional-swap bugs, so the readability concern behind LongParameterList is mitigated.
+    ignoreAnnotated:
+      - 'NamedArguments'
   TooManyFunctions:
     active: true
     thresholdInFiles: 20
@@ -41,6 +51,10 @@ naming:
     functionPattern: '[a-zA-Z][a-zA-Z0-9]*'
 
 style:
+  ThrowsCount:
+    # Use-case guard-clause validation naturally produces multiple throw statements,
+    # one per distinct business-rule violation. Allow up to 5.
+    max: 5
   ReturnCount:
     # Guard-clause early returns (e.g. `val x = y ?: return null`) are idiomatic
     # Kotlin and should not count toward the return-statement limit.

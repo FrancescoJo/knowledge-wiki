@@ -13,11 +13,8 @@ import com.fj.omnimemo.core.note.model.NoteAccessLevel
 import com.fj.omnimemo.core.note.model.NoteId
 import com.fj.omnimemo.core.note.model.NoteLanguage
 import com.fj.omnimemo.core.note.model.NoteStatus
-import com.fj.omnimemo.core.note.usecase.CreateNoteUseCase
 import com.fj.omnimemo.core.note.usecase.FindNoteUseCase
 import com.fj.omnimemo.core.note.usecase.ListNotesUseCase
-import com.fj.omnimemo.core.note.usecase.SoftDeleteNoteUseCase
-import com.fj.omnimemo.core.note.usecase.UpdateNoteUseCase
 import com.fj.omnimemo.core.test.annotation.MediumTest
 import com.fj.omnimemo.core.user.UserProfileCache
 import com.fj.omnimemo.core.user.model.UserId
@@ -40,16 +37,12 @@ import java.time.Instant
 import java.util.*
 
 /**
- * Medium Tests for [NoteControllerImpl]: verifies HTTP path routing, request/response
- * JSON serialisation, and status codes via the Spring MVC stack.
+ * Medium Tests for [NoteControllerImpl]: verifies HTTP routing, JSON serialisation,
+ * and status codes for read operations via the Spring MVC stack.
  *
+ * Write operations are covered in [NoteWriteControllerMvcTest].
  * Security filters are excluded; authentication logic is covered in
  * [com.fj.omnimemo.api.security.JwtAuthenticationFilterTest].
- *
- * Kotlin value classes (NoteId, UserId) are inlined to their underlying UUID type at the
- * JVM call site, so Mockito argument matchers that return null (e.g. anyArg()) cause NPE
- * before the proxy is reached. Stubs therefore use concrete values instead of matchers
- * for all value-class and enum parameters.
  *
  * @author Francesco Jo
  * @since 0.2.0
@@ -68,17 +61,6 @@ class NoteControllerMvcTest {
 
     @MockBean
     private lateinit var listNotesUseCase: ListNotesUseCase
-
-    @MockBean
-    private lateinit var createNoteUseCase: CreateNoteUseCase
-
-    @MockBean
-    private lateinit var updateNoteUseCase: UpdateNoteUseCase
-
-    // Injected into controller via Spring DI; not referenced in test methods directly.
-    @Suppress("UnusedPrivateProperty")
-    @MockBean
-    private lateinit var softDeleteNoteUseCase: SoftDeleteNoteUseCase
 
     // Required by GlobalModelAdvice; not referenced in test methods directly.
     @Suppress("UnusedPrivateProperty")
@@ -176,87 +158,6 @@ class NoteControllerMvcTest {
     @Test
     fun `GET notes by id returns 400 for malformed UUID`() {
         mockMvc.perform(get("${ApiPathsV1.NOTES}/not-a-uuid"))
-            .andExpect(status().isBadRequest)
-    }
-
-    @Test
-    fun `POST notes returns 201 with created note`() {
-        // MockMvc uses "127.0.0.1" as the default remote address.
-        given(
-            createNoteUseCase.create(
-                authorId, NoteLanguage.EN, "Getting Started", "# Hello",
-                NoteAccessLevel.PUBLIC, NoteStatus.PUBLISHED, "127.0.0.1", null,
-            )
-        ).willReturn(existingNote)
-
-        mockMvc.perform(
-            post(ApiPathsV1.NOTES)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """{"language":"en","title":"Getting Started","content":"# Hello","accessLevel":"PUBLIC","status":"PUBLISHED"}"""
-                )
-        )
-            .andExpect(status().isCreated)
-            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.body.title").value("Getting Started"))
-            .andExpect(jsonPath("$.body.id").isString)
-    }
-
-    @Test
-    fun `PUT notes by id returns 200 with updated note`() {
-        given(
-            updateNoteUseCase.update(
-                noteId, authorId, 1, null, "updated content",
-                null, null, "127.0.0.1", null,
-            )
-        ).willReturn(existingNote)
-
-        mockMvc.perform(
-            put("${ApiPathsV1.NOTES}/${noteId.value}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"expectedVersion":1,"content":"updated content"}""")
-        )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.body.title").value("Getting Started"))
-    }
-
-    @Test
-    fun `PUT notes by id returns 404 when note is not found`() {
-        val unknownId = NoteId(UUID.randomUUID())
-        given(
-            updateNoteUseCase.update(
-                unknownId, authorId, 1, null, "updated content",
-                null, null, "127.0.0.1", null,
-            )
-        ).willThrow(NoteNotFoundException(unknownId))
-
-        mockMvc.perform(
-            put("${ApiPathsV1.NOTES}/${unknownId.value}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"expectedVersion":1,"content":"updated content"}""")
-        )
-            .andExpect(status().isNotFound)
-    }
-
-    @Test
-    fun `PUT notes by id returns 400 for malformed UUID`() {
-        mockMvc.perform(
-            put("${ApiPathsV1.NOTES}/not-a-uuid")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"expectedVersion":1,"content":"updated content"}""")
-        )
-            .andExpect(status().isBadRequest)
-    }
-
-    @Test
-    fun `DELETE notes by id returns 204`() {
-        mockMvc.perform(delete("${ApiPathsV1.NOTES}/${noteId.value}"))
-            .andExpect(status().isNoContent)
-    }
-
-    @Test
-    fun `DELETE notes by id returns 400 for malformed UUID`() {
-        mockMvc.perform(delete("${ApiPathsV1.NOTES}/not-a-uuid"))
             .andExpect(status().isBadRequest)
     }
 }

@@ -48,7 +48,7 @@ class FindNoteUseCase(
 
     private fun buildResult(note: Note, requesterId: UserId?): Result {
         checkAccess(note, requesterId)
-        val content = noteVersionRepository.findContent(note.id, note.currentVersion) ?: ""
+        val content = noteVersionRepository.findContent(note.id, note.currentVersion).orEmpty()
         return Result(note, content)
     }
 

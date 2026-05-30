@@ -37,6 +37,7 @@ class AuthApiClient(
             String::class.java,
         )
 
+    @Suppress("ForbiddenVoid")
     fun logout(accessToken: String, refreshToken: String): ResponseEntity<Void> =
         restTemplate.postForEntity(
             "${ApiPathsV1.AUTH}/logout",

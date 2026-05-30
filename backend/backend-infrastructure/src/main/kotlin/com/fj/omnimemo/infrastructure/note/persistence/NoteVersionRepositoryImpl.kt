@@ -45,7 +45,7 @@ class NoteVersionRepositoryImpl(private val jdbc: JdbcTemplate) : NoteVersionRep
         val storedContent = if (isSnapshot) {
             fullContent
         } else {
-            val previousContent = findContent(noteId, version - 1) ?: ""
+            val previousContent = findContent(noteId, version - 1).orEmpty()
             MarkdownPatchCodec.generatePatch(previousContent, fullContent)
         }
         val sql = """
@@ -80,6 +80,7 @@ class NoteVersionRepositoryImpl(private val jdbc: JdbcTemplate) : NoteVersionRep
      * snapshot) and all delta rows up to and including [targetVersion].
      * Returns null when no record exists for [targetVersion].
      */
+    @Suppress("ReturnCount")
     private fun findVersionRange(noteId: NoteId, targetVersion: Int): List<NoteVersion>? {
         val snapshotSql = """
             SELECT $COL_NOTE_ID, $COL_VERSION, $COL_CONTENT, $COL_IS_SNAPSHOT, $COL_CREATED_AT

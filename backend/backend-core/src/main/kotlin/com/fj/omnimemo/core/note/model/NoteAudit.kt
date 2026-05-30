@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.core.note.model
 
+import com.fj.omnimemo.core.annotation.NamedArguments
 import com.fj.omnimemo.core.note.model.NoteAudit.Companion.create
 import com.fj.omnimemo.core.note.model.NoteAudit.Companion.reconstitute
 import com.fj.omnimemo.core.note.model.snapshot.NoteAuditData
@@ -37,6 +38,7 @@ interface NoteAudit {
     val createdAt: Instant
 
     companion object {
+        @NamedArguments
         fun create(
             noteId: NoteId,
             version: Int,
@@ -55,6 +57,7 @@ interface NoteAudit {
             createdAt = Instant.now(),
         )
 
+        @NamedArguments
         fun reconstitute(
             id: UUID,
             noteId: NoteId,

@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.core.note.model
 
+import com.fj.omnimemo.core.annotation.NamedArguments
 import com.fj.omnimemo.core.data.model.DateTimeAuditable
 import com.fj.omnimemo.core.data.model.Persistable
 import com.fj.omnimemo.core.note.model.Note.Companion.create
@@ -102,6 +103,7 @@ interface Note : Persistable<NoteId>, DateTimeAuditable {
          *
          * @since 0.2.0
          */
+        @NamedArguments
         fun reconstitute(
             id: NoteId,
             language: NoteLanguage,

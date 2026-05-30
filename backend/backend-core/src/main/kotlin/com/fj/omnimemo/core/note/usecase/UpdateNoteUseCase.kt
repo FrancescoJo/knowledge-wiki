@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.core.note.usecase
 
+import com.fj.omnimemo.core.annotation.NamedArguments
 import com.fj.omnimemo.core.note.exception.DuplicateNoteTitleException
 import com.fj.omnimemo.core.note.exception.NoteAccessDeniedException
 import com.fj.omnimemo.core.note.exception.NoteAlreadyDeletedException
@@ -46,6 +47,7 @@ class UpdateNoteUseCase(
     private val noteVersionRepository: NoteVersionRepository,
     private val noteAuditRepository: NoteAuditRepository,
 ) {
+    @NamedArguments
     fun update(
         noteId: NoteId,
         editorId: UserId,

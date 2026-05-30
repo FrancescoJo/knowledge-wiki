@@ -8,10 +8,11 @@ package com.fj.omnimemo.api.endpoint.user.impl
 import com.fj.omnimemo.api.endpoint.ApiPathsV1
 import com.fj.omnimemo.core.test.annotation.MediumTest
 import com.fj.omnimemo.core.user.UserProfileCache
-import com.fj.omnimemo.core.user.exception.UserNotFoundException
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.model.UserId
-import com.fj.omnimemo.core.user.usecase.*
+import com.fj.omnimemo.core.user.usecase.CreateUserUseCase
+import com.fj.omnimemo.core.user.usecase.DeleteUserUseCase
+import com.fj.omnimemo.core.user.usecase.FindUserUseCase
 import com.fj.omnimemo.infrastructure.security.JwtTokenService
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
@@ -27,12 +28,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.util.*
 
 /**
- * Medium Tests for [UserControllerImpl]: verifies HTTP path routing, request/response
- * JSON serialisation, and status codes via the Spring MVC stack.
+ * Medium Tests for [UserControllerImpl]: verifies HTTP routing, JSON serialisation,
+ * and status codes for account operations via the Spring MVC stack.
  *
- * Security filters are excluded here; authentication logic is covered separately in
- * [com.fj.omnimemo.api.security.JwtAuthenticationFilterTest] and
- * [com.fj.omnimemo.api.endpoint.health.HealthControllerSpec].
+ * Credential operations are covered in [UserCredentialControllerMvcTest].
+ * Security filters are excluded; authentication logic is covered separately.
  *
  * @author Francesco Jo
  * @since 0.1.1
@@ -51,12 +51,6 @@ class UserControllerMvcTest {
 
     @MockBean
     private lateinit var findUserUseCase: FindUserUseCase
-
-    @MockBean
-    private lateinit var updateUserEmailUseCase: UpdateUserEmailUseCase
-
-    @MockBean
-    private lateinit var updateUserPasswordUseCase: UpdateUserPasswordUseCase
 
     // Injected into controller via Spring DI; not referenced in test methods directly.
     @Suppress("UnusedPrivateProperty")
@@ -114,47 +108,6 @@ class UserControllerMvcTest {
             .andExpect(status().isCreated)
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.body.email").value("alice@example.com"))
-    }
-
-    @Test
-    fun `PUT users email returns 200 with updated user`() {
-        val uuid = UUID.randomUUID()
-        given(updateUserEmailUseCase.updateEmail(UserId(uuid), "new@example.com")).willReturn(existingUser)
-
-        mockMvc.perform(
-            put("${ApiPathsV1.USERS}/$uuid/email")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"email":"new@example.com"}""")
-        )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.body.email").value("alice@example.com"))
-    }
-
-    @Test
-    fun `PUT users password returns 200 with updated user`() {
-        val uuid = UUID.randomUUID()
-        given(updateUserPasswordUseCase.updatePassword(UserId(uuid), "newpass")).willReturn(existingUser)
-
-        mockMvc.perform(
-            put("${ApiPathsV1.USERS}/$uuid/password")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"password":"newpass"}""")
-        )
-            .andExpect(status().isOk)
-    }
-
-    @Test
-    fun `PUT users email returns 404 when user does not exist`() {
-        val uuid = UUID.randomUUID()
-        given(updateUserEmailUseCase.updateEmail(UserId(uuid), "new@example.com"))
-            .willThrow(UserNotFoundException(UserId(uuid)))
-
-        mockMvc.perform(
-            put("${ApiPathsV1.USERS}/$uuid/email")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"email":"new@example.com"}""")
-        )
-            .andExpect(status().isNotFound)
     }
 
     @Test

@@ -9,6 +9,7 @@ dependencies {
     implementation("com.github.f4b6a3:uuid-creator:5.3.3")
 
     // Testing
+    testFixturesImplementation("net.datafaker:datafaker:2.4.3")
     testFixturesImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")

@@ -103,8 +103,8 @@ tasks.register("test-backend-large") {
 
 tasks.register("test-backend-all") {
     group = "verification"
-    description = "Runs all backend tests."
-    dependsOn(subprojects.map { ":${it.name}:test" })
+    description = "Runs all backend tests and static analysis."
+    dependsOn(subprojects.map { ":${it.name}:check" })
 }
 
 tasks.register("test-all") {

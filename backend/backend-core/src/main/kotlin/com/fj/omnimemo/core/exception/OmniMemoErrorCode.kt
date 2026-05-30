@@ -51,7 +51,8 @@ enum class OmniMemoErrorCode(val exceptionClass: KClass<out OmniMemoException>) 
                 .filter { (_, group) -> group.size > 1 }
                 .map { (code, group) -> "$code -> [${group.joinToString { it.name }}]" }
             require(duplicates.isEmpty()) {
-                "Duplicate OmniMemoErrorCode.code values detected — hash collision must be resolved manually: $duplicates"
+                "Duplicate OmniMemoErrorCode.code values detected — " +
+                    "hash collision must be resolved manually: $duplicates"
             }
         }
 

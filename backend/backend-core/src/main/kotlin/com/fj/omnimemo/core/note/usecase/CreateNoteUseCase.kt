@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.core.note.usecase
 
+import com.fj.omnimemo.core.annotation.NamedArguments
 import com.fj.omnimemo.core.note.exception.DuplicateNoteTitleException
 import com.fj.omnimemo.core.note.model.Note
 import com.fj.omnimemo.core.note.model.NoteAccessLevel
@@ -37,6 +38,7 @@ class CreateNoteUseCase(
     private val noteVersionRepository: NoteVersionRepository,
     private val noteAuditRepository: NoteAuditRepository,
 ) {
+    @NamedArguments
     fun create(
         authorId: UserId,
         language: NoteLanguage,

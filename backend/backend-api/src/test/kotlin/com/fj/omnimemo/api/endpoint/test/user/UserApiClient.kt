@@ -46,6 +46,7 @@ class UserApiClient(
             String::class.java,
         )
 
+    @Suppress("ForbiddenVoid")
     fun delete(id: String, accessToken: String): ResponseEntity<Void> =
         restTemplate.exchange(
             "${ApiPathsV1.USERS}/$id",
