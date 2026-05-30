@@ -7,6 +7,7 @@ package com.fj.omnimemo.core.exception
 
 import com.fj.omnimemo.core.exception.OmniMemoErrorCode.Companion.byCode
 import com.fj.omnimemo.core.exception.OmniMemoErrorCode.Companion.of
+import com.fj.omnimemo.core.note.exception.*
 import com.fj.omnimemo.core.user.exception.*
 import kotlin.reflect.KClass
 
@@ -32,6 +33,12 @@ enum class OmniMemoErrorCode(val exceptionClass: KClass<out OmniMemoException>) 
     TOKEN_EXPIRED(TokenExpiredException::class),
     USER_NOT_FOUND(UserNotFoundException::class),
     REDUNDANT_BOOTSTRAP_PROHIBITED(RedundantBootstrapProhibitedException::class),
+    NOTE_NOT_FOUND(NoteNotFoundException::class),
+    DUPLICATE_NOTE_TITLE(DuplicateNoteTitleException::class),
+    NOTE_ACCESS_DENIED(NoteAccessDeniedException::class),
+    STALE_NOTE_VERSION(StaleNoteVersionException::class),
+    NOTE_ALREADY_DELETED(NoteAlreadyDeletedException::class),
+    NOTE_ROLLBACK_NOT_PERMITTED(NoteRollbackNotPermittedException::class),
     ;
 
     open val code: String

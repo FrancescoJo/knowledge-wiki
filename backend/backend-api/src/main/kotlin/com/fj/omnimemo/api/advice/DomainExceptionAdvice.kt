@@ -65,5 +65,11 @@ class DomainExceptionAdvice {
         OmniMemoErrorCode.TOKEN_EXPIRED                  -> HttpStatus.UNAUTHORIZED
         OmniMemoErrorCode.USER_NOT_FOUND                 -> HttpStatus.NOT_FOUND
         OmniMemoErrorCode.REDUNDANT_BOOTSTRAP_PROHIBITED -> HttpStatus.CONFLICT
+        OmniMemoErrorCode.NOTE_NOT_FOUND                 -> HttpStatus.NOT_FOUND
+        OmniMemoErrorCode.DUPLICATE_NOTE_TITLE           -> HttpStatus.CONFLICT
+        OmniMemoErrorCode.NOTE_ACCESS_DENIED             -> HttpStatus.FORBIDDEN
+        OmniMemoErrorCode.STALE_NOTE_VERSION             -> HttpStatus.CONFLICT
+        OmniMemoErrorCode.NOTE_ALREADY_DELETED           -> HttpStatus.CONFLICT
+        OmniMemoErrorCode.NOTE_ROLLBACK_NOT_PERMITTED    -> HttpStatus.FORBIDDEN
     }
 }
