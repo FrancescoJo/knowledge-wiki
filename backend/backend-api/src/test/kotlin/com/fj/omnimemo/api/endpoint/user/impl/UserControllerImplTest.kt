@@ -9,18 +9,14 @@ import com.fj.omnimemo.api.endpoint.user.dto.request.CreateUserRequest
 import com.fj.omnimemo.api.endpoint.user.dto.request.UpdateEmailRequest
 import com.fj.omnimemo.api.endpoint.user.dto.request.UpdatePasswordRequest
 import com.fj.omnimemo.api.endpoint.user.dto.response.UserResponse
-import com.fj.omnimemo.core.user.exception.UserNotFoundException
 import com.fj.omnimemo.core.test.annotation.SmallTest
 import com.fj.omnimemo.core.user.MockUserProfileCache
+import com.fj.omnimemo.core.user.exception.UserNotFoundException
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.model.UserProfile
 import com.fj.omnimemo.core.user.repository.MockUserRepository
 import com.fj.omnimemo.core.user.security.MockPasswordHasher
-import com.fj.omnimemo.core.user.usecase.CreateUserUseCase
-import com.fj.omnimemo.core.user.usecase.DeleteUserUseCase
-import com.fj.omnimemo.core.user.usecase.FindUserUseCase
-import com.fj.omnimemo.core.user.usecase.UpdateUserEmailUseCase
-import com.fj.omnimemo.core.user.usecase.UpdateUserPasswordUseCase
+import com.fj.omnimemo.core.user.usecase.*
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContain
@@ -32,7 +28,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
-import java.util.UUID
+import java.util.*
 
 @SmallTest
 class UserControllerImplTest {

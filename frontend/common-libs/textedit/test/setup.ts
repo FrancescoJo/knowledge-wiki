@@ -8,9 +8,14 @@
  */
 
 const ctx2d = {
-  fillRect:             () => { /* stub */ },
-  createLinearGradient: () => ({ addColorStop: () => { /* stub */ } }),
-  set fillStyle(_: string) { /* stub */ },
+  fillRect: () => { /* stub */
+  },
+  createLinearGradient: () => ({
+    addColorStop: () => { /* stub */
+    }
+  }),
+  set fillStyle(_: string) { /* stub */
+  },
 }
 
 Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {

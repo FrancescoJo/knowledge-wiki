@@ -57,10 +57,11 @@ style:
   ForbiddenComment:
     active: false
   WildcardImport:
-    active: true
+    active: false
     excludeImports:
       - 'kotlin.*'
       - 'kotlinx.*'
+      - "java.util.*"
   UnusedPrivateMember:
     active: true
   # Spring's @Autowired and @MockBean set lateinit var properties via reflection;

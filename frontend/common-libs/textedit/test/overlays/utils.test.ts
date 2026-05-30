@@ -6,16 +6,16 @@
  * $Since: 2026-05-19
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import {
+  bindMenuCloseListeners,
   ColourPickerPopup,
   mkItem,
   setDisabled,
-  bindMenuCloseListeners,
-  tableNodeAt,
   tableDepthOf,
+  tableNodeAt,
 } from '@src/overlays/utils'
-import type { selectionCell } from '@tiptap/pm/tables'
+import type {selectionCell} from '@tiptap/pm/tables'
 
 // -- Test doubles --------------------------------------------------------------
 
@@ -23,7 +23,7 @@ function fakeCellAt(tableDepth: number, totalDepth: number): ReturnType<typeof s
   return {
     depth: totalDepth,
     node: (d: number) => ({
-      type: { spec: { tableRole: d === tableDepth ? 'table' : 'cell' } },
+      type: {spec: {tableRole: d === tableDepth ? 'table' : 'cell'}},
     }),
     start: (d: number) => d * 100,
   } as unknown as ReturnType<typeof selectionCell>
@@ -90,14 +90,14 @@ describe('tableDepthOf:', () => {
 describe('tableNodeAt:', () => {
   it('should return a tableNode whose tableRole is "table"', () => {
     const $cell = fakeCellAt(2, 3)
-    const { tableNode } = tableNodeAt($cell)
+    const {tableNode} = tableNodeAt($cell)
     expect(tableNode.type.spec['tableRole']).toBe('table')
   })
 
   it('should return the tableStart derived from the table depth', () => {
     const $cell = fakeCellAt(2, 3)
     // fakeCellAt sets start(d) = d * 100, so depth 2 → 200
-    const { tableStart } = tableNodeAt($cell)
+    const {tableStart} = tableNodeAt($cell)
     expect(tableStart).toBe(200)
   })
 })
@@ -109,7 +109,7 @@ describe('bindMenuCloseListeners:', () => {
   let outside: HTMLElement
 
   beforeEach(() => {
-    anchor  = document.createElement('div')
+    anchor = document.createElement('div')
     outside = document.createElement('div')
     document.body.append(anchor, outside)
   })
@@ -124,10 +124,12 @@ describe('bindMenuCloseListeners:', () => {
     bindMenuCloseListeners({
       anchors: [anchor],
       isOpen: () => true,
-      close: () => { closed = true },
+      close: () => {
+        closed = true
+      },
       identity: {},
     })
-    outside.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    outside.dispatchEvent(new MouseEvent('mousedown', {bubbles: true}))
     expect(closed).toBe(true)
   })
 
@@ -136,10 +138,12 @@ describe('bindMenuCloseListeners:', () => {
     bindMenuCloseListeners({
       anchors: [anchor],
       isOpen: () => true,
-      close: () => { closed = true },
+      close: () => {
+        closed = true
+      },
       identity: {},
     })
-    anchor.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    anchor.dispatchEvent(new MouseEvent('mousedown', {bubbles: true}))
     expect(closed).toBe(false)
   })
 
@@ -148,10 +152,12 @@ describe('bindMenuCloseListeners:', () => {
     bindMenuCloseListeners({
       anchors: [anchor],
       isOpen: () => true,
-      close: () => { closed = true },
+      close: () => {
+        closed = true
+      },
       identity: {},
     })
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+    document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}))
     expect(closed).toBe(true)
   })
 
@@ -160,10 +166,12 @@ describe('bindMenuCloseListeners:', () => {
     bindMenuCloseListeners({
       anchors: [anchor],
       isOpen: () => false,
-      close: () => { closed = true },
+      close: () => {
+        closed = true
+      },
       identity: {},
     })
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+    document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}))
     expect(closed).toBe(false)
   })
 
@@ -173,10 +181,12 @@ describe('bindMenuCloseListeners:', () => {
     bindMenuCloseListeners({
       anchors: [anchor],
       isOpen: () => true,
-      close: () => { closed = true },
+      close: () => {
+        closed = true
+      },
       identity: id,
     })
-    document.dispatchEvent(new CustomEvent('te:context-menu-open', { detail: {} }))
+    document.dispatchEvent(new CustomEvent('te:context-menu-open', {detail: {}}))
     expect(closed).toBe(true)
   })
 
@@ -186,10 +196,12 @@ describe('bindMenuCloseListeners:', () => {
     bindMenuCloseListeners({
       anchors: [anchor],
       isOpen: () => true,
-      close: () => { closed = true },
+      close: () => {
+        closed = true
+      },
       identity: id,
     })
-    document.dispatchEvent(new CustomEvent('te:context-menu-open', { detail: id }))
+    document.dispatchEvent(new CustomEvent('te:context-menu-open', {detail: id}))
     expect(closed).toBe(false)
   })
 })
@@ -265,13 +277,15 @@ describe('ColourPickerPopup:', () => {
 
   describe('open:', () => {
     it('should make the popup visible', () => {
-      popup.open(fakeRect(), '#ff0000', () => {})
+      popup.open(fakeRect(), '#ff0000', () => {
+      })
       expect(popup.isOpen).toBe(true)
       expect(popup.dom.hidden).toBe(false)
     })
 
     it('should populate the hex input with the initial colour', () => {
-      popup.open(fakeRect(), '#00ff00', () => {})
+      popup.open(fakeRect(), '#00ff00', () => {
+      })
       expect(hexInput(popup).value).toBe('#00ff00')
     })
   })
@@ -280,7 +294,8 @@ describe('ColourPickerPopup:', () => {
 
   describe('close:', () => {
     it('should hide the popup', () => {
-      popup.open(fakeRect(), '#ff0000', () => {})
+      popup.open(fakeRect(), '#ff0000', () => {
+      })
       popup.close()
       expect(popup.isOpen).toBe(false)
       expect(popup.dom.hidden).toBe(true)
@@ -292,14 +307,17 @@ describe('ColourPickerPopup:', () => {
   describe('when the apply button is clicked:', () => {
     it('should call onApply with a #rrggbb string', () => {
       let result: string | undefined
-      popup.open(fakeRect(), '#ff0000', c => { result = c })
-      applyBtn(popup).dispatchEvent(new MouseEvent('click', { bubbles: true }))
+      popup.open(fakeRect(), '#ff0000', c => {
+        result = c
+      })
+      applyBtn(popup).dispatchEvent(new MouseEvent('click', {bubbles: true}))
       expect(result).toMatch(/^#[0-9a-f]{6}$/i)
     })
 
     it('should close the popup', () => {
-      popup.open(fakeRect(), '#ff0000', () => {})
-      applyBtn(popup).dispatchEvent(new MouseEvent('click', { bubbles: true }))
+      popup.open(fakeRect(), '#ff0000', () => {
+      })
+      applyBtn(popup).dispatchEvent(new MouseEvent('click', {bubbles: true}))
       expect(popup.isOpen).toBe(false)
     })
   })
@@ -309,8 +327,10 @@ describe('ColourPickerPopup:', () => {
   describe('when the cancel button is clicked:', () => {
     it('should close the popup without calling onApply', () => {
       let called = false
-      popup.open(fakeRect(), '#ff0000', () => { called = true })
-      cancelBtn(popup).dispatchEvent(new MouseEvent('click', { bubbles: true }))
+      popup.open(fakeRect(), '#ff0000', () => {
+        called = true
+      })
+      cancelBtn(popup).dispatchEvent(new MouseEvent('click', {bubbles: true}))
       expect(popup.isOpen).toBe(false)
       expect(called).toBe(false)
     })
@@ -320,15 +340,16 @@ describe('ColourPickerPopup:', () => {
 
   describe('when Escape is pressed while open:', () => {
     it('should close the popup', () => {
-      popup.open(fakeRect(), '#ff0000', () => {})
-      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+      popup.open(fakeRect(), '#ff0000', () => {
+      })
+      document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))
       expect(popup.isOpen).toBe(false)
     })
   })
 
   describe('when Escape is pressed while closed:', () => {
     it('should have no effect', () => {
-      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+      document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))
       expect(popup.isOpen).toBe(false)
     })
   })
@@ -337,12 +358,13 @@ describe('ColourPickerPopup:', () => {
 
   describe('when mousedown outside the popup fires after it opened:', () => {
     it('should close the popup on the second external mousedown', () => {
-      popup.open(fakeRect(), '#ff0000', () => {})
+      popup.open(fakeRect(), '#ff0000', () => {
+      })
       // First mousedown clears the skipNextClose guard set by open().
-      document.dispatchEvent(new MouseEvent('mousedown', { bubbles: false }))
+      document.dispatchEvent(new MouseEvent('mousedown', {bubbles: false}))
       expect(popup.isOpen).toBe(true)
       // Second mousedown (target=document, not inside popup.dom) triggers close.
-      document.dispatchEvent(new MouseEvent('mousedown', { bubbles: false }))
+      document.dispatchEvent(new MouseEvent('mousedown', {bubbles: false}))
       expect(popup.isOpen).toBe(false)
     })
   })
@@ -351,7 +373,8 @@ describe('ColourPickerPopup:', () => {
 
   describe('when te:context-menu-open fires while the popup is open:', () => {
     it('should close the popup', () => {
-      popup.open(fakeRect(), '#ff0000', () => {})
+      popup.open(fakeRect(), '#ff0000', () => {
+      })
       document.dispatchEvent(new CustomEvent('te:context-menu-open'))
       expect(popup.isOpen).toBe(false)
     })
@@ -368,9 +391,10 @@ describe('ColourPickerPopup:', () => {
 
   describe('when the canvas receives a mousedown event:', () => {
     it('should update the hex input to reflect the picked colour', () => {
-      popup.open(fakeRect(), '#ff0000', () => {})
+      popup.open(fakeRect(), '#ff0000', () => {
+      })
       canvas(popup).dispatchEvent(
-        new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientX: 100, clientY: 50 }),
+        new MouseEvent('mousedown', {bubbles: true, cancelable: true, clientX: 100, clientY: 50}),
       )
       expect(hexInput(popup).value).toMatch(/^#[0-9a-f]{6}$/i)
     })
@@ -378,9 +402,10 @@ describe('ColourPickerPopup:', () => {
 
   describe('when the mouse is dragged across the canvas (buttons=1):', () => {
     it('should update the hex input at the new pointer position', () => {
-      popup.open(fakeRect(), '#ff0000', () => {})
+      popup.open(fakeRect(), '#ff0000', () => {
+      })
       canvas(popup).dispatchEvent(
-        new MouseEvent('mousemove', { bubbles: true, cancelable: true, buttons: 1, clientX: 50, clientY: 75 }),
+        new MouseEvent('mousemove', {bubbles: true, cancelable: true, buttons: 1, clientX: 50, clientY: 75}),
       )
       expect(hexInput(popup).value).toMatch(/^#[0-9a-f]{6}$/i)
     })
@@ -388,10 +413,11 @@ describe('ColourPickerPopup:', () => {
 
   describe('when the mouse moves over the canvas without a button held (buttons=0):', () => {
     it('should not change the hex input', () => {
-      popup.open(fakeRect(), '#ff0000', () => {})
+      popup.open(fakeRect(), '#ff0000', () => {
+      })
       const before = hexInput(popup).value
       canvas(popup).dispatchEvent(
-        new MouseEvent('mousemove', { bubbles: true, cancelable: true, buttons: 0, clientX: 50, clientY: 75 }),
+        new MouseEvent('mousemove', {bubbles: true, cancelable: true, buttons: 0, clientX: 50, clientY: 75}),
       )
       expect(hexInput(popup).value).toBe(before)
     })
@@ -401,7 +427,8 @@ describe('ColourPickerPopup:', () => {
 
   describe('when the hue slider is moved:', () => {
     it('should update the RGB and hex inputs', () => {
-      popup.open(fakeRect(), '#ff0000', () => {})
+      popup.open(fakeRect(), '#ff0000', () => {
+      })
       const slider = hueSlider(popup)
       slider.value = '120'
       slider.dispatchEvent(new Event('input'))
@@ -409,7 +436,8 @@ describe('ColourPickerPopup:', () => {
     })
 
     it('should reflect different hue values correctly', () => {
-      popup.open(fakeRect(), '#ff0000', () => {})
+      popup.open(fakeRect(), '#ff0000', () => {
+      })
       const slider = hueSlider(popup)
       // Exercise each of the 6 hsvToRgb hue branches:
       for (const hue of [30, 90, 150, 210, 270, 330]) {
@@ -424,11 +452,15 @@ describe('ColourPickerPopup:', () => {
 
   describe('when RGB inputs are changed:', () => {
     it('should update the hex input to match the new RGB values', () => {
-      popup.open(fakeRect(), '#ff0000', () => {})
+      popup.open(fakeRect(), '#ff0000', () => {
+      })
       const [r, g, b] = rgbInputs(popup)
-      r.value = '0';   r.dispatchEvent(new Event('input'))
-      g.value = '128'; g.dispatchEvent(new Event('input'))
-      b.value = '255'; b.dispatchEvent(new Event('input'))
+      r.value = '0';
+      r.dispatchEvent(new Event('input'))
+      g.value = '128';
+      g.dispatchEvent(new Event('input'))
+      b.value = '255';
+      b.dispatchEvent(new Event('input'))
       expect(hexInput(popup).value).toMatch(/^#[0-9a-f]{6}$/i)
     })
   })
@@ -437,7 +469,8 @@ describe('ColourPickerPopup:', () => {
 
   describe('when the hex input receives a valid 6-digit hex:', () => {
     it('should update the RGB inputs to the corresponding values', () => {
-      popup.open(fakeRect(), '#000000', () => {})
+      popup.open(fakeRect(), '#000000', () => {
+      })
       const hex = hexInput(popup)
       hex.value = '#0080ff'
       hex.dispatchEvent(new Event('input'))
@@ -450,7 +483,8 @@ describe('ColourPickerPopup:', () => {
 
   describe('when the hex input receives an invalid value:', () => {
     it('should not crash and leave RGB inputs unchanged', () => {
-      popup.open(fakeRect(), '#ff0000', () => {})
+      popup.open(fakeRect(), '#ff0000', () => {
+      })
       const [r] = rgbInputs(popup)
       const rBefore = r.value
       hexInput(popup).value = 'not-a-colour'
@@ -475,11 +509,12 @@ describe('ColourPickerPopup — EyeDropper (resolve path):', () => {
   })
 
   async function expectHexInput(initialColour: string, expected: string): Promise<void> {
-      popup.open(fakeRect(), initialColour, () => {})
-      const btn = popup.dom.querySelector<HTMLButtonElement>('.te-colour-picker__eyedropper')!
-      btn.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-      await new Promise(r => setTimeout(r, 0))
-      expect(hexInput(popup).value).toBe(expected)
+    popup.open(fakeRect(), initialColour, () => {
+    })
+    const btn = popup.dom.querySelector<HTMLButtonElement>('.te-colour-picker__eyedropper')!
+    btn.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    await new Promise(r => setTimeout(r, 0))
+    expect(hexInput(popup).value).toBe(expected)
   }
 
   describe('when sRGBHex includes a leading #:', () => {
@@ -487,7 +522,7 @@ describe('ColourPickerPopup — EyeDropper (resolve path):', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(window as any).EyeDropper = class {
         open(): Promise<{ sRGBHex: string }> {
-          return Promise.resolve({ sRGBHex: '#ff0000' })
+          return Promise.resolve({sRGBHex: '#ff0000'})
         }
       }
       popup = new ColourPickerPopup()
@@ -511,7 +546,7 @@ describe('ColourPickerPopup — EyeDropper (resolve path):', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(window as any).EyeDropper = class {
         open(): Promise<{ sRGBHex: string }> {
-          return Promise.resolve({ sRGBHex: 'ff0000' })  // no leading '#'
+          return Promise.resolve({sRGBHex: 'ff0000'})  // no leading '#'
         }
       }
       popup = new ColourPickerPopup()
@@ -545,9 +580,10 @@ describe('ColourPickerPopup — EyeDropper (cancel path):', () => {
   })
 
   it('should silently absorb the rejection and leave the colour unchanged', async () => {
-    popup.open(fakeRect(), '#ffffff', () => {})
+    popup.open(fakeRect(), '#ffffff', () => {
+    })
     const btn = popup.dom.querySelector<HTMLButtonElement>('.te-colour-picker__eyedropper')!
-    btn.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    btn.dispatchEvent(new MouseEvent('click', {bubbles: true}))
     await new Promise(r => setTimeout(r, 0))
     expect(hexInput(popup).value).toBe('#ffffff')
   })
@@ -561,7 +597,7 @@ describe('ColourPickerPopup — position (viewport overflow):', () => {
   let popup: ColourPickerPopup
 
   beforeEach(() => {
-    vi.stubGlobal('innerWidth',  100)
+    vi.stubGlobal('innerWidth', 100)
     vi.stubGlobal('innerHeight', 100)
     popup = new ColourPickerPopup()
     document.body.append(popup.dom)
@@ -575,14 +611,16 @@ describe('ColourPickerPopup — position (viewport overflow):', () => {
   it('should clamp left when the popup overflows the right edge of the viewport', () => {
     // left=10, pickerW=244 → 10+244=254 > 100 → clamp fires (line 365 TRUE)
     // left = 100-244-8 = -152 → max(8,−152) = 8
-    popup.open(fakeRect(10, 10, 100, 30), '#ff0000', () => {})
+    popup.open(fakeRect(10, 10, 100, 30), '#ff0000', () => {
+    })
     expect(popup.dom.style.left).toBe('8px')
   })
 
   it('should flip above the anchor when the popup overflows the bottom of the viewport', () => {
     // top=44, pickerH=320 → 44+320=364 > 100 → flip fires (line 367 TRUE)
     // top = nearRect.top − pickerH − 4 = 10−320−4 = −314 → max(8,−314) = 8
-    popup.open(fakeRect(10, 10, 100, 30), '#ff0000', () => {})
+    popup.open(fakeRect(10, 10, 100, 30), '#ff0000', () => {
+    })
     expect(popup.dom.style.top).toBe('8px')
   })
 })
@@ -599,11 +637,14 @@ describe('ColourPickerPopup — rgbToHsv negative-hue wrap-around:', () => {
     document.body.append(popup.dom)
   })
 
-  afterEach(() => { popup.dom.remove() })
+  afterEach(() => {
+    popup.dom.remove()
+  })
 
   it('should normalise a negative hue value by adding 360', () => {
     // #ff0010: R>B, G=0 → (G−B)/delta < 0 → h < 0 before wrap
-    popup.open(fakeRect(), '#ff0010', () => {})
+    popup.open(fakeRect(), '#ff0010', () => {
+    })
     expect(hexInput(popup).value).toMatch(/^#[0-9a-f]{6}$/i)
   })
 })
@@ -620,10 +661,13 @@ describe('ColourPickerPopup — setColour with invalid hex:', () => {
     document.body.append(popup.dom)
   })
 
-  afterEach(() => { popup.dom.remove() })
+  afterEach(() => {
+    popup.dom.remove()
+  })
 
   it('should open without crashing when the initial colour is invalid', () => {
-    popup.open(fakeRect(), 'not-a-colour', () => {})
+    popup.open(fakeRect(), 'not-a-colour', () => {
+    })
     expect(popup.isOpen).toBe(true)
   })
 })
@@ -646,7 +690,8 @@ describe('ColourPickerPopup — drawCanvas with null context:', () => {
   })
 
   it('should silently return when the 2D canvas context is unavailable', () => {
-    popup.open(fakeRect(), '#ff0000', () => {})
+    popup.open(fakeRect(), '#ff0000', () => {
+    })
     vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)
     const slider = hueSlider(popup)
     slider.value = '120'

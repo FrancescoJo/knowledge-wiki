@@ -3,7 +3,10 @@
   "title": "AuthTokenResponse",
   "description": "JWT access and refresh tokens returned on successful login or token refresh. Tokens are also set as httpOnly cookies for browser clients.",
   "type": "object",
-  "required": ["accessToken", "refreshToken"],
+  "required": [
+    "accessToken",
+    "refreshToken"
+  ],
   "properties": {
     "accessToken": {
       "type": "string",

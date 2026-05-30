@@ -7,33 +7,35 @@
  * $Since: 2026-05-09
  */
 
-import { Extension } from '@tiptap/core'
-import { Plugin, PluginKey } from '@tiptap/pm/state'
-import type { Node as PmNode } from '@tiptap/pm/model'
-import type { EditorView } from '@tiptap/pm/view'
+import type {Editor} from '@tiptap/core'
+import {Extension} from '@tiptap/core'
+import {Plugin, PluginKey} from '@tiptap/pm/state'
+import type {Node as PmNode} from '@tiptap/pm/model'
+import type {EditorView} from '@tiptap/pm/view'
+import {CellSelection, isInTable, moveTableRow, rowIsHeader, selectionCell, TableMap,} from '@tiptap/pm/tables'
 import {
-  isInTable,
-  selectionCell,
-  CellSelection,
-  TableMap,
-  moveTableRow,
-  rowIsHeader,
-} from '@tiptap/pm/tables'
-import type { Editor } from '@tiptap/core'
-import {
-  tableNodeAt, mkItem, ColourPickerPopup, setDisabled, bindMenuCloseListeners,
-  DRAG_THRESHOLD, mkSep, createDragGhost, updateDragGhost, removeDragGhost, clearCells,
+  bindMenuCloseListeners,
+  clearCells,
+  ColourPickerPopup,
+  createDragGhost,
+  DRAG_THRESHOLD,
+  mkItem,
+  mkSep,
+  removeDragGhost,
+  setDisabled,
+  tableNodeAt,
+  updateDragGhost,
 } from './utils'
 
 const KEY = new PluginKey<null>('rowHandle')
 
-const CSS_HANDLE    = 'te-row-handle'
-const CSS_MENU      = 'te-row-handle__menu'
-const CSS_ITEM      = 'te-row-handle__item'
-const CSS_SEP       = 'te-row-handle__sep'
-const CSS_OPEN      = 'is-open'
-const CSS_DRAGGING  = 'is-dragging'
-const CSS_GHOST     = 'te-row-handle--ghost'
+const CSS_HANDLE = 'te-row-handle'
+const CSS_MENU = 'te-row-handle__menu'
+const CSS_ITEM = 'te-row-handle__item'
+const CSS_SEP = 'te-row-handle__sep'
+const CSS_OPEN = 'is-open'
+const CSS_DRAGGING = 'is-dragging'
+const CSS_GHOST = 'te-row-handle--ghost'
 const CSS_DROP_LINE = 'te-row-handle__drop-line'
 
 // -- Helpers -------------------------------------------------------------------
@@ -50,7 +52,7 @@ function currentRow(
 
 function clearRow(view: EditorView, editor: Editor, tableNode: PmNode, tableStart: number, row: number): void {
   clearCells(view, editor, tableNode, tableStart,
-    map => Array.from({ length: map.width }, (_, c) => map.positionAt(row, c, tableNode))
+    map => Array.from({length: map.width}, (_, c) => map.positionAt(row, c, tableNode))
   )
 }
 
@@ -76,13 +78,13 @@ class RowHandleView {
 
   private readonly onScroll: () => void
 
-  private readonly itemAddAbove:  HTMLButtonElement
-  private readonly itemAddBelow:  HTMLButtonElement
-  private readonly itemClear:     HTMLButtonElement
-  private readonly itemDelete:    HTMLButtonElement
-  private readonly itemBg:        HTMLButtonElement
-  private readonly itemMoveUp:    HTMLButtonElement
-  private readonly itemMoveDown:  HTMLButtonElement
+  private readonly itemAddAbove: HTMLButtonElement
+  private readonly itemAddBelow: HTMLButtonElement
+  private readonly itemClear: HTMLButtonElement
+  private readonly itemDelete: HTMLButtonElement
+  private readonly itemBg: HTMLButtonElement
+  private readonly itemMoveUp: HTMLButtonElement
+  private readonly itemMoveDown: HTMLButtonElement
 
   constructor(
     private readonly editorView: EditorView,
@@ -104,10 +106,10 @@ class RowHandleView {
 
     this.itemAddAbove = mkItem('Add row above', CSS_ITEM)
     this.itemAddBelow = mkItem('Add row below', CSS_ITEM)
-    this.itemClear    = mkItem('Clear cells', CSS_ITEM)
-    this.itemDelete   = mkItem('Delete row', CSS_ITEM)
-    this.itemBg       = mkItem('Background colour', CSS_ITEM)
-    this.itemMoveUp   = mkItem('Move row up', CSS_ITEM)
+    this.itemClear = mkItem('Clear cells', CSS_ITEM)
+    this.itemDelete = mkItem('Delete row', CSS_ITEM)
+    this.itemBg = mkItem('Background colour', CSS_ITEM)
+    this.itemMoveUp = mkItem('Move row up', CSS_ITEM)
     this.itemMoveDown = mkItem('Move row down', CSS_ITEM)
 
     this.menuDom.append(
@@ -128,7 +130,7 @@ class RowHandleView {
     document.body.appendChild(this.colourPicker.dom)
 
     this.onScroll = () => this.update(this.editorView)
-    editorView.dom.parentElement?.addEventListener('scroll', this.onScroll, { passive: true })
+    editorView.dom.parentElement?.addEventListener('scroll', this.onScroll, {passive: true})
 
     this.bindEvents()
     this.update(editorView)
@@ -160,12 +162,13 @@ class RowHandleView {
   private refreshState(view: EditorView): void {
     try {
       const $cell = selectionCell(view.state)
-      const { tableNode, tableStart } = tableNodeAt($cell)
-      this.tableNode  = tableNode
+      const {tableNode, tableStart} = tableNodeAt($cell)
+      this.tableNode = tableNode
       this.tableStart = tableStart
-      this.map        = TableMap.get(this.tableNode)
-      this.row        = currentRow($cell, this.map, this.tableStart)
-    } catch { /* keep previous state */ }
+      this.map = TableMap.get(this.tableNode)
+      this.row = currentRow($cell, this.map, this.tableStart)
+    } catch { /* keep previous state */
+    }
   }
 
   private updateHandlePosition(view: EditorView): void {
@@ -177,18 +180,19 @@ class RowHandleView {
       const leftCellDom = view.nodeDOM(this.tableStart + leftOffset)
       if (!(leftCellDom instanceof HTMLElement)) return
       const rect = leftCellDom.getBoundingClientRect()
-      this.handleDom.style.top    = `${rect.top + rect.height / 2}px`
-      this.handleDom.style.left   = `${rect.left}px`
+      this.handleDom.style.top = `${rect.top + rect.height / 2}px`
+      this.handleDom.style.left = `${rect.left}px`
       this.handleDom.style.height = `${rect.height}px`
-    } catch { /* leave position unchanged */ }
+    } catch { /* leave position unchanged */
+    }
   }
 
   private updateMenuPosition(): void {
-    const hRect    = this.handleDom.getBoundingClientRect()
+    const hRect = this.handleDom.getBoundingClientRect()
     const areaRect = this.editorView.dom.parentElement?.getBoundingClientRect()
     const menuRect = this.menuDom.getBoundingClientRect()
 
-    let top  = hRect.top
+    let top = hRect.top
     let left = hRect.right + 4
 
     if (areaRect && menuRect.width > 0) {
@@ -201,12 +205,12 @@ class RowHandleView {
       }
     }
 
-    this.menuDom.style.top  = `${top}px`
+    this.menuDom.style.top = `${top}px`
     this.menuDom.style.left = `${left}px`
   }
 
   private openMenu(): void {
-    document.dispatchEvent(new CustomEvent('te:context-menu-open', { detail: this }))
+    document.dispatchEvent(new CustomEvent('te:context-menu-open', {detail: this}))
     this.menuOpen = true
     this.menuDom.hidden = false
     this.handleDom.classList.add(CSS_OPEN)
@@ -225,7 +229,7 @@ class RowHandleView {
     const tableNode = this.tableNode
     const isHeader = map && tableNode ? rowIsHeader(map, tableNode, this.row) : false
     setDisabled(this.itemAddAbove, isHeader)
-    setDisabled(this.itemMoveUp,  !map || this.row <= 0)
+    setDisabled(this.itemMoveUp, !map || this.row <= 0)
     setDisabled(this.itemMoveDown, !map || this.row >= (map.height - 1))
   }
 
@@ -234,12 +238,13 @@ class RowHandleView {
     const tableNode = this.tableNode
     if (!map || !tableNode) return
     try {
-      const { state } = this.editorView
+      const {state} = this.editorView
       const anchor = this.tableStart + map.positionAt(this.row, 0, tableNode)
-      const head   = this.tableStart + map.positionAt(this.row, map.width - 1, tableNode)
+      const head = this.tableStart + map.positionAt(this.row, map.width - 1, tableNode)
       const sel = CellSelection.create(state.doc, anchor, head)
       this.editorView.dispatch(state.tr.setSelection(sel))
-    } catch { /* no-op */ }
+    } catch { /* no-op */
+    }
   }
 
   // -- Drag ------------------------------------------------------------------
@@ -342,16 +347,17 @@ class RowHandleView {
       }
 
       this.dragTargetRow = targetRow <= this.row ? targetRow : targetRow - 1
-      this.dropLineDom.style.top   = `${lineY}px`
-      this.dropLineDom.style.left  = `${lineLeft}px`
+      this.dropLineDom.style.top = `${lineY}px`
+      this.dropLineDom.style.left = `${lineLeft}px`
       this.dropLineDom.style.width = `${lineWidth}px`
       this.dropLineDom.hidden = false
-    } catch { /* no-op */ }
+    } catch { /* no-op */
+    }
   }
 
   private dropRow(targetRow: number): void {
-    const { state } = this.editorView
-    moveTableRow({ from: this.row, to: targetRow })(state, tr => this.editorView.dispatch(tr))
+    const {state} = this.editorView
+    moveTableRow({from: this.row, to: targetRow})(state, tr => this.editorView.dispatch(tr))
     this.editor.commands.focus()
   }
 
@@ -396,19 +402,19 @@ class RowHandleView {
     }))
 
     this.itemBg.addEventListener('mousedown', run(() => {
-      const { tableNode, tableStart, row, map } = this
+      const {tableNode, tableStart, row, map} = this
       if (!tableNode || !map) return
       const offset = map.positionAt(row, 0, tableNode)
       const initialColour = (tableNode.nodeAt(offset)?.attrs['background'] as string | null) ?? '#ffffff'
       const nearRect = this.itemBg.getBoundingClientRect()
       this.colourPicker.open(nearRect, initialColour, colour => {
-        const { state } = this.editorView
+        const {state} = this.editorView
         const tr = state.tr
         for (let c = 0; c < map.width; c++) {
           const cellOff = map.positionAt(row, c, tableNode)
           const cellNode = tableNode.nodeAt(cellOff)
           if (!cellNode) continue
-          tr.setNodeMarkup(tableStart + cellOff, undefined, { ...cellNode.attrs, background: colour })
+          tr.setNodeMarkup(tableStart + cellOff, undefined, {...cellNode.attrs, background: colour})
         }
         this.editorView.dispatch(tr)
         this.editor.commands.focus()
@@ -417,16 +423,16 @@ class RowHandleView {
 
     this.itemMoveUp.addEventListener('mousedown', run(() => {
       if (!this.map || this.row <= 0) return
-      const { state } = this.editorView
-      moveTableRow({ from: this.row, to: this.row - 1 })(state, tr => this.editorView.dispatch(tr))
+      const {state} = this.editorView
+      moveTableRow({from: this.row, to: this.row - 1})(state, tr => this.editorView.dispatch(tr))
       this.editor.commands.focus()
     }))
 
     this.itemMoveDown.addEventListener('mousedown', run(() => {
       const map = this.map
       if (!map || this.row >= map.height - 1) return
-      const { state } = this.editorView
-      moveTableRow({ from: this.row, to: this.row + 1 })(state, tr => this.editorView.dispatch(tr))
+      const {state} = this.editorView
+      moveTableRow({from: this.row, to: this.row + 1})(state, tr => this.editorView.dispatch(tr))
       this.editor.commands.focus()
     }))
   }

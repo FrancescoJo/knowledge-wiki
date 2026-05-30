@@ -3,7 +3,12 @@
   "title": "UserResponse",
   "description": "API representation of a user account.",
   "type": "object",
-  "required": ["id", "email", "createdAt", "updatedAt"],
+  "required": [
+    "id",
+    "email",
+    "createdAt",
+    "updatedAt"
+  ],
   "properties": {
     "id": {
       "type": "string",

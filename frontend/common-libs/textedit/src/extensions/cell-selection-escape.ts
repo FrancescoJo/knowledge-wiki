@@ -18,9 +18,9 @@
  * $Since: 2026-05-14
  */
 
-import { Extension } from '@tiptap/core'
-import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state'
-import { CellSelection } from '@tiptap/pm/tables'
+import {Extension} from '@tiptap/core'
+import {Plugin, PluginKey, TextSelection} from '@tiptap/pm/state'
+import {CellSelection} from '@tiptap/pm/tables'
 
 const pluginKey = new PluginKey<number | null>('cellSelectionEscape')
 
@@ -30,7 +30,7 @@ export const CellSelectionEscape = Extension.create({
   addKeyboardShortcuts() {
     return {
       Escape: () => {
-        const { state } = this.editor
+        const {state} = this.editor
         if (!(state.selection instanceof CellSelection)) return false
 
         const savedPos = pluginKey.getState(state)
@@ -53,7 +53,9 @@ export const CellSelectionEscape = Extension.create({
       new Plugin({
         key: pluginKey,
         state: {
-          init(): number | null { return null },
+          init(): number | null {
+            return null
+          },
           apply(tr, prev, oldState) {
             // Entering CellSelection from a TextSelection — save the cursor position.
             if (

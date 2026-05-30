@@ -4,25 +4,19 @@
  * $Since: 2026-05-09
  */
 
-import { Extension } from '@tiptap/core'
-import { Plugin, PluginKey } from '@tiptap/pm/state'
-import type { EditorView } from '@tiptap/pm/view'
-import {
-  isInTable,
-  selectionCell,
-  TableMap,
-  rowIsHeader,
-  columnIsHeader,
-} from '@tiptap/pm/tables'
-import type { Editor } from '@tiptap/core'
-import { mkItem, tableNodeAt } from './utils'
+import type {Editor} from '@tiptap/core'
+import {Extension} from '@tiptap/core'
+import {Plugin, PluginKey} from '@tiptap/pm/state'
+import type {EditorView} from '@tiptap/pm/view'
+import {columnIsHeader, isInTable, rowIsHeader, selectionCell, TableMap,} from '@tiptap/pm/tables'
+import {mkItem, tableNodeAt} from './utils'
 
 const KEY = new PluginKey<null>('tableOptionsOverlay')
 
-const CSS_OVERLAY  = 'te-table-options'
-const CSS_BTN      = 'te-table-options__btn'
-const CSS_SEP      = 'te-table-options__sep'
-const CSS_ACTIVE   = 'is-active'
+const CSS_OVERLAY = 'te-table-options'
+const CSS_BTN = 'te-table-options__btn'
+const CSS_SEP = 'te-table-options__sep'
+const CSS_ACTIVE = 'is-active'
 
 // -- Helpers -------------------------------------------------------------------
 
@@ -41,13 +35,13 @@ class TableOptionsView {
 
   private readonly onEditorBlur: () => void
   private readonly onScroll: () => void
-  private readonly btnFixedWidths:  HTMLButtonElement
-  private readonly btnHeaderRow:    HTMLButtonElement
-  private readonly btnHeaderCol:    HTMLButtonElement
-  private readonly btnAlignLeft:    HTMLButtonElement
-  private readonly btnAlignCentre:  HTMLButtonElement
-  private readonly btnAlignRight:   HTMLButtonElement
-  private readonly btnDistribute:   HTMLButtonElement
+  private readonly btnFixedWidths: HTMLButtonElement
+  private readonly btnHeaderRow: HTMLButtonElement
+  private readonly btnHeaderCol: HTMLButtonElement
+  private readonly btnAlignLeft: HTMLButtonElement
+  private readonly btnAlignCentre: HTMLButtonElement
+  private readonly btnAlignRight: HTMLButtonElement
+  private readonly btnDistribute: HTMLButtonElement
 
   constructor(
     private readonly editorView: EditorView,
@@ -59,13 +53,13 @@ class TableOptionsView {
     this.dom.setAttribute('aria-label', 'Table options')
     this.dom.style.display = 'none'
 
-    this.btnFixedWidths  = mkItem('Fixed widths', CSS_BTN, 'Toggle fixed column widths')
-    this.btnHeaderRow    = mkItem('Header row',   CSS_BTN, 'Toggle header row')
-    this.btnHeaderCol    = mkItem('Header col',   CSS_BTN, 'Toggle header column')
-    this.btnAlignLeft    = mkItem('←',            CSS_BTN, 'Align left')
-    this.btnAlignCentre  = mkItem('↔',            CSS_BTN, 'Align centre')
-    this.btnAlignRight   = mkItem('→',            CSS_BTN, 'Align right')
-    this.btnDistribute   = mkItem('Distribute',   CSS_BTN, 'Distribute columns evenly')
+    this.btnFixedWidths = mkItem('Fixed widths', CSS_BTN, 'Toggle fixed column widths')
+    this.btnHeaderRow = mkItem('Header row', CSS_BTN, 'Toggle header row')
+    this.btnHeaderCol = mkItem('Header col', CSS_BTN, 'Toggle header column')
+    this.btnAlignLeft = mkItem('←', CSS_BTN, 'Align left')
+    this.btnAlignCentre = mkItem('↔', CSS_BTN, 'Align centre')
+    this.btnAlignRight = mkItem('→', CSS_BTN, 'Align right')
+    this.btnDistribute = mkItem('Distribute', CSS_BTN, 'Distribute columns evenly')
 
     this.dom.append(
       this.btnFixedWidths, this.btnHeaderRow,
@@ -79,18 +73,22 @@ class TableOptionsView {
     // Prevent the editor from losing focus whenever the user interacts with any
     // part of the overlay — including buttons that have the `disabled` attribute,
     // which may not fire mousedown on the button element itself in all browsers.
-    this.dom.addEventListener('mousedown', ev => { ev.preventDefault() })
+    this.dom.addEventListener('mousedown', ev => {
+      ev.preventDefault()
+    })
 
     this.bindEvents()
 
     document.body.appendChild(this.dom)
 
     // Hide when the editor loses focus (no ProseMirror transaction fires in that case).
-    this.onEditorBlur = () => { this.dom.style.display = 'none' }
+    this.onEditorBlur = () => {
+      this.dom.style.display = 'none'
+    }
     editorView.dom.addEventListener('blur', this.onEditorBlur)
 
     this.onScroll = () => this.update(this.editorView)
-    editorView.dom.parentElement?.addEventListener('scroll', this.onScroll, { passive: true })
+    editorView.dom.parentElement?.addEventListener('scroll', this.onScroll, {passive: true})
 
     this.update(editorView)
   }
@@ -118,8 +116,8 @@ class TableOptionsView {
 
     this.btnFixedWidths.addEventListener('mousedown', ev => {
       ev.preventDefault()
-      const fixed = e.isActive('table', { fixedColumnWidths: true })
-      e.chain().focus().updateAttributes('table', { fixedColumnWidths: !fixed }).run()
+      const fixed = e.isActive('table', {fixedColumnWidths: true})
+      e.chain().focus().updateAttributes('table', {fixedColumnWidths: !fixed}).run()
     })
 
     this.btnHeaderRow.addEventListener('mousedown', ev => {
@@ -157,7 +155,7 @@ class TableOptionsView {
   private updatePosition(view: EditorView): void {
     try {
       const $cell = selectionCell(view.state)
-      const { tableNode, tableStart } = tableNodeAt($cell)
+      const {tableNode, tableStart} = tableNodeAt($cell)
       const map = TableMap.get(tableNode)
       const firstCellDom = view.nodeDOM(tableStart + map.positionAt(0, 0, tableNode))
       const tableDom = firstCellDom instanceof HTMLElement ? firstCellDom.closest('table') : null
@@ -165,25 +163,26 @@ class TableOptionsView {
       const tRect = tableDom.getBoundingClientRect()
       const areaDom = view.dom.parentElement ?? view.dom
       const areaRect = areaDom.getBoundingClientRect()
-      this.dom.style.top       = `${tRect.bottom + 4}px`
-      this.dom.style.left      = `${areaRect.left + areaRect.width / 2}px`
+      this.dom.style.top = `${tRect.bottom + 4}px`
+      this.dom.style.left = `${areaRect.left + areaRect.width / 2}px`
       this.dom.style.transform = 'translateX(-50%)'
-    } catch { /* leave position unchanged if calculation fails */ }
+    } catch { /* leave position unchanged if calculation fails */
+    }
   }
 
   private updateActiveStates(view: EditorView): void {
     const e = this.editor
-    const isFixed = e.isActive('table', { fixedColumnWidths: true })
+    const isFixed = e.isActive('table', {fixedColumnWidths: true})
 
-    this.setActive(this.btnFixedWidths,  isFixed)
-    this.setActive(this.btnAlignLeft,    e.isActive({ textAlign: 'left' }))
-    this.setActive(this.btnAlignCentre,  e.isActive({ textAlign: 'center' }))
-    this.setActive(this.btnAlignRight,   e.isActive({ textAlign: 'right' }))
+    this.setActive(this.btnFixedWidths, isFixed)
+    this.setActive(this.btnAlignLeft, e.isActive({textAlign: 'left'}))
+    this.setActive(this.btnAlignCentre, e.isActive({textAlign: 'center'}))
+    this.setActive(this.btnAlignRight, e.isActive({textAlign: 'right'}))
     this.btnDistribute.disabled = isFixed
 
     try {
       const $cell = selectionCell(view.state)
-      const { tableNode } = tableNodeAt($cell)
+      const {tableNode} = tableNodeAt($cell)
       const map = TableMap.get(tableNode)
       this.setActive(this.btnHeaderRow, rowIsHeader(map, tableNode, 0))
       this.setActive(this.btnHeaderCol, columnIsHeader(map, tableNode, 0))
@@ -199,10 +198,10 @@ class TableOptionsView {
   }
 
   private distributeColumns(): void {
-    const { state } = this.editorView
+    const {state} = this.editorView
     if (!isInTable(state)) return
     const $cell = selectionCell(state)
-    const { tableNode, tableStart } = tableNodeAt($cell)
+    const {tableNode, tableStart} = tableNodeAt($cell)
     const map = TableMap.get(tableNode)
 
     const explicitWidth: number | null = tableNode.attrs['tableWidth'] ?? null
@@ -225,8 +224,8 @@ class TableOptionsView {
       const cell = tableNode.nodeAt(offset)
       if (!cell) continue
       const colspan: number = cell.attrs['colspan'] ?? 1
-      const colwidth = Array.from({ length: colspan }, () => equalColWidth!)
-      tr.setNodeMarkup(tableStart + offset, undefined, { ...cell.attrs, colwidth })
+      const colwidth = Array.from({length: colspan}, () => equalColWidth!)
+      tr.setNodeMarkup(tableStart + offset, undefined, {...cell.attrs, colwidth})
     }
     this.editorView.dispatch(tr)
     this.editor.commands.focus()

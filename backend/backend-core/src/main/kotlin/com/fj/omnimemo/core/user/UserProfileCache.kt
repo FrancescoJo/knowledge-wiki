@@ -5,8 +5,8 @@
  */
 package com.fj.omnimemo.core.user
 
-import com.fj.omnimemo.core.user.model.UserProfile
 import com.fj.omnimemo.core.user.model.UserId
+import com.fj.omnimemo.core.user.model.UserProfile
 
 /**
  * Read-through cache for user display profiles.

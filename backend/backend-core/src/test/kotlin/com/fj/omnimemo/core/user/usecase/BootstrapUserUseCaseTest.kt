@@ -5,8 +5,8 @@
  */
 package com.fj.omnimemo.core.user.usecase
 
-import com.fj.omnimemo.core.user.exception.RedundantBootstrapProhibitedException
 import com.fj.omnimemo.core.test.annotation.SmallTest
+import com.fj.omnimemo.core.user.exception.RedundantBootstrapProhibitedException
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.repository.MockUserRepository
 import com.fj.omnimemo.core.user.security.MockPasswordHasher

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <body>
-<span th:fragment="status"
-      th:class="${status == 'UP'} ? 'status-value' : 'status-value error'"
+<span th:class="${status == 'UP'} ? 'status-value' : 'status-value error'"
+      th:fragment="status"
       th:text="#{status.value(${status}, ${time})}">Status: —</span>
 </body>
 </html>

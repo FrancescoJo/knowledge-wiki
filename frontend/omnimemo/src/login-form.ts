@@ -4,22 +4,24 @@
  * $Since: 2026-05-26T00:00:00Z
  */
 
-import { getCsrfToken } from '@src/csrf'
+import {getCsrfToken} from '@src/csrf'
 
 type CsrfProvider = () => string | null
 type NavigateFn = (url: string) => void
 type CredentialStoreFn = (form: HTMLFormElement) => Promise<void>
 
 function defaultCredentialStore(form: HTMLFormElement): Promise<void> {
-    if (!('credentials' in navigator)) return Promise.resolve()
-    const Ctor = (window as unknown as Record<string, unknown>)['PasswordCredential'] as
-        (new(form: HTMLFormElement) => Credential) | undefined
-    if (!Ctor) return Promise.resolve()
-    try {
-        return navigator.credentials.store(new Ctor(form)).then(() => {}, () => {})
-    } catch (_) {
-        return Promise.resolve()
-    }
+  if (!('credentials' in navigator)) return Promise.resolve()
+  const Ctor = (window as unknown as Record<string, unknown>)['PasswordCredential'] as
+    (new(form: HTMLFormElement) => Credential) | undefined
+  if (!Ctor) return Promise.resolve()
+  try {
+    return navigator.credentials.store(new Ctor(form)).then(() => {
+    }, () => {
+    })
+  } catch (_) {
+    return Promise.resolve()
+  }
 }
 
 /**
@@ -39,48 +41,50 @@ function defaultCredentialStore(form: HTMLFormElement): Promise<void> {
  * @version 0.1.4
  */
 export function initLoginForm(
-    root: EventTarget = document.body,
-    csrfProvider: CsrfProvider = getCsrfToken,
-    navigate: NavigateFn = (url) => { window.location.href = url },
-    credentialStore: CredentialStoreFn = defaultCredentialStore,
+  root: EventTarget = document.body,
+  csrfProvider: CsrfProvider = getCsrfToken,
+  navigate: NavigateFn = (url) => {
+    window.location.href = url
+  },
+  credentialStore: CredentialStoreFn = defaultCredentialStore,
 ): void {
-    root.addEventListener('keydown', (evt: Event) => {
-        const event = evt as KeyboardEvent
-        if (event.key !== 'Enter') return
-        const target = event.target as HTMLElement
+  root.addEventListener('keydown', (evt: Event) => {
+    const event = evt as KeyboardEvent
+    if (event.key !== 'Enter') return
+    const target = event.target as HTMLElement
 
-        if (target.id === 'login-email') {
-            event.preventDefault()
-            ;(document.getElementById('login-password') as HTMLInputElement | null)?.focus()
-            return
-        }
+    if (target.id === 'login-email') {
+      event.preventDefault()
+      ;(document.getElementById('login-password') as HTMLInputElement | null)?.focus()
+      return
+    }
 
-        if (target.id === 'login-password') {
-            event.preventDefault()
-            document.querySelector<HTMLButtonElement>('#login-form button[type="submit"]')?.click()
-        }
-    })
+    if (target.id === 'login-password') {
+      event.preventDefault()
+      document.querySelector<HTMLButtonElement>('#login-form button[type="submit"]')?.click()
+    }
+  })
 
-    root.addEventListener('htmx:configRequest', (evt: Event) => {
-        const token = csrfProvider()
-        if (token) (evt as CustomEvent).detail.headers['X-XSRF-TOKEN'] = token
-    })
+  root.addEventListener('htmx:configRequest', (evt: Event) => {
+    const token = csrfProvider()
+    if (token) (evt as CustomEvent).detail.headers['X-XSRF-TOKEN'] = token
+  })
 
-    root.addEventListener('htmx:afterRequest', (evt: Event) => {
-        const event = evt as CustomEvent
-        if ((event.detail.elt as HTMLElement).id !== 'login-form') return
-        if (!event.detail.successful) return
-        const form = event.detail.elt as HTMLFormElement
-        credentialStore(form).then(() => navigate('/'))
-    })
+  root.addEventListener('htmx:afterRequest', (evt: Event) => {
+    const event = evt as CustomEvent
+    if ((event.detail.elt as HTMLElement).id !== 'login-form') return
+    if (!event.detail.successful) return
+    const form = event.detail.elt as HTMLFormElement
+    credentialStore(form).then(() => navigate('/'))
+  })
 
-    root.addEventListener('htmx:responseError', (evt: Event) => {
-        const event = evt as CustomEvent
-        if ((event.detail.elt as HTMLElement).id !== 'login-form') return
-        const errorEl = document.getElementById('login-error')
-        if (!errorEl) return
-        errorEl.textContent = event.detail.xhr.status === 401
-            ? 'Invalid email or password.'
-            : 'Login failed. Please try again.'
-    })
+  root.addEventListener('htmx:responseError', (evt: Event) => {
+    const event = evt as CustomEvent
+    if ((event.detail.elt as HTMLElement).id !== 'login-form') return
+    const errorEl = document.getElementById('login-error')
+    if (!errorEl) return
+    errorEl.textContent = event.detail.xhr.status === 401
+      ? 'Invalid email or password.'
+      : 'Login failed. Please try again.'
+  })
 }

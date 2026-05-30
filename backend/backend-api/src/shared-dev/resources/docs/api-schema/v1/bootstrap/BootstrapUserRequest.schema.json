@@ -3,7 +3,10 @@
   "title": "BootstrapUserRequest",
   "description": "Payload to create the first administrator account. Accepted only when the users table is empty and the request originates from localhost.",
   "type": "object",
-  "required": ["email", "password"],
+  "required": [
+    "email",
+    "password"
+  ],
   "properties": {
     "email": {
       "type": "string",

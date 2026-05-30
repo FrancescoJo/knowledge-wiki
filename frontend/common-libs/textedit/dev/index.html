@@ -1,151 +1,157 @@
 ﻿<!doctype html>
 <html lang="en-GB">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TextEdit — Development</title>
   <meta name="darkreader-lock">
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <div class="layout">
+<div class="layout">
 
-    <!-- -- Page header ------------------------------------------------ -->
-    <header class="page-header">
-      <nav class="breadcrumb">
-        <a href="#">Home</a> / <a href="#">Development Notes</a> / Edit
-      </nav>
-    </header>
+  <!-- -- Page header ------------------------------------------------ -->
+  <header class="page-header">
+    <nav class="breadcrumb">
+      <a href="#">Home</a> / <a href="#">Development Notes</a> / Edit
+    </nav>
+  </header>
 
-    <!-- -- Editor column ---------------------------------------------- -->
-    <div class="editor-column">
-      <div class="edit-form">
+  <!-- -- Editor column ---------------------------------------------- -->
+  <div class="editor-column">
+    <div class="edit-form">
 
-        <label>
-          <input
-            type="text"
-            class="title-input"
-            placeholder="Document title"
-            value="Formatting Reference"
-          />
-        </label>
+      <label>
+        <input
+          type="text"
+          class="title-input"
+          placeholder="Document title"
+          value="Formatting Reference"
+        />
+      </label>
 
-        <!-- Toolbar (represents the wiki's formatting toolbar) -->
-        <div class="toolbar" id="toolbar">
-          <!-- Group: Heading -->
-          <button data-cmd="heading" data-arg="1" title="Heading 1 (Ctrl+Alt+1)">H1</button>
-          <button data-cmd="heading" data-arg="2" title="Heading 2 (Ctrl+Alt+2)">H2</button>
-          <button data-cmd="heading" data-arg="3" title="Heading 3 (Ctrl+Alt+3)">H3</button>
-          <button data-cmd="heading" data-arg="4" title="Heading 4 (Ctrl+Alt+4)">H4</button>
-          <button data-cmd="heading" data-arg="5" title="Heading 5 (Ctrl+Alt+5)">H5</button>
-          <button data-cmd="heading" data-arg="6" title="Heading 6 (Ctrl+Alt+6)">H6</button>
+      <!-- Toolbar (represents the wiki's formatting toolbar) -->
+      <div class="toolbar" id="toolbar">
+        <!-- Group: Heading -->
+        <button data-cmd="heading" data-arg="1" title="Heading 1 (Ctrl+Alt+1)">H1</button>
+        <button data-cmd="heading" data-arg="2" title="Heading 2 (Ctrl+Alt+2)">H2</button>
+        <button data-cmd="heading" data-arg="3" title="Heading 3 (Ctrl+Alt+3)">H3</button>
+        <button data-cmd="heading" data-arg="4" title="Heading 4 (Ctrl+Alt+4)">H4</button>
+        <button data-cmd="heading" data-arg="5" title="Heading 5 (Ctrl+Alt+5)">H5</button>
+        <button data-cmd="heading" data-arg="6" title="Heading 6 (Ctrl+Alt+6)">H6</button>
 
-          <div class="toolbar-separator"></div>
+        <div class="toolbar-separator"></div>
 
-          <!-- Group: Styling -->
-          <button data-cmd="bold"      title="Bold (Ctrl+Alt+B)"><b>B</b></button>
-          <button data-cmd="italic"    title="Italic (Ctrl+Alt+I)"><i>I</i></button>
-          <button data-cmd="strike"    title="Strikethrough (Ctrl+Alt+S)"><s>S</s></button>
-          <button data-cmd="underline" title="Underline (Ctrl+Alt+U)"><u>U</u></button>
-          <button data-cmd="code"      title="Inline code (Ctrl+Alt+Z)">‹›</button>
-          <button id="colour-fg-btn" class="toolbar-colour-btn" title="Text colour (Ctrl+Alt+C)"><span class="toolbar-colour-swatch" id="colour-fg-swatch" style="background:#000000"></span></button>
-          <button id="colour-bg-btn" class="toolbar-colour-btn" title="Highlight colour (Ctrl+Alt+V)"><span class="toolbar-colour-swatch" id="colour-bg-swatch" style="background:#ffff00"></span></button>
+        <!-- Group: Styling -->
+        <button data-cmd="bold" title="Bold (Ctrl+Alt+B)"><b>B</b></button>
+        <button data-cmd="italic" title="Italic (Ctrl+Alt+I)"><i>I</i></button>
+        <button data-cmd="strike" title="Strikethrough (Ctrl+Alt+S)"><s>S</s></button>
+        <button data-cmd="underline" title="Underline (Ctrl+Alt+U)"><u>U</u></button>
+        <button data-cmd="code" title="Inline code (Ctrl+Alt+Z)">‹›</button>
+        <button id="colour-fg-btn" class="toolbar-colour-btn" title="Text colour (Ctrl+Alt+C)"><span
+          class="toolbar-colour-swatch" id="colour-fg-swatch" style="background:#000000"></span></button>
+        <button id="colour-bg-btn" class="toolbar-colour-btn" title="Highlight colour (Ctrl+Alt+V)"><span
+          class="toolbar-colour-swatch" id="colour-bg-swatch" style="background:#ffff00"></span></button>
 
-          <div class="toolbar-separator"></div>
+        <div class="toolbar-separator"></div>
 
-          <!-- Group: Script -->
-          <button data-cmd="superscript" title="Superscript (Ctrl+Alt+])">x²</button>
-          <button data-cmd="subscript"   title="Subscript (Ctrl+Alt+[)">x₂</button>
+        <!-- Group: Script -->
+        <button data-cmd="superscript" title="Superscript (Ctrl+Alt+])">x²</button>
+        <button data-cmd="subscript" title="Subscript (Ctrl+Alt+[)">x₂</button>
 
-          <div class="toolbar-separator"></div>
+        <div class="toolbar-separator"></div>
 
-          <!-- Group: Listing -->
-          <button data-cmd="bulletList"  title="Bullet list (Ctrl+Alt+-)">•—</button>
-          <button data-cmd="orderedList" title="Ordered list (Ctrl+Alt+=)">1.</button>
-          <button data-cmd="taskList"    title="Task list (Ctrl+Alt+;)">☑</button>
+        <!-- Group: Listing -->
+        <button data-cmd="bulletList" title="Bullet list (Ctrl+Alt+-)">•—</button>
+        <button data-cmd="orderedList" title="Ordered list (Ctrl+Alt+=)">1.</button>
+        <button data-cmd="taskList" title="Task list (Ctrl+Alt+;)">☑</button>
 
-          <div class="toolbar-separator"></div>
+        <div class="toolbar-separator"></div>
 
-          <!-- Group: Alignment -->
-          <button data-cmd="align" data-arg="left"   title="Align left (Ctrl+Alt+J)">←</button>
-          <button data-cmd="align" data-arg="centre" title="Align centre (Ctrl+Alt+K)">↔</button>
-          <button data-cmd="align" data-arg="right"  title="Align right (Ctrl+Alt+L)">→</button>
+        <!-- Group: Alignment -->
+        <button data-cmd="align" data-arg="left" title="Align left (Ctrl+Alt+J)">←</button>
+        <button data-cmd="align" data-arg="centre" title="Align centre (Ctrl+Alt+K)">↔</button>
+        <button data-cmd="align" data-arg="right" title="Align right (Ctrl+Alt+L)">→</button>
 
-          <div class="toolbar-separator"></div>
+        <div class="toolbar-separator"></div>
 
-          <!-- Group: Objects -->
-          <button data-cmd="blockquote" title="Blockquote">"</button>
-          <button data-cmd="codeBlock"  title="Code block">{}</button>
-          <button data-cmd="link"       title="Hyperlink">↗</button>
+        <!-- Group: Objects -->
+        <button data-cmd="blockquote" title="Blockquote">"</button>
+        <button data-cmd="codeBlock" title="Code block">{}</button>
+        <button data-cmd="link" title="Hyperlink">↗</button>
 
-          <!-- Table split button: left = insert default, right = open size picker -->
-          <div class="toolbar-table-wrap" id="table-picker-wrap">
-            <button data-cmd="insertTable" title="Insert table (2 × 2 with header)">⊞</button><span class="toolbar-table-sep" aria-hidden="true"></span><button class="toolbar-table-arrow" id="table-picker-toggle" title="Table size picker" aria-haspopup="true" aria-expanded="false">▼</button>
-            <div class="table-picker" id="table-picker" hidden>
-              <label class="table-picker-header-option">
-                <input type="checkbox" id="table-include-header" checked>
-                Include Header
-              </label>
-              <div class="table-picker-grid" id="table-picker-grid"></div>
-              <div class="table-picker-size" id="table-picker-size"></div>
-            </div>
+        <!-- Table split button: left = insert default, right = open size picker -->
+        <div class="toolbar-table-wrap" id="table-picker-wrap">
+          <button data-cmd="insertTable" title="Insert table (2 × 2 with header)">⊞</button>
+          <span class="toolbar-table-sep" aria-hidden="true"></span>
+          <button class="toolbar-table-arrow" id="table-picker-toggle" title="Table size picker"
+                  aria-haspopup="true" aria-expanded="false">▼
+          </button>
+          <div class="table-picker" id="table-picker" hidden>
+            <label class="table-picker-header-option">
+              <input type="checkbox" id="table-include-header" checked>
+              Include Header
+            </label>
+            <div class="table-picker-grid" id="table-picker-grid"></div>
+            <div class="table-picker-size" id="table-picker-size"></div>
           </div>
         </div>
-
-        <!-- Editor mount point -->
-        <div class="editor-wrapper">
-          <div id="editor"></div>
-        </div>
-
-        <!-- Action bar (represents the wiki's save/cancel controls) -->
-        <div class="action-bar">
-          <button class="btn-primary"   id="btn-save">Save</button>
-          <button class="btn-secondary" id="btn-cancel">Cancel</button>
-        </div>
-
       </div>
+
+      <!-- Editor mount point -->
+      <div class="editor-wrapper">
+        <div id="editor"></div>
+      </div>
+
+      <!-- Action bar (represents the wiki's save/cancel controls) -->
+      <div class="action-bar">
+        <button class="btn-primary" id="btn-save">Save</button>
+        <button class="btn-secondary" id="btn-cancel">Cancel</button>
+      </div>
+
     </div>
-
-    <!-- -- Dev panel -------------------------------------------------- -->
-    <aside class="dev-panel">
-      <div class="dev-panel-header">Development Tools</div>
-
-      <div class="dev-panel-controls">
-        <button id="btn-get-json">Snapshot JSON</button>
-        <button id="btn-toggle-readonly">Make Read-only</button>
-        <button id="btn-load-sample">Reload Sample</button>
-      </div>
-
-      <div class="dev-panel-tabs">
-        <button class="dev-tab is-active" data-tab="live">Live output</button>
-        <button class="dev-tab"           data-tab="snapshot">Snapshot</button>
-      </div>
-
-      <div class="dev-panel-output">
-        <div id="tab-live">
-          <div class="dev-hint">JSON updates on every keystroke.</div>
-          <pre id="json-output-live"></pre>
-        </div>
-        <div id="tab-snapshot" style="display:none">
-          <div class="dev-hint">Click "Snapshot JSON" to capture current content.</div>
-          <pre id="json-output"></pre>
-        </div>
-      </div>
-    </aside>
-
   </div>
 
-  <script type="module">
-    // Tab switching — dev-only, not part of the textedit module
-    document.querySelectorAll('.dev-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.dev-tab').forEach(t => t.classList.remove('is-active'))
-        tab.classList.add('is-active')
-        document.getElementById('tab-live').style.display     = tab.dataset.tab === 'live'     ? '' : 'none'
-        document.getElementById('tab-snapshot').style.display = tab.dataset.tab === 'snapshot' ? '' : 'none'
-      })
+  <!-- -- Dev panel -------------------------------------------------- -->
+  <aside class="dev-panel">
+    <div class="dev-panel-header">Development Tools</div>
+
+    <div class="dev-panel-controls">
+      <button id="btn-get-json">Snapshot JSON</button>
+      <button id="btn-toggle-readonly">Make Read-only</button>
+      <button id="btn-load-sample">Reload Sample</button>
+    </div>
+
+    <div class="dev-panel-tabs">
+      <button class="dev-tab is-active" data-tab="live">Live output</button>
+      <button class="dev-tab" data-tab="snapshot">Snapshot</button>
+    </div>
+
+    <div class="dev-panel-output">
+      <div id="tab-live">
+        <div class="dev-hint">JSON updates on every keystroke.</div>
+        <pre id="json-output-live"></pre>
+      </div>
+      <div id="tab-snapshot" style="display:none">
+        <div class="dev-hint">Click "Snapshot JSON" to capture current content.</div>
+        <pre id="json-output"></pre>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<script type="module">
+  // Tab switching — dev-only, not part of the textedit module
+  document.querySelectorAll('.dev-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.dev-tab').forEach(t => t.classList.remove('is-active'))
+      tab.classList.add('is-active')
+      document.getElementById('tab-live').style.display = tab.dataset.tab === 'live' ? '' : 'none'
+      document.getElementById('tab-snapshot').style.display = tab.dataset.tab === 'snapshot' ? '' : 'none'
     })
-  </script>
-  <script type="module" src="./main.ts"></script>
+  })
+</script>
+<script type="module" src="./main.ts"></script>
 </body>
 </html>

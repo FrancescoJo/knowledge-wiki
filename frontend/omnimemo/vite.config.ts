@@ -4,8 +4,8 @@
  * $Since: 2026-05-26
  */
 
-import { defineConfig } from 'vite'
-import { resolve } from 'path'
+import {defineConfig} from 'vite'
+import {resolve} from 'path'
 
 export default defineConfig({
   root: 'dev',

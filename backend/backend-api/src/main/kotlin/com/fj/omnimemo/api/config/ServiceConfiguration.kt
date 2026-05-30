@@ -11,13 +11,7 @@ import com.fj.omnimemo.core.user.UserProfileCache
 import com.fj.omnimemo.core.user.repository.RefreshTokenRepository
 import com.fj.omnimemo.core.user.repository.UserRepository
 import com.fj.omnimemo.core.user.security.PasswordHasher
-import com.fj.omnimemo.core.user.usecase.BootstrapUserUseCase
-import com.fj.omnimemo.core.user.usecase.CreateUserUseCase
-import com.fj.omnimemo.core.user.usecase.DeleteUserUseCase
-import com.fj.omnimemo.core.user.usecase.FindUserUseCase
-import com.fj.omnimemo.core.user.usecase.LoginUseCase
-import com.fj.omnimemo.core.user.usecase.UpdateUserEmailUseCase
-import com.fj.omnimemo.core.user.usecase.UpdateUserPasswordUseCase
+import com.fj.omnimemo.core.user.usecase.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

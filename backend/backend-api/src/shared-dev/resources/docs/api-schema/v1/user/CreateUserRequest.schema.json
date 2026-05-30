@@ -3,7 +3,10 @@
   "title": "CreateUserRequest",
   "description": "Payload to register a new user account.",
   "type": "object",
-  "required": ["email", "password"],
+  "required": [
+    "email",
+    "password"
+  ],
   "properties": {
     "email": {
       "type": "string",

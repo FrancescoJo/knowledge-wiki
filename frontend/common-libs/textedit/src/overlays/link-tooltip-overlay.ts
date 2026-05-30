@@ -13,12 +13,12 @@ import type {EditorView} from '@tiptap/pm/view'
 
 const KEY = new PluginKey<null>('linkTooltipOverlay')
 
-const CSS_TOOLTIP    = 'te-link-tooltip'
-const CSS_CTRL_HELD  = 'te-ctrl-held'
+const CSS_TOOLTIP = 'te-link-tooltip'
+const CSS_CTRL_HELD = 'te-ctrl-held'
 const HREF_MAX_CHARS = 60
-const OFFSET_X       = 14
-const OFFSET_Y       = 20
-const SCREEN_MARGIN  = 8
+const OFFSET_X = 14
+const OFFSET_Y = 20
+const SCREEN_MARGIN = 8
 
 // -- Tooltip view --------------------------------------------------------------
 
@@ -27,11 +27,11 @@ class LinkTooltipView {
 
   private overLink = false
 
-  private readonly onMousemove:  (ev: MouseEvent) => void
+  private readonly onMousemove: (ev: MouseEvent) => void
   private readonly onMouseleave: () => void
-  private readonly onClick:      (ev: MouseEvent) => void
-  private readonly onKeydown:    (ev: KeyboardEvent) => void
-  private readonly onKeyup:      (ev: KeyboardEvent) => void
+  private readonly onClick: (ev: MouseEvent) => void
+  private readonly onKeydown: (ev: KeyboardEvent) => void
+  private readonly onKeyup: (ev: KeyboardEvent) => void
 
   constructor(private readonly editorView: EditorView) {
     this.dom = document.createElement('div')
@@ -39,17 +39,17 @@ class LinkTooltipView {
     this.dom.hidden = true
     document.body.appendChild(this.dom)
 
-    this.onMousemove  = (ev: MouseEvent) => this.handleMousemove(ev)
+    this.onMousemove = (ev: MouseEvent) => this.handleMousemove(ev)
     this.onMouseleave = () => this.hide()
-    this.onClick      = (ev: MouseEvent) => this.handleClick(ev)
-    this.onKeydown    = (ev: KeyboardEvent) => this.handleKeydown(ev)
-    this.onKeyup      = (ev: KeyboardEvent) => this.handleKeyup(ev)
+    this.onClick = (ev: MouseEvent) => this.handleClick(ev)
+    this.onKeydown = (ev: KeyboardEvent) => this.handleKeydown(ev)
+    this.onKeyup = (ev: KeyboardEvent) => this.handleKeyup(ev)
 
-    editorView.dom.addEventListener('mousemove',  this.onMousemove)
+    editorView.dom.addEventListener('mousemove', this.onMousemove)
     editorView.dom.addEventListener('mouseleave', this.onMouseleave)
-    editorView.dom.addEventListener('click',      this.onClick)
+    editorView.dom.addEventListener('click', this.onClick)
     document.addEventListener('keydown', this.onKeydown)
-    document.addEventListener('keyup',   this.onKeyup)
+    document.addEventListener('keyup', this.onKeyup)
   }
 
   private handleMousemove(ev: MouseEvent): void {
@@ -61,10 +61,10 @@ class LinkTooltipView {
 
     this.overLink = true
 
-    const href  = anchor.getAttribute('href') ?? ''
+    const href = anchor.getAttribute('href') ?? ''
     this.dom.textContent = href.length > HREF_MAX_CHARS
-        ? href.slice(0, HREF_MAX_CHARS) + '…'
-        : href
+      ? href.slice(0, HREF_MAX_CHARS) + '…'
+      : href
     this.dom.hidden = false
     this.position(ev.clientX, ev.clientY)
     this.updateCursor(ev.ctrlKey)
@@ -104,23 +104,24 @@ class LinkTooltipView {
 
     // getBoundingClientRect() forces a synchronous layout so dimensions are
     // accurate immediately after hidden is set to false.
-    const { width, height } = this.dom.getBoundingClientRect()
+    const {width, height} = this.dom.getBoundingClientRect()
 
-    if (x + width  > window.innerWidth  - SCREEN_MARGIN) x = clientX - width  - OFFSET_X
+    if (x + width > window.innerWidth - SCREEN_MARGIN) x = clientX - width - OFFSET_X
     if (y + height > window.innerHeight - SCREEN_MARGIN) y = clientY - height - 4
 
     this.dom.style.left = `${Math.max(SCREEN_MARGIN, x)}px`
-    this.dom.style.top  = `${Math.max(SCREEN_MARGIN, y)}px`
+    this.dom.style.top = `${Math.max(SCREEN_MARGIN, y)}px`
   }
 
-  update(): void {}
+  update(): void {
+  }
 
   destroy(): void {
-    this.editorView.dom.removeEventListener('mousemove',  this.onMousemove)
+    this.editorView.dom.removeEventListener('mousemove', this.onMousemove)
     this.editorView.dom.removeEventListener('mouseleave', this.onMouseleave)
-    this.editorView.dom.removeEventListener('click',      this.onClick)
+    this.editorView.dom.removeEventListener('click', this.onClick)
     document.removeEventListener('keydown', this.onKeydown)
-    document.removeEventListener('keyup',   this.onKeyup)
+    document.removeEventListener('keyup', this.onKeyup)
     this.editorView.dom.classList.remove(CSS_CTRL_HELD)
     this.dom.remove()
   }

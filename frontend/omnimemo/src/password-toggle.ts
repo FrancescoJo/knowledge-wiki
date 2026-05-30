@@ -14,12 +14,12 @@
  * @version 0.1.0
  */
 export function togglePasswordVisibility(inputId: string, button: HTMLButtonElement): void {
-    const input = document.getElementById(inputId) as HTMLInputElement | null
-    if (!input) return
-    const isPassword = input.type === 'password'
-    input.type = isPassword ? 'text' : 'password'
-    button.textContent = isPassword ? 'Hide' : 'Show'
-    button.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password')
+  const input = document.getElementById(inputId) as HTMLInputElement | null
+  if (!input) return
+  const isPassword = input.type === 'password'
+  input.type = isPassword ? 'text' : 'password'
+  button.textContent = isPassword ? 'Hide' : 'Show'
+  button.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password')
 }
 
 /**
@@ -31,11 +31,11 @@ export function togglePasswordVisibility(inputId: string, button: HTMLButtonElem
  * @version 0.1.0
  */
 export function initPasswordToggles(root: EventTarget = document): void {
-    root.addEventListener('click', (e: Event) => {
-        const btn = (e.target as Element).closest<HTMLButtonElement>('.login-password-toggle')
-        if (!btn) return
-        const targetId = btn.dataset['target']
-        if (!targetId) return
-        togglePasswordVisibility(targetId, btn)
-    })
+  root.addEventListener('click', (e: Event) => {
+    const btn = (e.target as Element).closest<HTMLButtonElement>('.login-password-toggle')
+    if (!btn) return
+    const targetId = btn.dataset['target']
+    if (!targetId) return
+    togglePasswordVisibility(targetId, btn)
+  })
 }

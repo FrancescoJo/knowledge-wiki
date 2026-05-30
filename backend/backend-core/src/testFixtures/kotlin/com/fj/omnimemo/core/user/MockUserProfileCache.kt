@@ -5,8 +5,8 @@
  */
 package com.fj.omnimemo.core.user
 
-import com.fj.omnimemo.core.user.model.UserProfile
 import com.fj.omnimemo.core.user.model.UserId
+import com.fj.omnimemo.core.user.model.UserProfile
 
 /**
  * In-memory fake of [UserProfileCache] for use in Small tests.

@@ -4,24 +4,31 @@
  * $Since: 2026-05-07
  */
 
-import { Editor } from '@tiptap/core'
-import { GapCursor } from '@tiptap/pm/gapcursor'
-import { Fragment } from '@tiptap/pm/model'
+import {Editor} from '@tiptap/core'
+import {GapCursor} from '@tiptap/pm/gapcursor'
+import {Fragment} from '@tiptap/pm/model'
 import {
-  isInTable,
-  selectedRect,
-  selectionCell,
   CellSelection,
-  TableMap,
   columnIsHeader,
-  rowIsHeader,
+  isInTable,
   moveTableColumn,
   moveTableRow,
+  rowIsHeader,
+  selectedRect,
+  selectionCell,
+  TableMap,
 } from '@tiptap/pm/tables'
-import { buildExtensions, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_COLS, BLOCK_OBJECT_TYPES } from './extensions'
-import type { BlockObjectType } from './extensions'
-import type { HeadingLevel, InsertTableOptions, TextAlignment, TextEditContent, TextEditHandle, TextEditOptions } from './types'
-import { hashJson } from './utils'
+import type {BlockObjectType} from './extensions'
+import {BLOCK_OBJECT_TYPES, buildExtensions, TABLE_DEFAULT_COLS, TABLE_DEFAULT_ROWS} from './extensions'
+import type {
+  HeadingLevel,
+  InsertTableOptions,
+  TextAlignment,
+  TextEditContent,
+  TextEditHandle,
+  TextEditOptions
+} from './types'
+import {hashJson} from './utils'
 
 /**
  * Rich text editor component wrapping TipTap core.
@@ -53,7 +60,7 @@ export class TextEdit implements TextEditHandle {
       extensions: buildExtensions(options.codeLanguages ?? []),
       content: options.content ?? null,
       editable: !(options.readOnly ?? false),
-      onUpdate: ({ editor }) => {
+      onUpdate: ({editor}) => {
         this.currentHash = hashJson(editor.getJSON() as TextEditContent)
         options.onChange?.(editor.getJSON() as TextEditContent)
       },
@@ -162,7 +169,7 @@ export class TextEdit implements TextEditHandle {
    * @version 0.1.0
    */
   isAtObjectBoundary(): boolean {
-    const { selection } = this.editor.state
+    const {selection} = this.editor.state
     if (!(selection instanceof GapCursor)) return false
     const nodeBefore = selection.$head.nodeBefore
     return nodeBefore !== null && BLOCK_OBJECT_TYPES.includes(nodeBefore.type.name as BlockObjectType)
@@ -217,7 +224,7 @@ export class TextEdit implements TextEditHandle {
    * @version 0.1.0
    */
   setLink(href: string): void {
-    this.editor.chain().focus().setLink({ href }).run()
+    this.editor.chain().focus().setLink({href}).run()
   }
 
   /** @since 0.1.0 @version 0.1.0 */
@@ -251,7 +258,7 @@ export class TextEdit implements TextEditHandle {
    * @version 0.1.0
    */
   setHighlightColour(colour: string): void {
-    this.editor.chain().focus().setHighlight({ color: colour }).run()
+    this.editor.chain().focus().setHighlight({color: colour}).run()
   }
 
   /** @since 0.1.0 @version 0.1.0 */
@@ -282,7 +289,7 @@ export class TextEdit implements TextEditHandle {
    * @version 0.1.0
    */
   toggleHeading(level: HeadingLevel): void {
-    this.editor.chain().focus().toggleHeading({ level }).run()
+    this.editor.chain().focus().toggleHeading({level}).run()
   }
 
   /** @since 0.1.0 @version 0.1.0 */
@@ -339,7 +346,7 @@ export class TextEdit implements TextEditHandle {
     this.editor
       .chain()
       .focus()
-      .insertTable({ rows, cols, withHeaderRow })
+      .insertTable({rows, cols, withHeaderRow})
       .run()
   }
 
@@ -355,7 +362,7 @@ export class TextEdit implements TextEditHandle {
    * @since 0.2.0 @version 0.2.0
    */
   canMergeCells(): boolean {
-    const { state } = this.editor
+    const {state} = this.editor
     if (!(state.selection instanceof CellSelection)) return false
     const rect = selectedRect(state)
     return rect.right - rect.left > 1 || rect.bottom - rect.top > 1
@@ -378,7 +385,7 @@ export class TextEdit implements TextEditHandle {
 
   /** @since 0.2.0 @version 0.2.0 */
   isTableFixedColumnWidths(): boolean {
-    return this.editor.isActive('table', { fixedColumnWidths: true })
+    return this.editor.isActive('table', {fixedColumnWidths: true})
   }
 
   /** @since 0.2.0 @version 0.2.0 */
@@ -415,7 +422,7 @@ export class TextEdit implements TextEditHandle {
    * @since 0.2.0 @version 0.2.0
    */
   setTableFixedColumnWidths(fixed: boolean): void {
-    this.editor.chain().focus().updateAttributes('table', { fixedColumnWidths: fixed }).run()
+    this.editor.chain().focus().updateAttributes('table', {fixedColumnWidths: fixed}).run()
   }
 
   // -- Table structure --------------------------------------------------------
@@ -494,7 +501,7 @@ export class TextEdit implements TextEditHandle {
    * @since 0.2.0 @version 0.2.0
    */
   distributeColumns(): void {
-    const { state } = this.editor
+    const {state} = this.editor
     if (!isInTable(state)) return
     const $cell = selectionCell(state)
     let tableDepth = $cell.depth
@@ -525,8 +532,8 @@ export class TextEdit implements TextEditHandle {
       const cell = table.nodeAt(cellOffset)
       if (!cell) continue
       const colspan: number = cell.attrs['colspan'] ?? 1
-      const colwidth = Array.from({ length: colspan }, () => equalColWidth!)
-      tr.setNodeMarkup(tableStart + cellOffset, undefined, { ...cell.attrs, colwidth })
+      const colwidth = Array.from({length: colspan}, () => equalColWidth!)
+      tr.setNodeMarkup(tableStart + cellOffset, undefined, {...cell.attrs, colwidth})
     }
 
     this.editor.view.dispatch(tr)
@@ -537,9 +544,9 @@ export class TextEdit implements TextEditHandle {
    * @since 0.2.0 @version 0.2.0
    */
   clearCells(): void {
-    const { state } = this.editor
+    const {state} = this.editor
     if (!isInTable(state)) return
-    const { selection } = state
+    const {selection} = state
     const paragraphType = state.schema.nodes['paragraph']
     if (!paragraphType) return
 
@@ -576,38 +583,38 @@ export class TextEdit implements TextEditHandle {
 
   /** @since 0.2.0 @version 0.2.0 */
   moveColumnLeft(): void {
-    const { state } = this.editor
+    const {state} = this.editor
     if (!isInTable(state)) return
     const rect = selectedRect(state)
     if (rect.left === 0) return
-    moveTableColumn({ from: rect.left, to: rect.left - 1 })(state, tr => this.editor.view.dispatch(tr))
+    moveTableColumn({from: rect.left, to: rect.left - 1})(state, tr => this.editor.view.dispatch(tr))
   }
 
   /** @since 0.2.0 @version 0.2.0 */
   moveColumnRight(): void {
-    const { state } = this.editor
+    const {state} = this.editor
     if (!isInTable(state)) return
     const rect = selectedRect(state)
     if (rect.left >= rect.map.width - 1) return
-    moveTableColumn({ from: rect.left, to: rect.left + 1 })(state, tr => this.editor.view.dispatch(tr))
+    moveTableColumn({from: rect.left, to: rect.left + 1})(state, tr => this.editor.view.dispatch(tr))
   }
 
   /** @since 0.2.0 @version 0.2.0 */
   moveRowUp(): void {
-    const { state } = this.editor
+    const {state} = this.editor
     if (!isInTable(state)) return
     const rect = selectedRect(state)
     if (rect.top === 0) return
-    moveTableRow({ from: rect.top, to: rect.top - 1 })(state, tr => this.editor.view.dispatch(tr))
+    moveTableRow({from: rect.top, to: rect.top - 1})(state, tr => this.editor.view.dispatch(tr))
   }
 
   /** @since 0.2.0 @version 0.2.0 */
   moveRowDown(): void {
-    const { state } = this.editor
+    const {state} = this.editor
     if (!isInTable(state)) return
     const rect = selectedRect(state)
     if (rect.top >= rect.map.height - 1) return
-    moveTableRow({ from: rect.top, to: rect.top + 1 })(state, tr => this.editor.view.dispatch(tr))
+    moveTableRow({from: rect.top, to: rect.top + 1})(state, tr => this.editor.view.dispatch(tr))
   }
 
   // -- Column sort ------------------------------------------------------------
@@ -623,11 +630,11 @@ export class TextEdit implements TextEditHandle {
   }
 
   private doSortColumn(direction: 'asc' | 'desc'): void {
-    const { state } = this.editor
+    const {state} = this.editor
     if (!isInTable(state)) return
 
     const rect = selectedRect(state)
-    const { table, map, tableStart } = rect
+    const {table, map, tableStart} = rect
     const colIndex = rect.left
     const firstDataRow = rowIsHeader(map, table, 0) ? 1 : 0
 
@@ -637,7 +644,7 @@ export class TextEdit implements TextEditHandle {
     for (let r = firstDataRow; r < map.height; r++) {
       const cellOffset = map.positionAt(r, colIndex, table)
       const cell = table.nodeAt(cellOffset)
-      rows.push({ index: r, text: cell?.textContent ?? '' })
+      rows.push({index: r, text: cell?.textContent ?? ''})
     }
 
     const collator = new Intl.Collator()
@@ -650,7 +657,7 @@ export class TextEdit implements TextEditHandle {
 
     const children = []
     for (let r = 0; r < firstDataRow; r++) children.push(table.child(r))
-    for (const { index } of sorted) children.push(table.child(index))
+    for (const {index} of sorted) children.push(table.child(index))
 
     const tableNodePos = tableStart - 1
     const tr = state.tr.replaceWith(tableNodePos, tableNodePos + table.nodeSize, table.copy(Fragment.from(children)))

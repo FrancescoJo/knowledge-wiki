@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.infrastructure.test
 
+import com.fj.omnimemo.infrastructure.test.PostgresContainerSupport.newContainer
 import org.testcontainers.containers.PostgreSQLContainer
 
 /**

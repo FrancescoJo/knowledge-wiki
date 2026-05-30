@@ -7,13 +7,13 @@
  * $Since: 2026-05-27
  */
 
-import { initPasswordToggles } from '@src/password-toggle'
-import { initLoginForm } from '@src/login-form'
+import {initPasswordToggles} from '@src/password-toggle'
+import {initLoginForm} from '@src/login-form'
 
 document.addEventListener('DOMContentLoaded', () => {
-    initPasswordToggles()
-    initLoginForm()
+  initPasswordToggles()
+  initLoginForm()
 
-    const dialog = document.getElementById('login-popup') as HTMLDialogElement | null
-    dialog?.showModal()
+  const dialog = document.getElementById('login-popup') as HTMLDialogElement | null
+  dialog?.showModal()
 })

@@ -4,9 +4,9 @@
  * $Since: 2026-05-07
  */
 
-import { TextEdit, NodeType, MarkType } from '@src/index'
-import type { TextEditContent, TextEditHandle, HeadingLevel, TextAlignment, InsertTableOptions } from '@src/types'
-import { ColourPickerPopup } from '@src/overlays/utils'
+import {MarkType, NodeType, TextEdit} from '@src/index'
+import type {HeadingLevel, InsertTableOptions, TextAlignment, TextEditContent, TextEditHandle} from '@src/types'
+import {ColourPickerPopup} from '@src/overlays/utils'
 
 const SAMPLE_CONTENT: TextEditContent = {
   type: NodeType.Doc,
@@ -16,85 +16,97 @@ const SAMPLE_CONTENT: TextEditContent = {
 
     {
       type: NodeType.Heading,
-      attrs: { level: 1 },
-      content: [{ type: NodeType.Text, text: 'Formatting Reference' }],
+      attrs: {level: 1},
+      content: [{type: NodeType.Text, text: 'Formatting Reference'}],
     },
     {
       type: NodeType.Heading,
-      attrs: { level: 2 },
-      content: [{ type: NodeType.Text, text: 'Heading 2 — Lorem ipsum dolor sit amet' }],
+      attrs: {level: 2},
+      content: [{type: NodeType.Text, text: 'Heading 2 — Lorem ipsum dolor sit amet'}],
     },
     {
       type: NodeType.Heading,
-      attrs: { level: 3 },
-      content: [{ type: NodeType.Text, text: 'Heading 3 — consectetur adipiscing elit' }],
+      attrs: {level: 3},
+      content: [{type: NodeType.Text, text: 'Heading 3 — consectetur adipiscing elit'}],
     },
     {
       type: NodeType.Heading,
-      attrs: { level: 4 },
-      content: [{ type: NodeType.Text, text: 'Heading 4 — sed do eiusmod tempor' }],
+      attrs: {level: 4},
+      content: [{type: NodeType.Text, text: 'Heading 4 — sed do eiusmod tempor'}],
     },
     {
       type: NodeType.Heading,
-      attrs: { level: 5 },
-      content: [{ type: NodeType.Text, text: 'Heading 5 — incididunt ut labore' }],
+      attrs: {level: 5},
+      content: [{type: NodeType.Text, text: 'Heading 5 — incididunt ut labore'}],
     },
     {
       type: NodeType.Heading,
-      attrs: { level: 6 },
-      content: [{ type: NodeType.Text, text: 'Heading 6 — et dolore magna aliqua' }],
+      attrs: {level: 6},
+      content: [{type: NodeType.Text, text: 'Heading 6 — et dolore magna aliqua'}],
     },
 
     // -- Inline marks --------------------------------------------------------
 
     {
       type: NodeType.Heading,
-      attrs: { level: 2 },
-      content: [{ type: NodeType.Text, text: 'Inline Marks' }],
+      attrs: {level: 2},
+      content: [{type: NodeType.Text, text: 'Inline Marks'}],
     },
     {
       type: NodeType.Paragraph,
       content: [
-        { type: NodeType.Text, marks: [{ type: MarkType.Bold }], text: 'Bold' },
-        { type: NodeType.Text, text: ',  ' },
-        { type: NodeType.Text, marks: [{ type: MarkType.Italic }], text: 'italic' },
-        { type: NodeType.Text, text: ',  ' },
-        { type: NodeType.Text, marks: [{ type: MarkType.Strike }], text: 'strikethrough' },
-        { type: NodeType.Text, text: ',  ' },
-        { type: NodeType.Text, marks: [{ type: MarkType.Underline }], text: 'underline' },
-        { type: NodeType.Text, text: ',  ' },
-        { type: NodeType.Text, marks: [{ type: MarkType.Code }], text: 'inline code' },
-        { type: NodeType.Text, text: ',  ' },
-        { type: NodeType.Text, marks: [{ type: MarkType.TextStyle, attrs: { color: '#e03e3e' } }], text: 'red text' },
-        { type: NodeType.Text, text: ',  ' },
-        { type: NodeType.Text, marks: [{ type: MarkType.TextStyle, attrs: { color: '#2563eb' } }], text: 'blue text' },
-        { type: NodeType.Text, text: ',  ' },
-        { type: NodeType.Text, marks: [{ type: MarkType.Highlight, attrs: { color: '#fef08a' } }], text: 'yellow highlight' },
-        { type: NodeType.Text, text: ',  ' },
-        { type: NodeType.Text, marks: [{ type: MarkType.Highlight, attrs: { color: '#bbf7d0' } }], text: 'green highlight' },
-        { type: NodeType.Text, text: '.' },
+        {type: NodeType.Text, marks: [{type: MarkType.Bold}], text: 'Bold'},
+        {type: NodeType.Text, text: ',  '},
+        {type: NodeType.Text, marks: [{type: MarkType.Italic}], text: 'italic'},
+        {type: NodeType.Text, text: ',  '},
+        {type: NodeType.Text, marks: [{type: MarkType.Strike}], text: 'strikethrough'},
+        {type: NodeType.Text, text: ',  '},
+        {type: NodeType.Text, marks: [{type: MarkType.Underline}], text: 'underline'},
+        {type: NodeType.Text, text: ',  '},
+        {type: NodeType.Text, marks: [{type: MarkType.Code}], text: 'inline code'},
+        {type: NodeType.Text, text: ',  '},
+        {type: NodeType.Text, marks: [{type: MarkType.TextStyle, attrs: {color: '#e03e3e'}}], text: 'red text'},
+        {type: NodeType.Text, text: ',  '},
+        {type: NodeType.Text, marks: [{type: MarkType.TextStyle, attrs: {color: '#2563eb'}}], text: 'blue text'},
+        {type: NodeType.Text, text: ',  '},
+        {type: NodeType.Text, marks: [{type: MarkType.Highlight, attrs: {color: '#fef08a'}}], text: 'yellow highlight'},
+        {type: NodeType.Text, text: ',  '},
+        {type: NodeType.Text, marks: [{type: MarkType.Highlight, attrs: {color: '#bbf7d0'}}], text: 'green highlight'},
+        {type: NodeType.Text, text: '.'},
       ],
     },
     {
       type: NodeType.Paragraph,
       content: [
-        { type: NodeType.Text, text: 'Superscript: E = mc' },
-        { type: NodeType.Text, marks: [{ type: MarkType.Superscript }], text: '2' },
-        { type: NodeType.Text, text: '.  Subscript: H' },
-        { type: NodeType.Text, marks: [{ type: MarkType.Subscript }], text: '2' },
-        { type: NodeType.Text, text: 'O.  Combined: ' },
-        { type: NodeType.Text, marks: [{ type: MarkType.Bold }, { type: MarkType.Italic }, { type: MarkType.Underline }], text: 'bold italic underline' },
-        { type: NodeType.Text, text: '.' },
+        {type: NodeType.Text, text: 'Superscript: E = mc'},
+        {type: NodeType.Text, marks: [{type: MarkType.Superscript}], text: '2'},
+        {type: NodeType.Text, text: '.  Subscript: H'},
+        {type: NodeType.Text, marks: [{type: MarkType.Subscript}], text: '2'},
+        {type: NodeType.Text, text: 'O.  Combined: '},
+        {
+          type: NodeType.Text,
+          marks: [{type: MarkType.Bold}, {type: MarkType.Italic}, {type: MarkType.Underline}],
+          text: 'bold italic underline'
+        },
+        {type: NodeType.Text, text: '.'},
       ],
     },
     {
       type: NodeType.Paragraph,
       content: [
-        { type: NodeType.Text, text: 'Hyperlink: ' },
-        { type: NodeType.Text, marks: [{ type: MarkType.Link, attrs: { href: 'https://tiptap.dev' } }], text: 'TipTap documentation' },
-        { type: NodeType.Text, text: ',  ' },
-        { type: NodeType.Text, marks: [{ type: MarkType.Bold }, { type: MarkType.Link, attrs: { href: 'https://tiptap.dev/extensions' } }], text: 'bold link' },
-        { type: NodeType.Text, text: '.' },
+        {type: NodeType.Text, text: 'Hyperlink: '},
+        {
+          type: NodeType.Text,
+          marks: [{type: MarkType.Link, attrs: {href: 'https://tiptap.dev'}}],
+          text: 'TipTap documentation'
+        },
+        {type: NodeType.Text, text: ',  '},
+        {
+          type: NodeType.Text,
+          marks: [{type: MarkType.Bold}, {type: MarkType.Link, attrs: {href: 'https://tiptap.dev/extensions'}}],
+          text: 'bold link'
+        },
+        {type: NodeType.Text, text: '.'},
       ],
     },
 
@@ -102,33 +114,88 @@ const SAMPLE_CONTENT: TextEditContent = {
 
     {
       type: NodeType.Heading,
-      attrs: { level: 2 },
-      content: [{ type: NodeType.Text, text: 'Lists' }],
+      attrs: {level: 2},
+      content: [{type: NodeType.Text, text: 'Lists'}],
     },
     {
       type: NodeType.BulletList,
       content: [
-        { type: NodeType.ListItem, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Bullet item — Lorem ipsum dolor sit amet' }] }] },
-        { type: NodeType.ListItem, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Bullet item — consectetur adipiscing elit' }] }] },
-        { type: NodeType.ListItem, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Bullet item — sed do eiusmod tempor incididunt' }] }] },
+        {
+          type: NodeType.ListItem,
+          content: [{
+            type: NodeType.Paragraph,
+            content: [{type: NodeType.Text, text: 'Bullet item — Lorem ipsum dolor sit amet'}]
+          }]
+        },
+        {
+          type: NodeType.ListItem,
+          content: [{
+            type: NodeType.Paragraph,
+            content: [{type: NodeType.Text, text: 'Bullet item — consectetur adipiscing elit'}]
+          }]
+        },
+        {
+          type: NodeType.ListItem,
+          content: [{
+            type: NodeType.Paragraph,
+            content: [{type: NodeType.Text, text: 'Bullet item — sed do eiusmod tempor incididunt'}]
+          }]
+        },
       ],
     },
     {
       type: NodeType.OrderedList,
-      attrs: { start: 1 },
+      attrs: {start: 1},
       content: [
-        { type: NodeType.ListItem, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'First step — initialise the project' }] }] },
-        { type: NodeType.ListItem, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Second step — configure extensions' }] }] },
-        { type: NodeType.ListItem, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Third step — deploy to production' }] }] },
+        {
+          type: NodeType.ListItem,
+          content: [{
+            type: NodeType.Paragraph,
+            content: [{type: NodeType.Text, text: 'First step — initialise the project'}]
+          }]
+        },
+        {
+          type: NodeType.ListItem,
+          content: [{
+            type: NodeType.Paragraph,
+            content: [{type: NodeType.Text, text: 'Second step — configure extensions'}]
+          }]
+        },
+        {
+          type: NodeType.ListItem,
+          content: [{
+            type: NodeType.Paragraph,
+            content: [{type: NodeType.Text, text: 'Third step — deploy to production'}]
+          }]
+        },
       ],
     },
     {
       type: NodeType.TaskList,
       content: [
-        { type: NodeType.TaskItem, attrs: { checked: true },  content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Design the API surface' }] }] },
-        { type: NodeType.TaskItem, attrs: { checked: true },  content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Write unit tests' }] }] },
-        { type: NodeType.TaskItem, attrs: { checked: false }, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Integrate with the wiki frontend' }] }] },
-        { type: NodeType.TaskItem, attrs: { checked: false }, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Publish release notes' }] }] },
+        {
+          type: NodeType.TaskItem,
+          attrs: {checked: true},
+          content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'Design the API surface'}]}]
+        },
+        {
+          type: NodeType.TaskItem,
+          attrs: {checked: true},
+          content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'Write unit tests'}]}]
+        },
+        {
+          type: NodeType.TaskItem,
+          attrs: {checked: false},
+          content: [{
+            type: NodeType.Paragraph,
+            content: [{type: NodeType.Text, text: 'Integrate with the wiki frontend'}]
+          }]
+        },
+        {
+          type: NodeType.TaskItem,
+          attrs: {checked: false},
+          content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'Publish release notes'}]}]
+        },
       ],
     },
 
@@ -136,40 +203,55 @@ const SAMPLE_CONTENT: TextEditContent = {
 
     {
       type: NodeType.Heading,
-      attrs: { level: 2 },
-      content: [{ type: NodeType.Text, text: 'Alignment' }],
+      attrs: {level: 2},
+      content: [{type: NodeType.Text, text: 'Alignment'}],
     },
     {
       type: NodeType.Paragraph,
-      attrs: { textAlign: 'left' },
-      content: [{ type: NodeType.Text, text: 'Left-aligned — Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }],
+      attrs: {textAlign: 'left'},
+      content: [{
+        type: NodeType.Text,
+        text: 'Left-aligned — Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+      }],
     },
     {
       type: NodeType.Paragraph,
-      attrs: { textAlign: 'center' },
-      content: [{ type: NodeType.Text, text: 'Centre-aligned — Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }],
+      attrs: {textAlign: 'center'},
+      content: [{
+        type: NodeType.Text,
+        text: 'Centre-aligned — Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+      }],
     },
     {
       type: NodeType.Paragraph,
-      attrs: { textAlign: 'right' },
-      content: [{ type: NodeType.Text, text: 'Right-aligned — Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }],
+      attrs: {textAlign: 'right'},
+      content: [{
+        type: NodeType.Text,
+        text: 'Right-aligned — Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+      }],
     },
 
     // -- Block elements -------------------------------------------------------
 
     {
       type: NodeType.Heading,
-      attrs: { level: 2 },
-      content: [{ type: NodeType.Text, text: 'Block Elements' }],
+      attrs: {level: 2},
+      content: [{type: NodeType.Text, text: 'Block Elements'}],
     },
     {
       type: NodeType.Blockquote,
-      content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: '"Simplicity is the ultimate sophistication." — Leonardo da Vinci' }] }],
+      content: [{
+        type: NodeType.Paragraph,
+        content: [{type: NodeType.Text, text: '"Simplicity is the ultimate sophistication." — Leonardo da Vinci'}]
+      }],
     },
     {
       type: NodeType.CodeBlock,
-      attrs: { language: 'typescript' },
-      content: [{ type: NodeType.Text, text: 'function greet(name: string): string {\n  return `Hello, ${name}!`\n}\n\nconsole.log(greet(\'World\'))' }],
+      attrs: {language: 'typescript'},
+      content: [{
+        type: NodeType.Text,
+        text: 'function greet(name: string): string {\n  return `Hello, ${name}!`\n}\n\nconsole.log(greet(\'World\'))'
+      }],
     },
     {
       type: NodeType.Table,
@@ -177,33 +259,72 @@ const SAMPLE_CONTENT: TextEditContent = {
         {
           type: NodeType.TableRow,
           content: [
-            { type: NodeType.TableHeader, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Feature' }] }] },
-            { type: NodeType.TableHeader, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Status' }] }] },
-            { type: NodeType.TableHeader, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Notes' }] }] },
+            {
+              type: NodeType.TableHeader,
+              content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'Feature'}]}]
+            },
+            {
+              type: NodeType.TableHeader,
+              content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'Status'}]}]
+            },
+            {
+              type: NodeType.TableHeader,
+              content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'Notes'}]}]
+            },
           ],
         },
         {
           type: NodeType.TableRow,
           content: [
-            { type: NodeType.TableCell, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Text formatting' }] }] },
-            { type: NodeType.TableCell, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: '✓ Complete' }] }] },
-            { type: NodeType.TableCell, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Bold, italic, strike, underline, code' }] }] },
+            {
+              type: NodeType.TableCell,
+              content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'Text formatting'}]}]
+            },
+            {
+              type: NodeType.TableCell,
+              content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: '✓ Complete'}]}]
+            },
+            {
+              type: NodeType.TableCell,
+              content: [{
+                type: NodeType.Paragraph,
+                content: [{type: NodeType.Text, text: 'Bold, italic, strike, underline, code'}]
+              }]
+            },
           ],
         },
         {
           type: NodeType.TableRow,
           content: [
-            { type: NodeType.TableCell, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Colour' }] }] },
-            { type: NodeType.TableCell, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: '✓ Complete' }] }] },
-            { type: NodeType.TableCell, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Foreground and highlight' }] }] },
+            {
+              type: NodeType.TableCell,
+              content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'Colour'}]}]
+            },
+            {
+              type: NodeType.TableCell,
+              content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: '✓ Complete'}]}]
+            },
+            {
+              type: NodeType.TableCell,
+              content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'Foreground and highlight'}]}]
+            },
           ],
         },
         {
           type: NodeType.TableRow,
           content: [
-            { type: NodeType.TableCell, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Alignment' }] }] },
-            { type: NodeType.TableCell, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: '✓ Complete' }] }] },
-            { type: NodeType.TableCell, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Left, centre, right' }] }] },
+            {
+              type: NodeType.TableCell,
+              content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'Alignment'}]}]
+            },
+            {
+              type: NodeType.TableCell,
+              content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: '✓ Complete'}]}]
+            },
+            {
+              type: NodeType.TableCell,
+              content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'Left, centre, right'}]}]
+            },
           ],
         },
       ],
@@ -224,20 +345,48 @@ function initialiseToolbar(editor: TextEdit): void {
     const arg = target.dataset['arg']
 
     switch (cmd) {
-      case 'heading':        editor.toggleHeading(Number(arg) as HeadingLevel); break
-      case 'bold':           editor.toggleBold(); break
-      case 'italic':         editor.toggleItalic(); break
-      case 'strike':         editor.toggleStrike(); break
-      case 'underline':      editor.toggleUnderline(); break
-      case 'code':           editor.toggleCode(); break
-      case 'superscript':    editor.toggleSuperscript(); break
-      case 'subscript':      editor.toggleSubscript(); break
-      case 'bulletList':     editor.toggleBulletList(); break
-      case 'orderedList':    editor.toggleOrderedList(); break
-      case 'taskList':       editor.toggleTaskList(); break
-      case 'align':          editor.setTextAlign(arg as TextAlignment); break
-      case 'blockquote':     editor.toggleBlockquote(); break
-      case 'codeBlock':      editor.toggleCodeBlock(); break
+      case 'heading':
+        editor.toggleHeading(Number(arg) as HeadingLevel);
+        break
+      case 'bold':
+        editor.toggleBold();
+        break
+      case 'italic':
+        editor.toggleItalic();
+        break
+      case 'strike':
+        editor.toggleStrike();
+        break
+      case 'underline':
+        editor.toggleUnderline();
+        break
+      case 'code':
+        editor.toggleCode();
+        break
+      case 'superscript':
+        editor.toggleSuperscript();
+        break
+      case 'subscript':
+        editor.toggleSubscript();
+        break
+      case 'bulletList':
+        editor.toggleBulletList();
+        break
+      case 'orderedList':
+        editor.toggleOrderedList();
+        break
+      case 'taskList':
+        editor.toggleTaskList();
+        break
+      case 'align':
+        editor.setTextAlign(arg as TextAlignment);
+        break
+      case 'blockquote':
+        editor.toggleBlockquote();
+        break
+      case 'codeBlock':
+        editor.toggleCodeBlock();
+        break
       case 'link': {
         if (editor.isActive('link')) {
           editor.unsetLink()
@@ -247,12 +396,14 @@ function initialiseToolbar(editor: TextEdit): void {
         }
         break
       }
-      case 'insertTable':    editor.insertTable(); break
+      case 'insertTable':
+        editor.insertTable();
+        break
     }
   })
 
-  const fgBtn    = document.getElementById('colour-fg-btn')
-  const bgBtn    = document.getElementById('colour-bg-btn')
+  const fgBtn = document.getElementById('colour-fg-btn')
+  const bgBtn = document.getElementById('colour-bg-btn')
   const fgSwatch = document.getElementById('colour-fg-swatch') as HTMLElement | null
   const bgSwatch = document.getElementById('colour-bg-swatch') as HTMLElement | null
 
@@ -293,11 +444,11 @@ function updateToolbarState(editor: TextEditHandle): void {
     let isActive = false
 
     if (cmd === 'heading' && arg) {
-      isActive = editor.isActive('heading', { level: Number(arg) })
+      isActive = editor.isActive('heading', {level: Number(arg)})
     } else if (cmd === 'align' && arg) {
       const tiptapAlign = arg === 'centre' ? 'center' : arg
-      isActive = editor.isActive('paragraph', { textAlign: tiptapAlign }) ||
-                 editor.isActive('heading', { textAlign: tiptapAlign })
+      isActive = editor.isActive('paragraph', {textAlign: tiptapAlign}) ||
+        editor.isActive('heading', {textAlign: tiptapAlign})
     } else if (cmd && cmd !== 'insertTable') {
       isActive = editor.isActive(cmd)
     }
@@ -307,12 +458,12 @@ function updateToolbarState(editor: TextEditHandle): void {
 }
 
 function initialiseTablePicker(editor: TextEdit): void {
-  const toggle    = document.getElementById('table-picker-toggle')
-  const picker    = document.getElementById('table-picker')
-  const wrap      = document.getElementById('table-picker-wrap')
-  const gridEl    = document.getElementById('table-picker-grid')
+  const toggle = document.getElementById('table-picker-toggle')
+  const picker = document.getElementById('table-picker')
+  const wrap = document.getElementById('table-picker-wrap')
+  const gridEl = document.getElementById('table-picker-grid')
   const sizeLabel = document.getElementById('table-picker-size')
-  const headerCb  = document.getElementById('table-include-header') as HTMLInputElement | null
+  const headerCb = document.getElementById('table-include-header') as HTMLInputElement | null
 
   if (!toggle || !picker || !wrap || !gridEl || !sizeLabel || !headerCb) return
 
@@ -418,27 +569,72 @@ function registerHotkeys(editor: TextEdit): void {
 
     switch (e.code) {
       // Styling
-      case 'KeyB': e.preventDefault(); editor.toggleBold(); break
-      case 'KeyI': e.preventDefault(); editor.toggleItalic(); break
-      case 'KeyS': e.preventDefault(); editor.toggleStrike(); break
-      case 'KeyU': e.preventDefault(); editor.toggleUnderline(); break
-      case 'KeyZ': e.preventDefault(); editor.toggleCode(); break
-      case 'KeyC': e.preventDefault(); document.getElementById('colour-fg-btn')?.click(); break
-      case 'KeyV': e.preventDefault(); document.getElementById('colour-bg-btn')?.click(); break
+      case 'KeyB':
+        e.preventDefault();
+        editor.toggleBold();
+        break
+      case 'KeyI':
+        e.preventDefault();
+        editor.toggleItalic();
+        break
+      case 'KeyS':
+        e.preventDefault();
+        editor.toggleStrike();
+        break
+      case 'KeyU':
+        e.preventDefault();
+        editor.toggleUnderline();
+        break
+      case 'KeyZ':
+        e.preventDefault();
+        editor.toggleCode();
+        break
+      case 'KeyC':
+        e.preventDefault();
+        document.getElementById('colour-fg-btn')?.click();
+        break
+      case 'KeyV':
+        e.preventDefault();
+        document.getElementById('colour-bg-btn')?.click();
+        break
 
       // Script
-      case 'BracketRight': e.preventDefault(); editor.toggleSuperscript(); break
-      case 'BracketLeft':  e.preventDefault(); editor.toggleSubscript(); break
+      case 'BracketRight':
+        e.preventDefault();
+        editor.toggleSuperscript();
+        break
+      case 'BracketLeft':
+        e.preventDefault();
+        editor.toggleSubscript();
+        break
 
       // Listing
-      case 'Equal':     e.preventDefault(); editor.toggleOrderedList(); break
-      case 'Minus':     e.preventDefault(); editor.toggleBulletList(); break
-      case 'Semicolon': e.preventDefault(); editor.toggleTaskList(); break
+      case 'Equal':
+        e.preventDefault();
+        editor.toggleOrderedList();
+        break
+      case 'Minus':
+        e.preventDefault();
+        editor.toggleBulletList();
+        break
+      case 'Semicolon':
+        e.preventDefault();
+        editor.toggleTaskList();
+        break
 
       // Alignment
-      case 'KeyJ': e.preventDefault(); editor.setTextAlign('left'); break
-      case 'KeyK': e.preventDefault(); editor.setTextAlign('centre'); break
-      case 'KeyL': e.preventDefault(); editor.setTextAlign('right'); break
+      case 'KeyJ':
+        e.preventDefault();
+        editor.setTextAlign('left');
+        break
+      case 'KeyK':
+        e.preventDefault();
+        editor.setTextAlign('centre');
+        break
+      case 'KeyL':
+        e.preventDefault();
+        editor.setTextAlign('right');
+        break
     }
   })
 }

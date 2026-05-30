@@ -6,8 +6,8 @@
 package com.fj.omnimemo.api.endpoint.bootstrap.impl
 
 import com.fj.omnimemo.api.endpoint.bootstrap.dto.request.BootstrapUserRequest
-import com.fj.omnimemo.core.user.exception.RedundantBootstrapProhibitedException
 import com.fj.omnimemo.core.test.annotation.SmallTest
+import com.fj.omnimemo.core.user.exception.RedundantBootstrapProhibitedException
 import com.fj.omnimemo.core.user.repository.MockUserRepository
 import com.fj.omnimemo.core.user.security.MockPasswordHasher
 import com.fj.omnimemo.core.user.usecase.BootstrapUserUseCase

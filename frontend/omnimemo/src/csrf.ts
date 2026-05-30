@@ -16,6 +16,6 @@
  * @version 0.1.0
  */
 export function getCsrfToken(cookieString: string = document.cookie): string | null {
-    const match = cookieString.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/)
-    return match ? decodeURIComponent(match[1]) : null
+  const match = cookieString.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/)
+  return match ? decodeURIComponent(match[1]) : null
 }

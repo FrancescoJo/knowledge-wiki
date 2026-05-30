@@ -4,24 +4,19 @@
  * $Since: 2026-05-09
  */
 
-import { Extension } from '@tiptap/core'
-import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state'
-import type { EditorView } from '@tiptap/pm/view'
-import {
-  isInTable,
-  selectionCell,
-  selectedRect,
-  CellSelection,
-} from '@tiptap/pm/tables'
-import type { Editor } from '@tiptap/core'
-import { ColourPickerPopup, mkItem, setDisabled, bindMenuCloseListeners } from './utils'
+import type {Editor} from '@tiptap/core'
+import {Extension} from '@tiptap/core'
+import {Plugin, PluginKey, TextSelection} from '@tiptap/pm/state'
+import type {EditorView} from '@tiptap/pm/view'
+import {CellSelection, isInTable, selectedRect, selectionCell,} from '@tiptap/pm/tables'
+import {bindMenuCloseListeners, ColourPickerPopup, mkItem, setDisabled} from './utils'
 
 const KEY = new PluginKey<null>('cellOptionsOverlay')
 
-const CSS_TRIGGER  = 'te-cell-options'
-const CSS_MENU     = 'te-cell-options__menu'
-const CSS_ITEM     = 'te-cell-options__item'
-const CSS_OPEN     = 'is-open'
+const CSS_TRIGGER = 'te-cell-options'
+const CSS_MENU = 'te-cell-options__menu'
+const CSS_ITEM = 'te-cell-options__item'
+const CSS_OPEN = 'is-open'
 
 // -- Overlay view --------------------------------------------------------------
 
@@ -29,14 +24,14 @@ class CellOptionsView {
   readonly triggerDom: HTMLElement
   readonly menuDom: HTMLElement
 
-  private readonly itemBackground:  HTMLButtonElement
-  private readonly itemMergeCells:  HTMLButtonElement
-  private readonly itemSplitCell:   HTMLButtonElement
+  private readonly itemBackground: HTMLButtonElement
+  private readonly itemMergeCells: HTMLButtonElement
+  private readonly itemSplitCell: HTMLButtonElement
   private readonly itemAddColRight: HTMLButtonElement
   private readonly itemAddRowBelow: HTMLButtonElement
-  private readonly itemClearCell:   HTMLButtonElement
-  private readonly itemDelColumn:   HTMLButtonElement
-  private readonly itemDelRow:      HTMLButtonElement
+  private readonly itemClearCell: HTMLButtonElement
+  private readonly itemDelColumn: HTMLButtonElement
+  private readonly itemDelRow: HTMLButtonElement
 
   private menuOpen = false
   private readonly colourPicker: ColourPickerPopup
@@ -67,14 +62,14 @@ class CellOptionsView {
     this.menuDom.setAttribute('role', 'menu')
     this.menuDom.hidden = true
 
-    this.itemBackground  = mkItem('Background colour', CSS_ITEM)
-    this.itemMergeCells  = mkItem('Merge cells', CSS_ITEM)
-    this.itemSplitCell   = mkItem('Split cell', CSS_ITEM)
+    this.itemBackground = mkItem('Background colour', CSS_ITEM)
+    this.itemMergeCells = mkItem('Merge cells', CSS_ITEM)
+    this.itemSplitCell = mkItem('Split cell', CSS_ITEM)
     this.itemAddColRight = mkItem('Add column right', CSS_ITEM)
     this.itemAddRowBelow = mkItem('Add row below', CSS_ITEM)
-    this.itemClearCell   = mkItem('Clear cell', CSS_ITEM)
-    this.itemDelColumn   = mkItem('Delete column', CSS_ITEM)
-    this.itemDelRow      = mkItem('Delete row', CSS_ITEM)
+    this.itemClearCell = mkItem('Clear cell', CSS_ITEM)
+    this.itemDelColumn = mkItem('Delete column', CSS_ITEM)
+    this.itemDelRow = mkItem('Delete row', CSS_ITEM)
 
     this.menuDom.append(
       this.itemBackground,
@@ -103,7 +98,7 @@ class CellOptionsView {
     document.body.appendChild(this.colourPicker.dom)
 
     this.onScroll = () => this.update(this.editorView)
-    editorView.dom.parentElement?.addEventListener('scroll', this.onScroll, { passive: true })
+    editorView.dom.parentElement?.addEventListener('scroll', this.onScroll, {passive: true})
 
     this.update(editorView)
   }
@@ -137,7 +132,7 @@ class CellOptionsView {
   }
 
   private openMenu(): void {
-    document.dispatchEvent(new CustomEvent('te:context-menu-open', { detail: this }))
+    document.dispatchEvent(new CustomEvent('te:context-menu-open', {detail: this}))
     this.menuOpen = true
     this.menuDom.hidden = false
     this.triggerDom.querySelector('button')?.setAttribute('aria-expanded', 'true')
@@ -153,11 +148,11 @@ class CellOptionsView {
   }
 
   private updateMenuPosition(): void {
-    const tRect    = this.triggerDom.getBoundingClientRect()
+    const tRect = this.triggerDom.getBoundingClientRect()
     const areaRect = this.editorView.dom.parentElement?.getBoundingClientRect()
     const menuRect = this.menuDom.getBoundingClientRect()
 
-    let top  = tRect.bottom
+    let top = tRect.bottom
     let left = tRect.left
 
     if (areaRect && menuRect.width > 0) {
@@ -167,7 +162,7 @@ class CellOptionsView {
       }
     }
 
-    this.menuDom.style.top  = `${top}px`
+    this.menuDom.style.top = `${top}px`
     this.menuDom.style.left = `${left}px`
   }
 
@@ -181,19 +176,22 @@ class CellOptionsView {
       const cellDom = view.nodeDOM($cell.pos)
       if (!(cellDom instanceof HTMLElement)) return
       const dRect = cellDom.getBoundingClientRect()
-      this.triggerDom.style.top   = `${dRect.top}px`
+      this.triggerDom.style.top = `${dRect.top}px`
       this.triggerDom.style.right = `${window.innerWidth - dRect.right}px`
-    } catch { /* leave position unchanged */ }
+    } catch { /* leave position unchanged */
+    }
   }
 
   private updateItemStates(view: EditorView): void {
-    const { state } = view
+    const {state} = view
     const canMerge = (() => {
       if (!(state.selection instanceof CellSelection)) return false
       try {
         const rect = selectedRect(state)
         return rect.right - rect.left > 1 || rect.bottom - rect.top > 1
-      } catch { return false }
+      } catch {
+        return false
+      }
     })()
 
     const canSplit = (() => {
@@ -203,7 +201,9 @@ class CellOptionsView {
         const cell = $cell.nodeAfter
         if (!cell) return false
         return (cell.attrs['colspan'] ?? 1) > 1 || (cell.attrs['rowspan'] ?? 1) > 1
-      } catch { return false }
+      } catch {
+        return false
+      }
     })()
 
     setDisabled(this.itemMergeCells, !canMerge)
@@ -225,14 +225,16 @@ class CellOptionsView {
     }
 
     this.itemBackground.addEventListener('mousedown', run(() => {
-      const { state } = this.editorView
+      const {state} = this.editorView
       try {
         const $cell = selectionCell(state)
         this.pendingBgPos = $cell.pos
         const nearRect = this.itemBackground.getBoundingClientRect()
         const initialColour = ($cell.nodeAfter?.attrs['background'] as string | null) ?? '#ffffff'
         this.colourPicker.open(nearRect, initialColour, colour => this.applyCellBackground(colour))
-      } catch { return }
+      } catch {
+        return
+      }
     }))
 
     this.itemMergeCells.addEventListener('mousedown', run(() => {
@@ -266,10 +268,13 @@ class CellOptionsView {
 
   private applyCellBackground(colour: string): void {
     if (this.pendingBgPos === null) return
-    const { state } = this.editorView
+    const {state} = this.editorView
     const $cell = state.doc.resolve(this.pendingBgPos)
     const cellNode = $cell.nodeAfter
-    if (!cellNode) { this.pendingBgPos = null; return }
+    if (!cellNode) {
+      this.pendingBgPos = null;
+      return
+    }
     const tr = state.tr.setNodeMarkup(this.pendingBgPos, undefined, {
       ...cellNode.attrs,
       background: colour,
@@ -280,7 +285,7 @@ class CellOptionsView {
   }
 
   private clearCurrentCell(): void {
-    const { state } = this.editorView
+    const {state} = this.editorView
     if (!isInTable(state)) return
     const paragraphType = state.schema.nodes['paragraph']
     if (!paragraphType) return

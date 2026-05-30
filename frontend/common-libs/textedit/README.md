@@ -37,10 +37,10 @@ npm run lint      # tsc --noEmit
 
 `vite.config.ts` switches behaviour by command:
 
-| Command | Root | Output |
-|---|---|---|
-| `vite` (dev) | `dev/` | served in browser with HMR |
-| `vite build` | `.` | `dist/textedit.js` (ES module, peer deps excluded) |
+| Command      | Root   | Output                                             |
+|--------------|--------|----------------------------------------------------|
+| `vite` (dev) | `dev/` | served in browser with HMR                         |
+| `vite build` | `.`    | `dist/textedit.js` (ES module, peer deps excluded) |
 
 ---
 
@@ -86,10 +86,10 @@ npm run coverage
 Generates a v8 branch-coverage report in the terminal.
 Two files are excluded from measurement because they contain no executable code:
 
-| File | Reason |
-|---|---|
+| File           | Reason                     |
+|----------------|----------------------------|
 | `src/types.ts` | TypeScript interfaces only |
-| `src/index.ts` | Re-export barrel |
+| `src/index.ts` | Re-export barrel           |
 
 ---
 
@@ -197,154 +197,154 @@ No custom `htmx:configRequest` hook is needed.
 
 ### Content
 
-| Method | Description |
-|---|---|
-| `getContent()` | Returns current document as JSON |
-| `setContent(content)` | Replaces entire document |
+| Method                | Description                      |
+|-----------------------|----------------------------------|
+| `getContent()`        | Returns current document as JSON |
+| `setContent(content)` | Replaces entire document         |
 
 ### State
 
-| Method | Description |
-|---|---|
-| `setReadOnly(boolean)` | Toggles editable / read-only mode |
-| `isActive(name, attrs?)` | Returns true when the named mark or node is active at the current selection |
-| `isFocused()` | Returns true when the editor has keyboard focus |
-| `isDirty()` | Returns true when the document has been modified since the editor was created |
-| `isAtObjectBoundary()` | Returns true when a GapCursor is positioned immediately after a block object (codeBlock, table, blockquote) |
+| Method                   | Description                                                                                                 |
+|--------------------------|-------------------------------------------------------------------------------------------------------------|
+| `setReadOnly(boolean)`   | Toggles editable / read-only mode                                                                           |
+| `isActive(name, attrs?)` | Returns true when the named mark or node is active at the current selection                                 |
+| `isFocused()`            | Returns true when the editor has keyboard focus                                                             |
+| `isDirty()`              | Returns true when the document has been modified since the editor was created                               |
+| `isAtObjectBoundary()`   | Returns true when a GapCursor is positioned immediately after a block object (codeBlock, table, blockquote) |
 
 ### Focus
 
-| Method | Description |
-|---|---|
+| Method    | Description                          |
+|-----------|--------------------------------------|
 | `focus()` | Moves keyboard focus into the editor |
 
 ### Heading
 
-| Method | Description |
-|---|---|
+| Method                 | Description                                                                       |
+|------------------------|-----------------------------------------------------------------------------------|
 | `toggleHeading(level)` | `level` is `1`–`6`; if the block is already at that level, reverts to a paragraph |
 
 ### Text formatting
 
-| Method | Description |
-|---|---|
-| `toggleBold()` | |
-| `toggleItalic()` | |
-| `toggleStrike()` | |
-| `toggleUnderline()` | |
-| `toggleCode()` | Inline code |
+| Method              | Description |
+|---------------------|-------------|
+| `toggleBold()`      |             |
+| `toggleItalic()`    |             |
+| `toggleStrike()`    |             |
+| `toggleUnderline()` |             |
+| `toggleCode()`      | Inline code |
 
 ### Link
 
-| Method | Description |
-|---|---|
-| `setLink(href)` | Applies a hyperlink to the current selection |
-| `unsetLink()` | Removes the hyperlink from the current selection |
+| Method          | Description                                      |
+|-----------------|--------------------------------------------------|
+| `setLink(href)` | Applies a hyperlink to the current selection     |
+| `unsetLink()`   | Removes the hyperlink from the current selection |
 
 ### Colour
 
-| Method | Description |
-|---|---|
-| `setTextColour(colour)` | Applies foreground colour; CSS colour value (e.g. `'#ff0000'`) |
-| `unsetTextColour()` | Removes foreground colour |
-| `setHighlightColour(colour)` | Applies background highlight colour |
-| `unsetHighlightColour()` | Removes background highlight |
+| Method                       | Description                                                    |
+|------------------------------|----------------------------------------------------------------|
+| `setTextColour(colour)`      | Applies foreground colour; CSS colour value (e.g. `'#ff0000'`) |
+| `unsetTextColour()`          | Removes foreground colour                                      |
+| `setHighlightColour(colour)` | Applies background highlight colour                            |
+| `unsetHighlightColour()`     | Removes background highlight                                   |
 
 ### Script
 
-| Method | Description |
-|---|---|
-| `toggleSuperscript()` | |
-| `toggleSubscript()` | |
+| Method                | Description |
+|-----------------------|-------------|
+| `toggleSuperscript()` |             |
+| `toggleSubscript()`   |             |
 
 ### Listing
 
-| Method | Description |
-|---|---|
-| `toggleBulletList()` | |
-| `toggleOrderedList()` | |
-| `toggleTaskList()` | |
+| Method                | Description |
+|-----------------------|-------------|
+| `toggleBulletList()`  |             |
+| `toggleOrderedList()` |             |
+| `toggleTaskList()`    |             |
 
 ### Alignment
 
-| Method | Description |
-|---|---|
+| Method                    | Description                                       |
+|---------------------------|---------------------------------------------------|
 | `setTextAlign(alignment)` | `alignment` is `'left'`, `'centre'`, or `'right'` |
 
 ### Objects
 
-| Method | Description |
-|---|---|
-| `toggleBlockquote()` | |
-| `toggleCodeBlock()` | |
+| Method                  | Description                                                                                                                    |
+|-------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `toggleBlockquote()`    |                                                                                                                                |
+| `toggleCodeBlock()`     |                                                                                                                                |
 | `insertTable(options?)` | Inserts a table at the cursor position. Default: 2 rows × 2 columns with header row. Options: `rows`, `cols`, `withHeaderRow`. |
 
 ### Table state
 
-| Method | Description |
-|---|---|
-| `isInTable()` | Returns true when the cursor is inside a table cell |
-| `canMergeCells()` | Returns true when the selection spans multiple cells that can be merged |
-| `canSplitCell()` | Returns true when the cursor is in a merged cell that can be split |
-| `isTableFixedColumnWidths()` | Returns true when the current table has fixed column widths enabled |
-| `isTableHeaderRow()` | Returns true when the first row of the current table is a header row |
-| `isTableHeaderColumn()` | Returns true when the first column of the current table is a header column |
+| Method                       | Description                                                                |
+|------------------------------|----------------------------------------------------------------------------|
+| `isInTable()`                | Returns true when the cursor is inside a table cell                        |
+| `canMergeCells()`            | Returns true when the selection spans multiple cells that can be merged    |
+| `canSplitCell()`             | Returns true when the cursor is in a merged cell that can be split         |
+| `isTableFixedColumnWidths()` | Returns true when the current table has fixed column widths enabled        |
+| `isTableHeaderRow()`         | Returns true when the first row of the current table is a header row       |
+| `isTableHeaderColumn()`      | Returns true when the first column of the current table is a header column |
 
 ### Table attributes
 
-| Method | Description |
-|---|---|
+| Method                             | Description                                                  |
+|------------------------------------|--------------------------------------------------------------|
 | `setTableFixedColumnWidths(fixed)` | Enables or disables fixed column widths on the current table |
 
 ### Table structure
 
-| Method | Description |
-|---|---|
-| `addColumnBefore()` | Inserts a column to the left of the cursor column |
-| `addColumnAfter()` | Inserts a column to the right of the cursor column |
-| `deleteColumn()` | Deletes the cursor column |
-| `addRowBefore()` | Inserts a row above the cursor row |
-| `addRowAfter()` | Inserts a row below the cursor row |
-| `deleteRow()` | Deletes the cursor row |
-| `mergeCells()` | Merges the selected cells into one |
-| `splitCell()` | Splits the cursor cell into its original constituent cells |
-| `toggleHeaderRow()` | Toggles the first row between header and body cells |
-| `toggleHeaderColumn()` | Toggles the first column between header and body cells |
+| Method                 | Description                                                |
+|------------------------|------------------------------------------------------------|
+| `addColumnBefore()`    | Inserts a column to the left of the cursor column          |
+| `addColumnAfter()`     | Inserts a column to the right of the cursor column         |
+| `deleteColumn()`       | Deletes the cursor column                                  |
+| `addRowBefore()`       | Inserts a row above the cursor row                         |
+| `addRowAfter()`        | Inserts a row below the cursor row                         |
+| `deleteRow()`          | Deletes the cursor row                                     |
+| `mergeCells()`         | Merges the selected cells into one                         |
+| `splitCell()`          | Splits the cursor cell into its original constituent cells |
+| `toggleHeaderRow()`    | Toggles the first row between header and body cells        |
+| `toggleHeaderColumn()` | Toggles the first column between header and body cells     |
 
 ### Cell background
 
-| Method | Description |
-|---|---|
-| `setCellBackground(colour)` | Applies a background colour to the current cell or selected cells |
-| `clearCellBackground()` | Removes the background colour from the current cell or selected cells |
+| Method                      | Description                                                           |
+|-----------------------------|-----------------------------------------------------------------------|
+| `setCellBackground(colour)` | Applies a background colour to the current cell or selected cells     |
+| `clearCellBackground()`     | Removes the background colour from the current cell or selected cells |
 
 ### Table layout
 
-| Method | Description |
-|---|---|
+| Method                | Description                                                  |
+|-----------------------|--------------------------------------------------------------|
 | `distributeColumns()` | Distributes all column widths equally across the table width |
-| `clearCells()` | Clears the content of the current cell or all selected cells |
+| `clearCells()`        | Clears the content of the current cell or all selected cells |
 
 ### Column / row movement
 
-| Method | Description |
-|---|---|
-| `moveColumnLeft()` | Moves the cursor column one position to the left |
+| Method              | Description                                       |
+|---------------------|---------------------------------------------------|
+| `moveColumnLeft()`  | Moves the cursor column one position to the left  |
 | `moveColumnRight()` | Moves the cursor column one position to the right |
-| `moveRowUp()` | Moves the cursor row one position up |
-| `moveRowDown()` | Moves the cursor row one position down |
+| `moveRowUp()`       | Moves the cursor row one position up              |
+| `moveRowDown()`     | Moves the cursor row one position down            |
 
 ### Column sort
 
-| Method | Description |
-|---|---|
-| `sortColumnAscending()` | Sorts data rows by the cursor column in ascending order |
+| Method                   | Description                                              |
+|--------------------------|----------------------------------------------------------|
+| `sortColumnAscending()`  | Sorts data rows by the cursor column in ascending order  |
 | `sortColumnDescending()` | Sorts data rows by the cursor column in descending order |
 
 ### Lifecycle
 
-| Method | Description |
-|---|---|
+| Method      | Description                                                                               |
+|-------------|-------------------------------------------------------------------------------------------|
 | `destroy()` | Destroys the editor and removes it from the DOM. Call when the host element is unmounted. |
 
 ---
@@ -376,4 +376,5 @@ The dev panel provides:
 - **Make Read-only** — toggles editable state
 - **Reload Sample** — restores the built-in sample document
 
-The sample document covers all supported content types: headings, paragraphs, task list, code block, table, and blockquote.
+The sample document covers all supported content types: headings, paragraphs, task list, code block, table, and
+blockquote.

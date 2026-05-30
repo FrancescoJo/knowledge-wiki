@@ -6,11 +6,11 @@
 package com.fj.omnimemo.api.endpoint.bootstrap.impl
 
 import com.fj.omnimemo.api.endpoint.ApiPathsV1
-import com.fj.omnimemo.core.user.exception.RedundantBootstrapProhibitedException
 import com.fj.omnimemo.core.test.annotation.MediumTest
+import com.fj.omnimemo.core.user.UserProfileCache
+import com.fj.omnimemo.core.user.exception.RedundantBootstrapProhibitedException
 import com.fj.omnimemo.core.user.model.User
 import com.fj.omnimemo.core.user.usecase.BootstrapUserUseCase
-import com.fj.omnimemo.core.user.UserProfileCache
 import com.fj.omnimemo.infrastructure.security.JwtTokenService
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
@@ -22,9 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 /**
  * Medium Tests for [BootstrapControllerImpl]: verifies HTTP routing, JSON
@@ -46,12 +44,17 @@ class BootstrapControllerMvcTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    @MockBean private lateinit var bootstrapUserUseCase: BootstrapUserUseCase
+    @MockBean
+    private lateinit var bootstrapUserUseCase: BootstrapUserUseCase
+
     // Required by GlobalModelAdvice; not referenced in test methods directly.
     @Suppress("UnusedPrivateProperty")
-    @MockBean private lateinit var userProfileCache: UserProfileCache
+    @MockBean
+    private lateinit var userProfileCache: UserProfileCache
+
     @Suppress("UnusedPrivateProperty")
-    @MockBean private lateinit var jwtTokenService: JwtTokenService
+    @MockBean
+    private lateinit var jwtTokenService: JwtTokenService
 
     private val user = User.create("alice@example.com", "hashed")
 

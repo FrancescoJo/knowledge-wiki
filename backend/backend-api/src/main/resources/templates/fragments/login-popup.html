@@ -1,32 +1,36 @@
-<dialog xmlns:th="http://www.thymeleaf.org" th:fragment="loginPopup" id="login-popup" class="login-dialog" aria-labelledby="login-popup-title">
-    <form id="login-form" class="login-form"
-          method="post" action="/api/v1/auth/login"
-          hx-post="/api/v1/auth/login"
-          hx-swap="none">
-        <header class="login-dialog-header">
-            <h2 id="login-popup-title" class="login-dialog-title" th:text="#{login.title}">Log In</h2>
-            <button type="button" class="login-dialog-close" th:attr="aria-label=#{login.close}"
-                    onclick="document.getElementById('login-popup').close()">&#x2715;</button>
-        </header>
+<dialog aria-labelledby="login-popup-title" class="login-dialog" id="login-popup" th:fragment="loginPopup"
+        xmlns:th="http://www.thymeleaf.org">
+  <form action="/api/v1/auth/login" class="login-form"
+        hx-post="/api/v1/auth/login" hx-swap="none"
+        id="login-form"
+        method="post">
+    <header class="login-dialog-header">
+      <h2 class="login-dialog-title" id="login-popup-title" th:text="#{login.title}">Log In</h2>
+      <button class="login-dialog-close" onclick="document.getElementById('login-popup').close()"
+              th:attr="aria-label=#{login.close}"
+              type="button">&#x2715;
+      </button>
+    </header>
 
-        <div class="login-field">
-            <label for="login-email" class="login-label" th:text="#{login.email}">Email</label>
-            <input id="login-email" name="email" type="email" class="login-input"
-                   autocomplete="username" required>
-        </div>
+    <div class="login-field">
+      <label class="login-label" for="login-email" th:text="#{login.email}">Email</label>
+      <input autocomplete="username" class="login-input" id="login-email" name="email"
+             required type="email">
+    </div>
 
-        <div class="login-field">
-            <label for="login-password" class="login-label" th:text="#{login.password}">Password</label>
-            <div class="login-password-wrapper">
-                <input id="login-password" name="password" type="password" class="login-input"
-                       autocomplete="current-password" required>
-                <button type="button" class="login-password-toggle" aria-label="Show password"
-                        data-target="login-password" th:text="#{login.password.show}">Show</button>
-            </div>
-        </div>
+    <div class="login-field">
+      <label class="login-label" for="login-password" th:text="#{login.password}">Password</label>
+      <div class="login-password-wrapper">
+        <input autocomplete="current-password" class="login-input" id="login-password" name="password"
+               required type="password">
+        <button aria-label="Show password" class="login-password-toggle" data-target="login-password"
+                th:text="#{login.password.show}" type="button">Show
+        </button>
+      </div>
+    </div>
 
-        <p id="login-error" class="login-error" aria-live="polite"></p>
+    <p aria-live="polite" class="login-error" id="login-error"></p>
 
-        <button type="submit" class="login-submit" th:text="#{login.submit}">Log In</button>
-    </form>
+    <button class="login-submit" th:text="#{login.submit}" type="submit">Log In</button>
+  </form>
 </dialog>

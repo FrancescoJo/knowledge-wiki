@@ -4,7 +4,7 @@
  * $Since: 2026-05-07
  */
 
-import type { LanguageFn } from 'highlight.js'
+import type {LanguageFn} from 'highlight.js'
 
 /**
  * A syntax-highlighting language available in the code-block language picker.
@@ -29,35 +29,35 @@ export type TextEditContent = Record<string, unknown>
 
 /** Node type names used in TipTap's ProseMirror JSON format. */
 export const NodeType = {
-  Doc:         'doc',
-  Paragraph:   'paragraph',
-  Heading:     'heading',
-  Text:        'text',
-  BulletList:  'bulletList',
+  Doc: 'doc',
+  Paragraph: 'paragraph',
+  Heading: 'heading',
+  Text: 'text',
+  BulletList: 'bulletList',
   OrderedList: 'orderedList',
-  ListItem:    'listItem',
-  TaskList:    'taskList',
-  TaskItem:    'taskItem',
-  Blockquote:  'blockquote',
-  CodeBlock:   'codeBlock',
-  Table:       'table',
-  TableRow:    'tableRow',
+  ListItem: 'listItem',
+  TaskList: 'taskList',
+  TaskItem: 'taskItem',
+  Blockquote: 'blockquote',
+  CodeBlock: 'codeBlock',
+  Table: 'table',
+  TableRow: 'tableRow',
   TableHeader: 'tableHeader',
-  TableCell:   'tableCell',
+  TableCell: 'tableCell',
 } as const
 
 /** Mark type names used in TipTap's ProseMirror JSON format. */
 export const MarkType = {
-  Bold:        'bold',
-  Italic:      'italic',
-  Strike:      'strike',
-  Underline:   'underline',
-  Code:        'code',
-  TextStyle:   'textStyle',
-  Highlight:   'highlight',
+  Bold: 'bold',
+  Italic: 'italic',
+  Strike: 'strike',
+  Underline: 'underline',
+  Code: 'code',
+  TextStyle: 'textStyle',
+  Highlight: 'highlight',
   Superscript: 'superscript',
-  Subscript:   'subscript',
-  Link:        'link',
+  Subscript: 'subscript',
+  Link: 'link',
 } as const
 
 /** Valid heading levels supported by the editor. */
@@ -114,13 +114,16 @@ export interface TextEditOptions {
 export interface TextEditHandle {
   /** Returns true when the named mark or node is active at the current selection. */
   isActive(name: string, attributes?: Record<string, unknown>): boolean
+
   /** Returns true when any mark or node matching the given attributes is active. */
   isActive(attributes: Record<string, unknown>): boolean
+
   /**
    * Returns true when the document has been modified since the editor was created.
    * Compares the current document against its initial state using a content hash.
    */
   isDirty(): boolean
+
   /**
    * Returns true when a GapCursor is positioned immediately after a block object
    * (codeBlock, table, or blockquote). Use this to reflect the boundary state in
@@ -132,14 +135,19 @@ export interface TextEditHandle {
 
   /** Returns true when the cursor is inside a table cell. */
   isInTable(): boolean
+
   /** Returns true when the selection spans multiple cells that can be merged. */
   canMergeCells(): boolean
+
   /** Returns true when the cursor is in a merged cell that can be split. */
   canSplitCell(): boolean
+
   /** Returns true when the current table has fixed column widths enabled. */
   isTableFixedColumnWidths(): boolean
+
   /** Returns true when the first row of the current table is a header row. */
   isTableHeaderRow(): boolean
+
   /** Returns true when the first column of the current table is a header column. */
   isTableHeaderColumn(): boolean
 }

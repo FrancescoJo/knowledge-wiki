@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)" th:lang="${#locale.language}">
+<html th:fragment="layout(content)" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head :: head}"></head>
 <body class="site-body">
-    <header th:replace="~{fragments/header :: header}"></header>
-    <div th:replace="~{fragments/breadcrumb :: breadcrumb}"></div>
-    <main class="content-area">
-        <th:block th:replace="${content}"></th:block>
-    </main>
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
-    <th:block th:replace="~{fragments/login-popup :: loginPopup}"></th:block>
+<header th:replace="~{fragments/header :: header}"></header>
+<div th:replace="~{fragments/breadcrumb :: breadcrumb}"></div>
+<main class="content-area">
+  <th:block th:replace="${content}"></th:block>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<th:block th:replace="~{fragments/login-popup :: loginPopup}"></th:block>
 </body>
 </html>

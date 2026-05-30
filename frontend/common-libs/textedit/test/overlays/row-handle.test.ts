@@ -4,11 +4,11 @@
  * $Since: 2026-05-09
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { CellSelection, TableMap } from '@tiptap/pm/tables'
-import { TextEdit } from '@src/TextEdit'
-import { NodeType, type TextEditContent } from '@src/types'
-import { mountElement, pmView, getDoc, setCursorInCell, PARA_DOC, rect } from '../test-utils'
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
+import {CellSelection, TableMap} from '@tiptap/pm/tables'
+import {TextEdit} from '@src/TextEdit'
+import {NodeType, type TextEditContent} from '@src/types'
+import {getDoc, mountElement, PARA_DOC, pmView, rect, setCursorInCell} from '../test-utils'
 
 // -- Fixtures ------------------------------------------------------------------
 
@@ -20,22 +20,40 @@ const TABLE_DOC: TextEditContent = {
       {
         type: NodeType.TableRow,
         content: [
-          { type: NodeType.TableHeader, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'A' }] }] },
-          { type: NodeType.TableHeader, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'B' }] }] },
+          {
+            type: NodeType.TableHeader,
+            content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'A'}]}]
+          },
+          {
+            type: NodeType.TableHeader,
+            content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'B'}]}]
+          },
         ],
       },
       {
         type: NodeType.TableRow,
         content: [
-          { type: NodeType.TableCell, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: '1' }] }] },
-          { type: NodeType.TableCell, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: '2' }] }] },
+          {
+            type: NodeType.TableCell,
+            content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: '1'}]}]
+          },
+          {
+            type: NodeType.TableCell,
+            content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: '2'}]}]
+          },
         ],
       },
       {
         type: NodeType.TableRow,
         content: [
-          { type: NodeType.TableCell, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: '3' }] }] },
-          { type: NodeType.TableCell, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: '4' }] }] },
+          {
+            type: NodeType.TableCell,
+            content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: '3'}]}]
+          },
+          {
+            type: NodeType.TableCell,
+            content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: '4'}]}]
+          },
         ],
       },
     ],
@@ -63,12 +81,12 @@ function menuItem(label: string): HTMLButtonElement | null {
 }
 
 function clickHandle(): void {
-  handle()?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientY: 0 }))
-  document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientY: 0 }))
+  handle()?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true, clientY: 0}))
+  document.dispatchEvent(new MouseEvent('mouseup', {bubbles: true, clientY: 0}))
 }
 
 function clickItem(label: string): void {
-  menuItem(label)?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }))
+  menuItem(label)?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true}))
 }
 
 function picker(): HTMLElement | null {
@@ -81,17 +99,22 @@ describe('RowHandle:', () => {
   let element: HTMLElement
   let editor: TextEdit | undefined
 
-  beforeEach(() => { element = mountElement() })
+  beforeEach(() => {
+    element = mountElement()
+  })
 
   afterEach(() => {
-    try { editor?.destroy() } catch { /* already destroyed */ }
+    try {
+      editor?.destroy()
+    } catch { /* already destroyed */
+    }
     editor = undefined
     element.remove()
   })
 
   // Creates a TABLE_DOC editor, moves the cursor to row 1, and opens the row menu.
   function setupRow1(): TextEdit {
-    const ed = new TextEdit({ element, content: TABLE_DOC })
+    const ed = new TextEdit({element, content: TABLE_DOC})
     setCursorInCell(ed, 1, 0)
     clickHandle()
     return ed
@@ -99,7 +122,7 @@ describe('RowHandle:', () => {
 
   // Creates a TABLE_DOC editor, moves the cursor to row 0, and opens the row menu.
   function setupRow0(): TextEdit {
-    const ed = new TextEdit({ element, content: TABLE_DOC })
+    const ed = new TextEdit({element, content: TABLE_DOC})
     setCursorInCell(ed, 0, 0)
     clickHandle()
     return ed
@@ -108,18 +131,18 @@ describe('RowHandle:', () => {
   // Creates a TABLE_DOC editor, moves the cursor to row 1, and starts a drag
   // (mousedown at clientY=100 + mousemove at clientY=110).
   function startDragFromRow1(): TextEdit {
-    const ed = new TextEdit({ element, content: TABLE_DOC })
+    const ed = new TextEdit({element, content: TABLE_DOC})
     setCursorInCell(ed, 1, 0)
-    handle()?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientY: 100 }))
-    document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientY: 110 }))
+    handle()?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true, clientY: 100}))
+    document.dispatchEvent(new MouseEvent('mousemove', {bubbles: true, clientY: 110}))
     return ed
   }
 
   // Performs a complete drag gesture: mousedown → mousemove → mouseup.
   function dispatchDrag(): void {
-    handle()?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientY: 100 }))
-    document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientY: 110 }))
-    document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
+    handle()?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true, clientY: 100}))
+    document.dispatchEvent(new MouseEvent('mousemove', {bubbles: true, clientY: 110}))
+    document.dispatchEvent(new MouseEvent('mouseup', {bubbles: true}))
   }
 
   // -- mount -----------------------------------------------------------------
@@ -127,7 +150,7 @@ describe('RowHandle:', () => {
   // noinspection DuplicatedCode: code looks same but using different HTMLElement
   describe('when TextEdit is created:', () => {
     it('should add the handle element to the DOM', () => {
-      editor = new TextEdit({ element })
+      editor = new TextEdit({element})
       expect(handle()).not.toBeNull()
     })
   })
@@ -137,14 +160,14 @@ describe('RowHandle:', () => {
   describe('visibility:', () => {
     describe('when the cursor is outside a table:', () => {
       it('should be hidden', () => {
-        editor = new TextEdit({ element, content: PARA_DOC })
+        editor = new TextEdit({element, content: PARA_DOC})
         expect(handle()!.style.display).toBe('none')
       })
     })
 
     describe('when the cursor is placed inside a table cell:', () => {
       it('should become visible', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 0, 0)
         expect(handle()!.style.display).toBe('')
       })
@@ -161,7 +184,7 @@ describe('RowHandle:', () => {
 
     it('should select the entire row (CellSelection)', () => {
       editor = setupRow1()
-      const { selection } = pmView(editor).state
+      const {selection} = pmView(editor).state
       expect(selection instanceof CellSelection).toBe(true)
     })
   })
@@ -171,17 +194,17 @@ describe('RowHandle:', () => {
       it('should close the menu', () => {
         editor = setupRow1()
         expect(menu()!.hidden).toBe(false)
-        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+        document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))
         expect(menu()!.hidden).toBe(true)
       })
     })
 
     describe('when the menu is closed:', () => {
       it('should not change menu visibility', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 1, 0)
         expect(menu()!.hidden).toBe(true)
-        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+        document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))
         expect(menu()!.hidden).toBe(true)
       })
     })
@@ -278,7 +301,7 @@ describe('RowHandle:', () => {
       hexInput.value = '#0000ff'
       hexInput.dispatchEvent(new Event('input'))
       picker()!.querySelector<HTMLButtonElement>('.te-colour-picker__apply')!
-        .dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+        .dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}))
 
       const tableNode = pmView(editor).state.doc.firstChild!
       const map = TableMap.get(tableNode)
@@ -296,7 +319,7 @@ describe('RowHandle:', () => {
       hexInput.value = '#0000ff'
       hexInput.dispatchEvent(new Event('input'))
       picker()!.querySelector<HTMLButtonElement>('.te-colour-picker__cancel')!
-        .dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+        .dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}))
 
       expect(picker()!.hidden).toBe(true)
       const tableNode = pmView(editor).state.doc.firstChild!
@@ -337,7 +360,7 @@ describe('RowHandle:', () => {
   describe('position:', () => {
     describe('when cursor is inside a table row:', () => {
       it('should set left from cell rect only — not subtract the CSS-transform offset a second time', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 1, 0)
         expect(handle()!.style.left).toBe('0px')
       })
@@ -349,14 +372,14 @@ describe('RowHandle:', () => {
   describe('menu position:', () => {
     describe('when the menu would overflow the right edge of the textarea:', () => {
       it('should flip the menu to the left of the handle', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 1, 0)
 
         const view = pmView(editor)
         const areaDom = view.dom.parentElement ?? view.dom
-        areaDom.getBoundingClientRect   = () => rect(0, 0, 300, 600)
+        areaDom.getBoundingClientRect = () => rect(0, 0, 300, 600)
         handle()!.getBoundingClientRect = () => rect(240, 100, 40, 30)  // right=280
-        menu()!.getBoundingClientRect   = () => rect(0, 0, 200, 250)    // 200px wide
+        menu()!.getBoundingClientRect = () => rect(0, 0, 200, 250)    // 200px wide
 
         // Natural left = 280+4 = 284; 284+200=484 > 300 → flip: 240-200-4 = 36
         clickHandle()
@@ -366,14 +389,14 @@ describe('RowHandle:', () => {
 
     describe('when the menu would overflow the bottom edge of the textarea:', () => {
       it('should clamp the menu top to keep it within the textarea', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 1, 0)
 
         const view = pmView(editor)
         const areaDom = view.dom.parentElement ?? view.dom
-        areaDom.getBoundingClientRect   = () => rect(0, 0, 600, 250)
+        areaDom.getBoundingClientRect = () => rect(0, 0, 600, 250)
         handle()!.getBoundingClientRect = () => rect(0, 180, 40, 30)    // top=180
-        menu()!.getBoundingClientRect   = () => rect(0, 0, 150, 200)    // 200px tall
+        menu()!.getBoundingClientRect = () => rect(0, 0, 150, 200)    // 200px tall
 
         // Natural top = 180; 180+200=380 > 250 → clamp: 250-200 = 50
         clickHandle()
@@ -389,25 +412,25 @@ describe('RowHandle:', () => {
       it('should create a ghost element following the cursor', () => {
         editor = startDragFromRow1()
         expect(document.querySelector('.te-row-handle--ghost')).not.toBeNull()
-        document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
+        document.dispatchEvent(new MouseEvent('mouseup', {bubbles: true}))
       })
 
       it('should give the ghost 0.5 opacity', () => {
         editor = startDragFromRow1()
         const ghost = document.querySelector<HTMLElement>('.te-row-handle--ghost')
         expect(ghost?.style.opacity).toBe('0.5')
-        document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
+        document.dispatchEvent(new MouseEvent('mouseup', {bubbles: true}))
       })
     })
 
     describe('when drag movement is below the threshold:', () => {
       it('should not create a ghost element', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 1, 0)
-        handle()?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientY: 100 }))
-        document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientY: 103 }))
+        handle()?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true, clientY: 100}))
+        document.dispatchEvent(new MouseEvent('mousemove', {bubbles: true, clientY: 103}))
         expect(document.querySelector('.te-row-handle--ghost')).toBeNull()
-        document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
+        document.dispatchEvent(new MouseEvent('mouseup', {bubbles: true}))
       })
     })
 
@@ -415,7 +438,7 @@ describe('RowHandle:', () => {
       it('should remove the ghost element', () => {
         editor = startDragFromRow1()
         expect(document.querySelector('.te-row-handle--ghost')).not.toBeNull()
-        document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
+        document.dispatchEvent(new MouseEvent('mouseup', {bubbles: true}))
         expect(document.querySelector('.te-row-handle--ghost')).toBeNull()
       })
     })
@@ -424,7 +447,7 @@ describe('RowHandle:', () => {
       it('should cancel the drag and remove the ghost element', () => {
         editor = startDragFromRow1()
         expect(document.querySelector('.te-row-handle--ghost')).not.toBeNull()
-        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+        document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))
         expect(document.querySelector('.te-row-handle--ghost')).toBeNull()
       })
     })
@@ -434,7 +457,7 @@ describe('RowHandle:', () => {
 
   describe('Move row up mousedown (row > 0):', () => {
     it('should move the row upward', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 1, 0)  // row 1 = '1', '2'
       clickHandle()
       clickItem('Move row up')
@@ -448,7 +471,7 @@ describe('RowHandle:', () => {
 
   describe('when drag ends over a different row:', () => {
     it('should move the row to the drop position', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 1, 0)  // row 1 = '1', '2'
       // Drag from row 1; in jsdom all cell rects are at y=0, so the nearest
       // drop edge is row 0 — which is different from row 1 or row 2 → dropRow fires.
@@ -474,7 +497,7 @@ describe('RowHandle:', () => {
 
   describe('Move row down mousedown (last row):', () => {
     it('should leave the table unchanged when the cursor is in the last row', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 2, 0)  // row 2 is the last row in TABLE_DOC
       clickHandle()
       // this.row >= map.height - 1 guard fires → no-op
@@ -487,7 +510,7 @@ describe('RowHandle:', () => {
 
   describe('when dragging from the last row to a different row:', () => {
     it('should reorder the rows (covers the drop-indicator path)', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       // row 2 = last body row ('3','4'). jsdom returns all-zero rects, so
       // targetRow is always 0. Since 0 ≠ 2 (this.row) and 0 ≠ 3 (this.row+1),
       // the drop-indicator lines (386-390) execute and dragTargetRow is set to 0.
@@ -507,15 +530,15 @@ describe('RowHandle:', () => {
 
   describe('drag with mocked rects — targetRow > this.row (ternary false branch):', () => {
     it('should set dragTargetRow = targetRow - 1 and commit the move', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 1, 0)
       const spy = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({
         top: 0, bottom: 100, left: 0, right: 200, width: 200, height: 100,
         x: 0, y: 0, toJSON: () => ({}),
       } as DOMRect)
-      handle()?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientY: 0 }))
-      document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientY: 150 }))
-      document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
+      handle()?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true, clientY: 0}))
+      document.dispatchEvent(new MouseEvent('mousemove', {bubbles: true, clientY: 150}))
+      document.dispatchEvent(new MouseEvent('mouseup', {bubbles: true}))
       spy.mockRestore()
       // row 1 ('1','2') moved to position 2 → row2 now has '1'
       expect(getDoc(editor).content[0].content[2].content[0].content[0].content[0].text).toBe('1')
@@ -526,15 +549,15 @@ describe('RowHandle:', () => {
 
   describe('drag with getBoundingClientRect throwing (catch block):', () => {
     it('should silently absorb the error and leave the table unchanged', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 1, 0)
       // noinspection DuplicatedCode: code looks same but using different HTMLElement
       const spy = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => {
         throw new Error('mock getBoundingClientRect error')
       })
-      handle()?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientY: 0 }))
-      document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientY: 10 }))
-      document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
+      handle()?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true, clientY: 0}))
+      document.dispatchEvent(new MouseEvent('mousemove', {bubbles: true, clientY: 10}))
+      document.dispatchEvent(new MouseEvent('mouseup', {bubbles: true}))
       spy.mockRestore()
       // catch fired → dragTargetRow stays -1 → no move → row 0 still has 'A'
       expect(getDoc(editor).content[0].content[0].content[0].content[0].content[0].text).toBe('A')
@@ -545,7 +568,7 @@ describe('RowHandle:', () => {
 
   describe('when dragging from row 0 (drop target is the same row):', () => {
     it('should leave the table unchanged', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       // row 0 = header; jsdom getBoundingClientRect returns all zeros,
       // so showDropIndicator always finds targetRow=0 = this.row=0 → guard fires
       setCursorInCell(editor, 0, 0)
@@ -561,10 +584,10 @@ describe('RowHandle:', () => {
 
   describe('when the handle is clicked before any table is tracked:', () => {
     it('should do nothing in selectRow (map/tableNode null guard fires)', () => {
-      editor = new TextEdit({ element })  // no table — map and tableNode stay null
-      handle()?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientY: 0 }))
+      editor = new TextEdit({element})  // no table — map and tableNode stay null
+      handle()?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true, clientY: 0}))
       // Same Y → not a drag → onUp fires → selectRow() → !map || !tableNode guard
-      document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientY: 0 }))
+      document.dispatchEvent(new MouseEvent('mouseup', {bubbles: true, clientY: 0}))
       // Verify no crash; menu opens (openMenu is still called after selectRow returns).
       expect(menu()!.hidden).toBe(false)
     })
@@ -577,12 +600,12 @@ describe('RowHandle:', () => {
 
   describe('when showDropIndicator is called before any table is tracked:', () => {
     it('should return immediately without crashing', () => {
-      editor = new TextEdit({ element })  // no table — map and tableNode stay null
-      handle()?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientY: 0 }))
-      document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientY: 100 }))
+      editor = new TextEdit({element})  // no table — map and tableNode stay null
+      handle()?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true, clientY: 0}))
+      document.dispatchEvent(new MouseEvent('mousemove', {bubbles: true, clientY: 100}))
       // Ghost is created, but showDropIndicator returned early — no crash.
       expect(document.querySelector('.te-row-handle--ghost')).not.toBeNull()
-      document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
+      document.dispatchEvent(new MouseEvent('mouseup', {bubbles: true}))
     })
   })
 
@@ -593,18 +616,18 @@ describe('RowHandle:', () => {
   describe('when nodeDOM returns null during a row drag:', () => {
     it('should skip that row edge without crashing', () => {
       // noinspection DuplicatedCode: code looks same but using different HTMLElement
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
 
       const view = pmView(editor)
       const spy = vi.spyOn(view, 'nodeDOM').mockImplementationOnce(() => null)
 
-      handle()?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientY: 100 }))
-      document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientY: 110 }))
+      handle()?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true, clientY: 100}))
+      document.dispatchEvent(new MouseEvent('mousemove', {bubbles: true, clientY: 110}))
 
       expect(document.querySelector('.te-row-handle--ghost')).not.toBeNull()
 
-      document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
+      document.dispatchEvent(new MouseEvent('mouseup', {bubbles: true}))
       spy.mockRestore()
     })
   })
@@ -615,9 +638,9 @@ describe('RowHandle:', () => {
 
   describe('when the background colour button is clicked before any row is tracked:', () => {
     it('should do nothing and leave the picker closed', () => {
-      editor = new TextEdit({ element })  // no table content — tableNode stays null
+      editor = new TextEdit({element})  // no table content — tableNode stays null
       menuItem('Background colour')?.dispatchEvent(
-        new MouseEvent('mousedown', { bubbles: true, cancelable: true }),
+        new MouseEvent('mousedown', {bubbles: true, cancelable: true}),
       )
       expect(picker()!.hidden).toBe(true)
     })
@@ -631,11 +654,13 @@ describe('RowHandle:', () => {
   describe('when TableMap.get throws inside refreshState:', () => {
     it('covers: refreshState catch (line 192) and updateHandlePosition null guard (line 198)', () => {
       // noinspection DuplicatedCode: code looks same but using different HTMLElement
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       const origGet = TableMap.get.bind(TableMap)
       vi.spyOn(TableMap, 'get')
         .mockImplementationOnce(origGet)  // allow the setCursorInCell call to succeed
-        .mockImplementation(() => { throw new Error('mock') })  // all subsequent calls throw
+        .mockImplementation(() => {
+          throw new Error('mock')
+        })  // all subsequent calls throw
       // setCursorInCell: its own TableMap.get succeeds; dispatch triggers update() →
       // refreshState → TableMap.get throws → catch (line 192); map stays null →
       // updateHandlePosition → !map → line 198 fires.
@@ -653,14 +678,16 @@ describe('RowHandle:', () => {
   // noinspection DuplicatedCode: code looks same but using different HTMLElement
   describe('when dispatch throws during row selection:', () => {
     it('should silently absorb the error and still open the menu', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       // Start drag tracking via mousedown (no movement yet — not a drag).
-      handle()?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientY: 0 }))
+      handle()?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true, clientY: 0}))
       // Mock dispatch to throw once — fires when selectRow calls dispatch in onUp.
-      vi.spyOn(pmView(editor), 'dispatch').mockImplementationOnce(() => { throw new Error('mock') })
+      vi.spyOn(pmView(editor), 'dispatch').mockImplementationOnce(() => {
+        throw new Error('mock')
+      })
       // Mouseup at same Y → !wasDragging → selectRow() → dispatch throws → catch.
-      document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientY: 0 }))
+      document.dispatchEvent(new MouseEvent('mouseup', {bubbles: true, clientY: 0}))
       vi.restoreAllMocks()
       // openMenu still runs after selectRow's internal catch; menu is visible.
       expect(menu()!.hidden).toBe(false)
@@ -675,9 +702,11 @@ describe('RowHandle:', () => {
     // noinspection DuplicatedCode: code looks same but using different HTMLElement
     it('should silently absorb the error', () => {
       editor = setupRow1()
-      vi.spyOn(pmView(editor), 'dispatch').mockImplementationOnce(() => { throw new Error('mock') })
+      vi.spyOn(pmView(editor), 'dispatch').mockImplementationOnce(() => {
+        throw new Error('mock')
+      })
       menuItem('Clear cells')?.dispatchEvent(
-        new MouseEvent('mousedown', { bubbles: true, cancelable: true }),
+        new MouseEvent('mousedown', {bubbles: true, cancelable: true}),
       )
       vi.restoreAllMocks()
       expect(menu()!.hidden).toBe(true)
@@ -688,7 +717,7 @@ describe('RowHandle:', () => {
 
   describe('when the editor is destroyed:', () => {
     it('should remove the handle from the DOM', () => {
-      editor = new TextEdit({ element })
+      editor = new TextEdit({element})
       editor.destroy()
       editor = undefined
       expect(handle()).toBeNull()

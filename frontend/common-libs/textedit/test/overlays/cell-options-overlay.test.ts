@@ -4,20 +4,20 @@
  * $Since: 2026-05-09
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { TextSelection } from '@tiptap/pm/state'
-import { TableMap } from '@tiptap/pm/tables'
-import { TextEdit } from '@src/TextEdit'
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
+import {TextSelection} from '@tiptap/pm/state'
+import {TableMap} from '@tiptap/pm/tables'
+import {TextEdit} from '@src/TextEdit'
 import {
-    mountElement,
-    pmView,
-    getDoc,
-    setCursorInCell,
-    TABLE_DOC,
-    PARA_DOC,
-    TABLE_AND_PARA_DOC,
-    setCellSelection,
-    rect,
+  getDoc,
+  mountElement,
+  PARA_DOC,
+  pmView,
+  rect,
+  setCellSelection,
+  setCursorInCell,
+  TABLE_AND_PARA_DOC,
+  TABLE_DOC,
 } from '../test-utils'
 
 // -- Helpers -------------------------------------------------------------------
@@ -45,11 +45,11 @@ function menuItem(label: string): HTMLButtonElement | null {
 }
 
 function clickTrigger(): void {
-  triggerBtn()?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }))
+  triggerBtn()?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true}))
 }
 
 function clickItem(label: string): void {
-  menuItem(label)?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }))
+  menuItem(label)?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true}))
 }
 
 function picker(): HTMLElement | null {
@@ -62,11 +62,16 @@ describe('CellOptionsOverlay:', () => {
   let element: HTMLElement
   let editor: TextEdit | undefined
 
-  beforeEach(() => { element = mountElement() })
+  beforeEach(() => {
+    element = mountElement()
+  })
 
   // noinspection DuplicatedCode: teardown is local to each suite to capture its own editor and element bindings
   afterEach(() => {
-    try { editor?.destroy() } catch { /* already destroyed */ }
+    try {
+      editor?.destroy()
+    } catch { /* already destroyed */
+    }
     editor = undefined
     element.remove()
   })
@@ -75,12 +80,12 @@ describe('CellOptionsOverlay:', () => {
 
   describe('when TextEdit is created:', () => {
     it('should add the trigger element to the DOM', () => {
-      editor = new TextEdit({ element })
+      editor = new TextEdit({element})
       expect(trigger()).not.toBeNull()
     })
 
     it('should add the menu element to the DOM', () => {
-      editor = new TextEdit({ element })
+      editor = new TextEdit({element})
       expect(menu()).not.toBeNull()
     })
   })
@@ -90,14 +95,14 @@ describe('CellOptionsOverlay:', () => {
   describe('visibility:', () => {
     describe('when the cursor is outside a table:', () => {
       it('should be hidden', () => {
-        editor = new TextEdit({ element, content: PARA_DOC })
+        editor = new TextEdit({element, content: PARA_DOC})
         expect(trigger()!.hidden).toBe(true)
       })
     })
 
     describe('when the cursor is placed inside a table cell:', () => {
       it('should become visible', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 0, 0)
         expect(trigger()!.hidden).toBe(false)
       })
@@ -109,7 +114,7 @@ describe('CellOptionsOverlay:', () => {
   describe('menu:', () => {
     describe('when trigger is clicked while menu is closed:', () => {
       it('should open the menu', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 0, 0)
         clickTrigger()
         expect(menu()!.hidden).toBe(false)
@@ -118,7 +123,7 @@ describe('CellOptionsOverlay:', () => {
 
     describe('when trigger is clicked while menu is open:', () => {
       it('should close the menu', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 0, 0)
         clickTrigger()
         clickTrigger()
@@ -130,11 +135,11 @@ describe('CellOptionsOverlay:', () => {
   describe('Escape key:', () => {
     describe('when the menu is open:', () => {
       it('should close the menu', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 0, 0)
         clickTrigger()
         expect(menu()!.hidden).toBe(false)
-        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+        document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))
         expect(menu()!.hidden).toBe(true)
       })
     })
@@ -142,10 +147,10 @@ describe('CellOptionsOverlay:', () => {
     // noinspection DuplicatedCode: code looks same but using different HTMLElement
     describe('when the menu is closed:', () => {
       it('should not change menu visibility', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 0, 0)
         expect(menu()!.hidden).toBe(true)
-        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+        document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))
         expect(menu()!.hidden).toBe(true)
       })
     })
@@ -156,7 +161,7 @@ describe('CellOptionsOverlay:', () => {
   describe('Merge cells item:', () => {
     describe('when a single cell is selected:', () => {
       it('should be disabled', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 0, 0)
         expect(menuItem('Merge cells')!.disabled).toBe(true)
       })
@@ -164,7 +169,7 @@ describe('CellOptionsOverlay:', () => {
 
     describe('when multiple cells are selected:', () => {
       it('should be enabled', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCellSelection(editor, 1, 0, 1, 1)
         expect(menuItem('Merge cells')!.disabled).toBe(false)
       })
@@ -176,7 +181,7 @@ describe('CellOptionsOverlay:', () => {
   describe('Split cell item:', () => {
     describe('when the cell is not merged:', () => {
       it('should be disabled', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 0, 0)
         expect(menuItem('Split cell')!.disabled).toBe(true)
       })
@@ -184,7 +189,7 @@ describe('CellOptionsOverlay:', () => {
 
     describe('when the cell is merged:', () => {
       it('should be enabled', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCellSelection(editor, 1, 0, 1, 1)
         clickItem('Merge cells')
         setCursorInCell(editor, 1, 0)
@@ -197,7 +202,7 @@ describe('CellOptionsOverlay:', () => {
 
   describe('Split cell mousedown:', () => {
     it('should split a merged cell back into individual cells', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCellSelection(editor, 1, 0, 1, 1)
       clickItem('Merge cells')
       setCursorInCell(editor, 1, 0)
@@ -212,7 +217,7 @@ describe('CellOptionsOverlay:', () => {
 
   describe('Add column right mousedown:', () => {
     it('should add a column to the table', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       const colsBefore = getDoc(editor).content[0].content[0].content.length
       clickItem('Add column right')
@@ -225,7 +230,7 @@ describe('CellOptionsOverlay:', () => {
 
   describe('Add row below mousedown:', () => {
     it('should add a row to the table', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       const rowsBefore = getDoc(editor).content[0].content.length
       clickItem('Add row below')
@@ -238,7 +243,7 @@ describe('CellOptionsOverlay:', () => {
 
   describe('Clear cell mousedown:', () => {
     it('should empty the cell content', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 1, 0)
       clickItem('Clear cell')
       const cell = getDoc(editor).content[0].content[1].content[0]
@@ -249,11 +254,11 @@ describe('CellOptionsOverlay:', () => {
     })
 
     it('should leave the cursor inside the cleared cell', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 1, 0)
       clickItem('Clear cell')
 
-      const { selection, doc } = pmView(editor).state
+      const {selection, doc} = pmView(editor).state
       expect(selection).toBeInstanceOf(TextSelection)
 
       const tableNode = doc.firstChild!
@@ -261,7 +266,7 @@ describe('CellOptionsOverlay:', () => {
       const cellOffset = map.positionAt(1, 0, tableNode)
       const cellNodeAfterClear = tableNode.nodeAt(cellOffset)!
       const cellStart = 1 + cellOffset           // absolute pos before cell
-      const cellEnd   = cellStart + cellNodeAfterClear.nodeSize
+      const cellEnd = cellStart + cellNodeAfterClear.nodeSize
       expect((selection as TextSelection).from).toBeGreaterThan(cellStart)
       expect((selection as TextSelection).from).toBeLessThan(cellEnd)
     })
@@ -274,7 +279,7 @@ describe('CellOptionsOverlay:', () => {
 
   describe('Clear cell mousedown when cursor has moved outside the table:', () => {
     it('should leave the table unchanged', () => {
-      editor = new TextEdit({ element, content: TABLE_AND_PARA_DOC })
+      editor = new TextEdit({element, content: TABLE_AND_PARA_DOC})
       setCursorInCell(editor, 0, 0)
 
       // Move cursor to the paragraph that follows the table.
@@ -294,16 +299,16 @@ describe('CellOptionsOverlay:', () => {
 
   describe('Background colour mousedown:', () => {
     function colourPickerAttachedEditor(): TextEdit {
-        const editor = new TextEdit({ element, content: TABLE_DOC })
-        setCursorInCell(editor, 0, 0)
-        clickTrigger()
-        clickItem('Background colour')
+      const editor = new TextEdit({element, content: TABLE_DOC})
+      setCursorInCell(editor, 0, 0)
+      clickTrigger()
+      clickItem('Background colour')
 
-        return editor
+      return editor
     }
 
     it('should open the colour picker popup', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       clickTrigger()
       expect(picker()!.hidden).toBe(true)
@@ -318,7 +323,7 @@ describe('CellOptionsOverlay:', () => {
       hexInput.value = '#ff0000'
       hexInput.dispatchEvent(new Event('input'))
       picker()!.querySelector<HTMLButtonElement>('.te-colour-picker__apply')!
-        .dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+        .dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}))
 
       const tableNode = pmView(editor).state.doc.firstChild!
       const map = TableMap.get(tableNode)
@@ -327,12 +332,12 @@ describe('CellOptionsOverlay:', () => {
     })
 
     it('should close the picker after [Apply] is clicked', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       clickTrigger()
       clickItem('Background colour')
       picker()!.querySelector<HTMLButtonElement>('.te-colour-picker__apply')!
-        .dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+        .dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}))
       expect(picker()!.hidden).toBe(true)
     })
 
@@ -343,7 +348,7 @@ describe('CellOptionsOverlay:', () => {
       hexInput.value = '#ff0000'
       hexInput.dispatchEvent(new Event('input'))
       picker()!.querySelector<HTMLButtonElement>('.te-colour-picker__cancel')!
-        .dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+        .dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}))
 
       expect(picker()!.hidden).toBe(true)
       const tableNode = pmView(editor).state.doc.firstChild!
@@ -357,7 +362,7 @@ describe('CellOptionsOverlay:', () => {
 
   describe('Delete column mousedown:', () => {
     it('should remove a column from the table', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       const colsBefore = getDoc(editor).content[0].content[0].content.length
       clickItem('Delete column')
@@ -370,7 +375,7 @@ describe('CellOptionsOverlay:', () => {
 
   describe('Delete row mousedown:', () => {
     it('should remove a row from the table', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 1, 0)
       const rowsBefore = getDoc(editor).content[0].content.length
       clickItem('Delete row')
@@ -384,14 +389,14 @@ describe('CellOptionsOverlay:', () => {
   describe('menu position:', () => {
     describe('when the menu would overflow the right edge of the textarea:', () => {
       it('should clamp the menu left so it stays within the textarea', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 0, 0)
 
         const view = pmView(editor)
         const areaDom = view.dom.parentElement ?? view.dom
-        areaDom.getBoundingClientRect    = () => rect(0, 0, 300, 600)
+        areaDom.getBoundingClientRect = () => rect(0, 0, 300, 600)
         trigger()!.getBoundingClientRect = () => rect(250, 20, 30, 24)   // trigger at x=250
-        menu()!.getBoundingClientRect    = () => rect(0, 0, 200, 280)    // menu 200px wide
+        menu()!.getBoundingClientRect = () => rect(0, 0, 200, 280)    // menu 200px wide
 
         // Natural left = trigger.left = 250; 250+200=450 > 300 → clamp to 300-200 = 100
         clickTrigger()
@@ -401,14 +406,14 @@ describe('CellOptionsOverlay:', () => {
 
     describe('when the menu would overflow the bottom edge of the textarea:', () => {
       it('should flip the menu above the trigger', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 0, 0)
 
         const view = pmView(editor)
         const areaDom = view.dom.parentElement ?? view.dom
-        areaDom.getBoundingClientRect    = () => rect(0, 0, 600, 200)
+        areaDom.getBoundingClientRect = () => rect(0, 0, 600, 200)
         trigger()!.getBoundingClientRect = () => rect(50, 160, 30, 24)   // bottom=184
-        menu()!.getBoundingClientRect    = () => rect(0, 0, 150, 100)    // 100px tall
+        menu()!.getBoundingClientRect = () => rect(0, 0, 150, 100)    // 100px tall
 
         // Natural top = 184; 184+100=284 > 200 → flip: trigger.top - height = 160-100 = 60
         clickTrigger()
@@ -423,7 +428,7 @@ describe('CellOptionsOverlay:', () => {
 
   describe('when nodeDOM returns a non-HTMLElement in updatePosition:', () => {
     it('should leave the trigger position unchanged', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       vi.spyOn(pmView(editor), 'nodeDOM').mockReturnValue(null)
       // Move cursor to a different cell to trigger a state-change update().
@@ -439,10 +444,12 @@ describe('CellOptionsOverlay:', () => {
 
   describe('when getBoundingClientRect throws inside updatePosition:', () => {
     it('should silently absorb the error', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       const fakeEl = document.createElement('div')
-      fakeEl.getBoundingClientRect = () => { throw new Error('mock layout') }
+      fakeEl.getBoundingClientRect = () => {
+        throw new Error('mock layout')
+      }
       vi.spyOn(pmView(editor), 'nodeDOM').mockReturnValue(fakeEl)
       // Move cursor to a different cell to trigger a state-change update().
       setCursorInCell(editor, 1, 0)
@@ -455,14 +462,14 @@ describe('CellOptionsOverlay:', () => {
 
   describe('when the editor is destroyed:', () => {
     it('should remove the trigger from the DOM', () => {
-      editor = new TextEdit({ element })
+      editor = new TextEdit({element})
       editor.destroy()
       editor = undefined
       expect(trigger()).toBeNull()
     })
 
     it('should remove the menu from the DOM', () => {
-      editor = new TextEdit({ element })
+      editor = new TextEdit({element})
       editor.destroy()
       editor = undefined
       expect(menu()).toBeNull()

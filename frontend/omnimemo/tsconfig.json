@@ -11,9 +11,19 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@src/*": ["src/*"]
+      "@src/*": [
+        "src/*"
+      ]
     }
   },
-  "include": ["src/**/*.ts", "dev/**/*.ts", "test/**/*.ts"],
-  "exclude": ["node_modules", "dist", "dist-bundle"]
+  "include": [
+    "src/**/*.ts",
+    "dev/**/*.ts",
+    "test/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "dist-bundle"
+  ]
 }

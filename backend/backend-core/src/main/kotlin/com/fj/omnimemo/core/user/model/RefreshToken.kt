@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.core.user.model
 
+import com.fj.omnimemo.core.user.model.RefreshToken.Companion.create
 import com.fj.omnimemo.core.user.model.snapshot.RefreshTokenData
 import java.time.Instant
 

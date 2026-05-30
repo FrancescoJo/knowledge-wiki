@@ -21,9 +21,9 @@
  * $Since: 2026-05-14
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { TextEdit } from '@src/TextEdit'
-import { mountElement, setCursorInCell, TABLE_DOC } from '../test-utils'
+import {afterEach, beforeEach, describe, expect, it} from 'vitest'
+import {TextEdit} from '@src/TextEdit'
+import {mountElement, setCursorInCell, TABLE_DOC} from '../test-utils'
 
 // Each menu type ---------------------------------------------------------------
 
@@ -42,21 +42,21 @@ function cellMenu(): HTMLElement | null {
 // Simulate a pure click on the column handle (no drag movement).
 function openColMenu(): void {
   document.body.querySelector<HTMLElement>('.te-col-handle')
-    ?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientX: 0 }))
-  document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 0 }))
+    ?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true, clientX: 0}))
+  document.dispatchEvent(new MouseEvent('mouseup', {bubbles: true, clientX: 0}))
 }
 
 // Simulate a pure click on the row handle (no drag movement).
 function openRowMenu(): void {
   document.body.querySelector<HTMLElement>('.te-row-handle')
-    ?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientY: 0 }))
-  document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientY: 0 }))
+    ?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true, clientY: 0}))
+  document.dispatchEvent(new MouseEvent('mouseup', {bubbles: true, clientY: 0}))
 }
 
 // Simulate clicking the cell options trigger button.
 function openCellMenu(): void {
   document.body.querySelector<HTMLButtonElement>('.te-cell-options__btn')
-    ?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }))
+    ?.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true}))
 }
 
 // -- Tests ---------------------------------------------------------------------
@@ -67,13 +67,16 @@ describe('Context menu mutual exclusion:', () => {
 
   beforeEach(() => {
     element = mountElement()
-    editor = new TextEdit({ element, content: TABLE_DOC })
+    editor = new TextEdit({element, content: TABLE_DOC})
     setCursorInCell(editor, 1, 1)
   })
 
   // noinspection DuplicatedCode: teardown is local to each suite to capture its own editor and element bindings
   afterEach(() => {
-    try { editor?.destroy() } catch { /* already destroyed */ }
+    try {
+      editor?.destroy()
+    } catch { /* already destroyed */
+    }
     editor = undefined
     element.remove()
   })
@@ -81,7 +84,9 @@ describe('Context menu mutual exclusion:', () => {
   // -- Column menu as the open menu ------------------------------------------
 
   describe('column handle menu is open:', () => {
-    beforeEach(() => { openColMenu() })
+    beforeEach(() => {
+      openColMenu()
+    })
 
     it('should close the column menu when the row handle menu opens', () => {
       expect(colMenu()!.hidden).toBe(false)
@@ -101,7 +106,9 @@ describe('Context menu mutual exclusion:', () => {
   // -- Row menu as the open menu ---------------------------------------------
 
   describe('row handle menu is open:', () => {
-    beforeEach(() => { openRowMenu() })
+    beforeEach(() => {
+      openRowMenu()
+    })
 
     it('should close the row menu when the column handle menu opens', () => {
       expect(rowMenu()!.hidden).toBe(false)
@@ -121,7 +128,9 @@ describe('Context menu mutual exclusion:', () => {
   // -- Cell options menu as the open menu ------------------------------------
 
   describe('cell options menu is open:', () => {
-    beforeEach(() => { openCellMenu() })
+    beforeEach(() => {
+      openCellMenu()
+    })
 
     it('should close the cell options menu when the column handle menu opens', () => {
       expect(cellMenu()!.hidden).toBe(false)

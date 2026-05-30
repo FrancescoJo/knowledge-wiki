@@ -5,11 +5,9 @@
  */
 package com.fj.omnimemo.core.exception
 
-import com.fj.omnimemo.core.user.exception.PasswordMismatchException
-import com.fj.omnimemo.core.user.exception.RedundantBootstrapProhibitedException
-import com.fj.omnimemo.core.user.exception.RefreshTokenNotFoundException
-import com.fj.omnimemo.core.user.exception.TokenExpiredException
-import com.fj.omnimemo.core.user.exception.UserNotFoundException
+import com.fj.omnimemo.core.exception.OmniMemoErrorCode.Companion.byCode
+import com.fj.omnimemo.core.exception.OmniMemoErrorCode.Companion.of
+import com.fj.omnimemo.core.user.exception.*
 import kotlin.reflect.KClass
 
 /**

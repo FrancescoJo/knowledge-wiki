@@ -7,18 +7,17 @@
  * $Since: 2026-05-09
  */
 
-import { Extension } from '@tiptap/core'
-import { Plugin, PluginKey } from '@tiptap/pm/state'
-import { TextSelection } from '@tiptap/pm/state'
-import type { EditorView } from '@tiptap/pm/view'
-import { isInTable, selectionCell, TableMap } from '@tiptap/pm/tables'
-import type { Editor } from '@tiptap/core'
-import { tableDepthOf } from './utils'
+import type {Editor} from '@tiptap/core'
+import {Extension} from '@tiptap/core'
+import {Plugin, PluginKey, TextSelection} from '@tiptap/pm/state'
+import type {EditorView} from '@tiptap/pm/view'
+import {isInTable, selectionCell, TableMap} from '@tiptap/pm/tables'
+import {tableDepthOf} from './utils'
 
 const KEY = new PluginKey<null>('insertColumnHandle')
 
 const CSS_WRAP = 'te-insert-col'
-const CSS_BTN  = 'te-insert-col__btn'
+const CSS_BTN = 'te-insert-col__btn'
 const CSS_LINE = 'te-insert-col__line'
 
 // -- Handle view ---------------------------------------------------------------
@@ -38,7 +37,7 @@ class InsertColumnHandleView {
     document.body.appendChild(this.dom)
 
     this.onScroll = () => this.update(this.editorView)
-    editorView.dom.parentElement?.addEventListener('scroll', this.onScroll, { passive: true })
+    editorView.dom.parentElement?.addEventListener('scroll', this.onScroll, {passive: true})
 
     this.update(editorView)
   }
@@ -83,8 +82,8 @@ class InsertColumnHandleView {
 
       const line = document.createElement('div')
       line.className = CSS_LINE
-      line.style.left   = `${x}px`
-      line.style.top    = `${y}px`
+      line.style.left = `${x}px`
+      line.style.top = `${y}px`
       line.style.height = `${rect.height}px`
 
       const btn = document.createElement('button')
@@ -93,7 +92,7 @@ class InsertColumnHandleView {
       btn.setAttribute('title', 'Insert column')
       btn.textContent = '+'
       btn.style.left = `${x}px`
-      btn.style.top  = `${y}px`
+      btn.style.top = `${y}px`
 
       btn.addEventListener('mousedown', ev => {
         ev.preventDefault()
@@ -103,12 +102,13 @@ class InsertColumnHandleView {
 
       this.dom.appendChild(line)
       this.dom.appendChild(btn)
-    } catch { /* leave dom empty on error */ }
+    } catch { /* leave dom empty on error */
+    }
   }
 
   private insertAfterColumn(colIndex: number): void {
     const view = this.editorView
-    const { state } = view
+    const {state} = view
     if (!isInTable(state)) return
     try {
       const $cell = selectionCell(state)
@@ -122,7 +122,8 @@ class InsertColumnHandleView {
       const sel = TextSelection.create(state.doc, cursorPos)
       view.dispatch(state.tr.setSelection(sel))
       this.editor.chain().focus().addColumnAfter().run()
-    } catch { /* no-op */ }
+    } catch { /* no-op */
+    }
   }
 }
 

@@ -3,7 +3,10 @@
   "title": "HealthStatus",
   "description": "Current health state of the application.",
   "type": "object",
-  "required": ["status", "timestamp"],
+  "required": [
+    "status",
+    "timestamp"
+  ],
   "properties": {
     "status": {
       "type": "string",

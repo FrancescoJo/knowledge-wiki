@@ -31,7 +31,7 @@ tasks.register("checkSecretConfig") {
         if (!secretConfigFile.exists()) {
             throw GradleException(
                 "\napplication-secret.yml not found: ${secretConfigFile.absolutePath}" +
-                "\nCopy application-secret.yml.template and fill in the values."
+                        "\nCopy application-secret.yml.template and fill in the values."
             )
         }
     }

@@ -1,19 +1,21 @@
-<head xmlns:th="http://www.thymeleaf.org" th:fragment="head">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Omnimemo</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}">
-    <script>
-        document.addEventListener('click', function(e) {
-            ['.lang-switcher', '.user-menu'].forEach(function(sel) {
-                document.querySelectorAll(sel + '.open').forEach(function(el) {
-                    if (!el.contains(e.target)) el.classList.remove('open');
-                });
-            });
+<head th:fragment="head" xmlns:th="http://www.thymeleaf.org">
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Omnimemo</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <script>
+    document.addEventListener('click', function (e) {
+      ['.lang-switcher', '.user-menu'].forEach(function (sel) {
+        document.querySelectorAll(sel + '.open').forEach(function (el) {
+          if (!el.contains(e.target)) el.classList.remove('open');
         });
-    </script>
-    <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/htmx-ext-json-enc@2.0.1/json-enc.js"></script>
-    <script src="@textedit.script@"></script>
-    <script src="@omnimemo.script@"></script>
+      });
+    });
+  </script>
+  <script crossorigin="anonymous"
+          integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"
+          src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <script src="https://unpkg.com/htmx-ext-json-enc@2.0.1/json-enc.js"></script>
+  <script src="@textedit.script@"></script>
+  <script src="@omnimemo.script@"></script>
 </head>

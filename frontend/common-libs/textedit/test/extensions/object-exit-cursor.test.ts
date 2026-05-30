@@ -17,13 +17,13 @@
  * $Since: 2026-05-14
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { TextSelection } from '@tiptap/pm/state'
-import { GapCursor } from '@tiptap/pm/gapcursor'
-import { TableMap } from '@tiptap/pm/tables'
-import { TextEdit } from '@src/TextEdit'
-import { NodeType, type TextEditContent } from '@src/types'
-import { mountElement, pmView, pmState, setPmSelection, dispatchKeydown } from '../test-utils'
+import {afterEach, beforeEach, describe, expect, it} from 'vitest'
+import {TextSelection} from '@tiptap/pm/state'
+import {GapCursor} from '@tiptap/pm/gapcursor'
+import {TableMap} from '@tiptap/pm/tables'
+import {TextEdit} from '@src/TextEdit'
+import {NodeType, type TextEditContent} from '@src/types'
+import {dispatchKeydown, mountElement, pmState, pmView, setPmSelection} from '../test-utils'
 
 // -- Fixtures ------------------------------------------------------------------
 
@@ -37,7 +37,10 @@ const TABLE_ONLY_DOC: TextEditContent = {
         {
           type: NodeType.TableRow,
           content: [
-            { type: NodeType.TableHeader, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'H' }] }] },
+            {
+              type: NodeType.TableHeader,
+              content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'H'}]}]
+            },
           ],
         },
       ],
@@ -57,18 +60,24 @@ const TABLE_THEN_PARA_DOC: TextEditContent = {
         {
           type: NodeType.TableRow,
           content: [
-            { type: NodeType.TableHeader, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'H' }] }] },
+            {
+              type: NodeType.TableHeader,
+              content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'H'}]}]
+            },
           ],
         },
         {
           type: NodeType.TableRow,
           content: [
-            { type: NodeType.TableCell, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'D' }] }] },
+            {
+              type: NodeType.TableCell,
+              content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'D'}]}]
+            },
           ],
         },
       ],
     },
-    { type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'After table' }] },
+    {type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'After table'}]},
   ],
 }
 
@@ -77,14 +86,17 @@ const TABLE_THEN_PARA_DOC: TextEditContent = {
 const CODEBLOCK_THEN_TABLE_DOC: TextEditContent = {
   type: NodeType.Doc,
   content: [
-    { type: NodeType.CodeBlock, content: [{ type: NodeType.Text, text: 'code' }] },
+    {type: NodeType.CodeBlock, content: [{type: NodeType.Text, text: 'code'}]},
     {
       type: NodeType.Table,
       content: [
         {
           type: NodeType.TableRow,
           content: [
-            { type: NodeType.TableHeader, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'H' }] }] },
+            {
+              type: NodeType.TableHeader,
+              content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'H'}]}]
+            },
           ],
         },
       ],
@@ -98,7 +110,7 @@ const CODEBLOCK_THEN_TABLE_DOC: TextEditContent = {
 // Uses TableMap to locate the last cell, then resolves the exact end of its content.
 function setCursorAtVeryEndOfTable(editor: TextEdit): void {
   const view = pmView(editor)
-  const { state } = view
+  const {state} = view
   const table = state.doc.firstChild!
   const map = TableMap.get(table)
   const lastRow = map.height - 1
@@ -112,7 +124,7 @@ function setCursorAtVeryEndOfTable(editor: TextEdit): void {
 // GapCursor immediately after the first-child table.
 function setGapCursorAfterTable(editor: TextEdit): void {
   const view = pmView(editor)
-  const { state } = view
+  const {state} = view
   view.dispatch(state.tr.setSelection(new GapCursor(state.doc.resolve(state.doc.firstChild!.nodeSize))))
 }
 
@@ -120,7 +132,7 @@ function setGapCursorAfterTable(editor: TextEdit): void {
 // the first-child table. Requires a document where a paragraph comes after the table.
 function setCursorAtStartOfParagraphAfterTable(editor: TextEdit): void {
   const view = pmView(editor)
-  const { state } = view
+  const {state} = view
   // table.nodeSize = gap position between table and paragraph;
   // + 1 = inside the paragraph (after its opening token).
   const paraStartPos = state.doc.firstChild!.nodeSize + 1
@@ -131,7 +143,7 @@ function setCursorAtStartOfParagraphAfterTable(editor: TextEdit): void {
 // Designed for CODEBLOCK_THEN_TABLE_DOC where doc.child(0) is the codeBlock.
 function setCursorAtVeryStartOfTable(editor: TextEdit): void {
   const view = pmView(editor)
-  const { state } = view
+  const {state} = view
   const codeBlock = state.doc.child(0)
   const tableNode = state.doc.child(1)
   const tableStart = codeBlock.nodeSize + 1
@@ -146,11 +158,16 @@ describe('ObjectExitCursor — table navigation:', () => {
   let element: HTMLElement
   let editor: TextEdit | undefined
 
-  beforeEach(() => { element = mountElement() })
+  beforeEach(() => {
+    element = mountElement()
+  })
 
   // noinspection DuplicatedCode: teardown is local to each suite to capture its own editor and element bindings
   afterEach(() => {
-    try { editor?.destroy() } catch { /* already destroyed */ }
+    try {
+      editor?.destroy()
+    } catch { /* already destroyed */
+    }
     editor = undefined
     element.remove()
   })
@@ -159,7 +176,7 @@ describe('ObjectExitCursor — table navigation:', () => {
 
   describe('ArrowRight at the very end of a table:', () => {
     it('should place a GapCursor in the gap after the table', () => {
-      editor = new TextEdit({ element, content: TABLE_THEN_PARA_DOC })
+      editor = new TextEdit({element, content: TABLE_THEN_PARA_DOC})
       setCursorAtVeryEndOfTable(editor)
 
       dispatchKeydown(editor, 'ArrowRight')
@@ -170,7 +187,7 @@ describe('ObjectExitCursor — table navigation:', () => {
 
   describe('ArrowDown at the very end of a table:', () => {
     it('should place a GapCursor in the gap after the table', () => {
-      editor = new TextEdit({ element, content: TABLE_THEN_PARA_DOC })
+      editor = new TextEdit({element, content: TABLE_THEN_PARA_DOC})
       setCursorAtVeryEndOfTable(editor)
 
       dispatchKeydown(editor, 'ArrowDown')
@@ -183,12 +200,12 @@ describe('ObjectExitCursor — table navigation:', () => {
 
   describe('ArrowRight from GapCursor after table (paragraph follows):', () => {
     it('should move the text cursor into the paragraph after the table', () => {
-      editor = new TextEdit({ element, content: TABLE_THEN_PARA_DOC })
+      editor = new TextEdit({element, content: TABLE_THEN_PARA_DOC})
       setGapCursorAfterTable(editor)
 
       dispatchKeydown(editor, 'ArrowRight')
 
-      const { selection } = pmState(editor)
+      const {selection} = pmState(editor)
       expect(selection).toBeInstanceOf(TextSelection)
       expect((selection as TextSelection).$head.node(1).type.name).toBe('paragraph')
     })
@@ -196,12 +213,12 @@ describe('ObjectExitCursor — table navigation:', () => {
 
   describe('ArrowDown from GapCursor after table (paragraph follows):', () => {
     it('should move the text cursor into the paragraph after the table', () => {
-      editor = new TextEdit({ element, content: TABLE_THEN_PARA_DOC })
+      editor = new TextEdit({element, content: TABLE_THEN_PARA_DOC})
       setGapCursorAfterTable(editor)
 
       dispatchKeydown(editor, 'ArrowDown')
 
-      const { selection } = pmState(editor)
+      const {selection} = pmState(editor)
       expect(selection).toBeInstanceOf(TextSelection)
       expect((selection as TextSelection).$head.node(1).type.name).toBe('paragraph')
     })
@@ -209,7 +226,7 @@ describe('ObjectExitCursor — table navigation:', () => {
 
   describe('ArrowRight from GapCursor after a table that is the last document node:', () => {
     it('should insert a new paragraph and place the cursor inside it', () => {
-      editor = new TextEdit({ element, content: TABLE_ONLY_DOC })
+      editor = new TextEdit({element, content: TABLE_ONLY_DOC})
       setGapCursorAfterTable(editor)
 
       dispatchKeydown(editor, 'ArrowRight')
@@ -223,7 +240,7 @@ describe('ObjectExitCursor — table navigation:', () => {
 
   describe('ArrowDown from GapCursor after a table that is the last document node:', () => {
     it('should insert a new paragraph and place the cursor inside it', () => {
-      editor = new TextEdit({ element, content: TABLE_ONLY_DOC })
+      editor = new TextEdit({element, content: TABLE_ONLY_DOC})
       setGapCursorAfterTable(editor)
 
       dispatchKeydown(editor, 'ArrowDown')
@@ -239,12 +256,12 @@ describe('ObjectExitCursor — table navigation:', () => {
 
   describe('ArrowLeft from GapCursor after a table:', () => {
     it('should move the text cursor back inside the table', () => {
-      editor = new TextEdit({ element, content: TABLE_THEN_PARA_DOC })
+      editor = new TextEdit({element, content: TABLE_THEN_PARA_DOC})
       setGapCursorAfterTable(editor)
 
       dispatchKeydown(editor, 'ArrowLeft')
 
-      const { selection } = pmState(editor)
+      const {selection} = pmState(editor)
       expect(selection).toBeInstanceOf(TextSelection)
       expect((selection as TextSelection).$head.node(1).type.name).toBe('table')
     })
@@ -261,12 +278,12 @@ describe('ObjectExitCursor — table navigation:', () => {
 
   describe('ArrowLeft at the very start of the paragraph following a table:', () => {
     it('should place a GapCursor in the gap after the table', () => {
-      editor = new TextEdit({ element, content: TABLE_THEN_PARA_DOC })
+      editor = new TextEdit({element, content: TABLE_THEN_PARA_DOC})
       setCursorAtStartOfParagraphAfterTable(editor)
 
       dispatchKeydown(editor, 'ArrowLeft')
 
-      const { selection } = pmState(editor)
+      const {selection} = pmState(editor)
       expect(selection).toBeInstanceOf(GapCursor)
       expect(selection.$head.pos).toBe(pmState(editor).doc.firstChild!.nodeSize)
     })
@@ -274,8 +291,8 @@ describe('ObjectExitCursor — table navigation:', () => {
 
   describe('ArrowLeft mid-paragraph after table (not at the very start):', () => {
     it('should not create a GapCursor', () => {
-      editor = new TextEdit({ element, content: TABLE_THEN_PARA_DOC })
-      const { state } = pmView(editor)
+      editor = new TextEdit({element, content: TABLE_THEN_PARA_DOC})
+      const {state} = pmView(editor)
       // Position a few characters into the paragraph.
       const midParaPos = state.doc.firstChild!.nodeSize + 3
       setPmSelection(editor, TextSelection.create(state.doc, midParaPos))
@@ -288,7 +305,7 @@ describe('ObjectExitCursor — table navigation:', () => {
 
   describe('ArrowLeft twice from the start of the paragraph following a table:', () => {
     it('should place GapCursor on the first press, then cursor inside the table on the second', () => {
-      editor = new TextEdit({ element, content: TABLE_THEN_PARA_DOC })
+      editor = new TextEdit({element, content: TABLE_THEN_PARA_DOC})
       setCursorAtStartOfParagraphAfterTable(editor)
 
       dispatchKeydown(editor, 'ArrowLeft')  // paragraph start → GapCursor
@@ -296,7 +313,7 @@ describe('ObjectExitCursor — table navigation:', () => {
 
       dispatchKeydown(editor, 'ArrowLeft')  // GapCursor → inside table
 
-      const { selection } = pmState(editor)
+      const {selection} = pmState(editor)
       expect(selection).toBeInstanceOf(TextSelection)
       expect((selection as TextSelection).$head.node(1).type.name).toBe('table')
     })
@@ -306,12 +323,12 @@ describe('ObjectExitCursor — table navigation:', () => {
 
   describe('ArrowLeft at the very start of the first table cell (codeBlock precedes):', () => {
     it('should place a GapCursor between the codeBlock and the table', () => {
-      editor = new TextEdit({ element, content: CODEBLOCK_THEN_TABLE_DOC })
+      editor = new TextEdit({element, content: CODEBLOCK_THEN_TABLE_DOC})
       setCursorAtVeryStartOfTable(editor)
 
       dispatchKeydown(editor, 'ArrowLeft')
 
-      const { selection } = pmState(editor)
+      const {selection} = pmState(editor)
       expect(selection).toBeInstanceOf(GapCursor)
       expect(selection.$head.pos).toBe(pmState(editor).doc.child(0).nodeSize)
     })
@@ -319,12 +336,12 @@ describe('ObjectExitCursor — table navigation:', () => {
 
   describe('ArrowUp at the very start of the first table cell (codeBlock precedes):', () => {
     it('should place a GapCursor between the codeBlock and the table', () => {
-      editor = new TextEdit({ element, content: CODEBLOCK_THEN_TABLE_DOC })
+      editor = new TextEdit({element, content: CODEBLOCK_THEN_TABLE_DOC})
       setCursorAtVeryStartOfTable(editor)
 
       dispatchKeydown(editor, 'ArrowUp')
 
-      const { selection } = pmState(editor)
+      const {selection} = pmState(editor)
       expect(selection).toBeInstanceOf(GapCursor)
       expect(selection.$head.pos).toBe(pmState(editor).doc.child(0).nodeSize)
     })
@@ -337,10 +354,10 @@ describe('ObjectExitCursor — table navigation:', () => {
 
   describe('ArrowRight at the end of a non-last row in a multi-row table:', () => {
     it('should not create a GapCursor (ObjectExitCursor does not handle it)', () => {
-      editor = new TextEdit({ element, content: TABLE_THEN_PARA_DOC })
+      editor = new TextEdit({element, content: TABLE_THEN_PARA_DOC})
       // Place cursor at end of row 0's only cell (not the very end of the table).
       const view = pmView(editor)
-      const { state } = view
+      const {state} = view
       const table = state.doc.firstChild!
       const map = TableMap.get(table)
       const cellStartPos = 1 + map.positionAt(0, 0, table) + 2
@@ -365,15 +382,15 @@ describe('ObjectExitCursor — table navigation:', () => {
         content: [{
           type: NodeType.Blockquote,
           content: [
-            { type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'first' }] },
-            { type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'second' }] },
+            {type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'first'}]},
+            {type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'second'}]},
           ],
         }],
       }
-      editor = new TextEdit({ element, content: BLOCKQUOTE_TWO_PARA_DOC })
+      editor = new TextEdit({element, content: BLOCKQUOTE_TWO_PARA_DOC})
       // Position cursor at the very start of para2's text content.
       // Doc: blockquote(para1[7], para2[8]). Para2 text starts at 1+7+1=9.
-      const { state } = pmView(editor)
+      const {state} = pmView(editor)
       const para1 = state.doc.child(0).child(0)
       const startOfPara2 = 1 + para1.nodeSize + 1
       setPmSelection(editor, TextSelection.create(state.doc, startOfPara2))
@@ -394,19 +411,24 @@ describe('ObjectExitCursor — table navigation:', () => {
       const PARA_THEN_TABLE_DOC: TextEditContent = {
         type: NodeType.Doc,
         content: [
-          { type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'Before' }] },
+          {type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'Before'}]},
           {
             type: NodeType.Table,
-            content: [{ type: NodeType.TableRow, content: [
-              { type: NodeType.TableHeader, content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'H' }] }] },
-            ]}],
+            content: [{
+              type: NodeType.TableRow, content: [
+                {
+                  type: NodeType.TableHeader,
+                  content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'H'}]}]
+                },
+              ]
+            }],
           },
         ],
       }
-      editor = new TextEdit({ element, content: PARA_THEN_TABLE_DOC })
+      editor = new TextEdit({element, content: PARA_THEN_TABLE_DOC})
       // GapCursor at the gap between the paragraph and the table.
       // nodeBefore = paragraph, which is not in objectTypes → line 97 fires.
-      const { state } = pmView(editor)
+      const {state} = pmView(editor)
       const gapPos = state.doc.child(0).nodeSize
       setPmSelection(editor, new GapCursor(state.doc.resolve(gapPos)))
       expect(pmState(editor).selection).toBeInstanceOf(GapCursor)

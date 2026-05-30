@@ -7,33 +7,36 @@
  * $Since: 2026-05-09
  */
 
-import { Extension } from '@tiptap/core'
-import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state'
-import { Fragment } from '@tiptap/pm/model'
-import type { Node as PmNode } from '@tiptap/pm/model'
-import type { EditorView } from '@tiptap/pm/view'
+import type {Editor} from '@tiptap/core'
+import {Extension} from '@tiptap/core'
+import {Plugin, PluginKey, TextSelection} from '@tiptap/pm/state'
+import type {Node as PmNode} from '@tiptap/pm/model'
+import {Fragment} from '@tiptap/pm/model'
+import type {EditorView} from '@tiptap/pm/view'
+import {CellSelection, isInTable, moveTableColumn, selectionCell, TableMap,} from '@tiptap/pm/tables'
 import {
-  isInTable,
-  selectionCell,
-  CellSelection,
-  TableMap,
-  moveTableColumn,
-} from '@tiptap/pm/tables'
-import type { Editor } from '@tiptap/core'
-import {
-  tableNodeAt, mkItem, ColourPickerPopup, setDisabled, bindMenuCloseListeners,
-  DRAG_THRESHOLD, mkSep, createDragGhost, updateDragGhost, removeDragGhost, clearCells,
+  bindMenuCloseListeners,
+  clearCells,
+  ColourPickerPopup,
+  createDragGhost,
+  DRAG_THRESHOLD,
+  mkItem,
+  mkSep,
+  removeDragGhost,
+  setDisabled,
+  tableNodeAt,
+  updateDragGhost,
 } from './utils'
 
 const KEY = new PluginKey<null>('columnHandle')
 
-const CSS_HANDLE    = 'te-col-handle'
-const CSS_MENU      = 'te-col-handle__menu'
-const CSS_ITEM      = 'te-col-handle__item'
-const CSS_SEP       = 'te-col-handle__sep'
-const CSS_OPEN      = 'is-open'
-const CSS_DRAGGING  = 'is-dragging'
-const CSS_GHOST     = 'te-col-handle--ghost'
+const CSS_HANDLE = 'te-col-handle'
+const CSS_MENU = 'te-col-handle__menu'
+const CSS_ITEM = 'te-col-handle__item'
+const CSS_SEP = 'te-col-handle__sep'
+const CSS_OPEN = 'is-open'
+const CSS_DRAGGING = 'is-dragging'
+const CSS_GHOST = 'te-col-handle--ghost'
 const CSS_DROP_LINE = 'te-col-handle__drop-line'
 
 // -- Helpers -------------------------------------------------------------------
@@ -49,7 +52,7 @@ function currentCol(
 }
 
 function sortColumn(view: EditorView, tableNode: PmNode, tableStart: number, col: number, ascending: boolean): void {
-  const { state } = view
+  const {state} = view
   if (!isInTable(state)) return
   try {
     const map = TableMap.get(tableNode)
@@ -59,7 +62,7 @@ function sortColumn(view: EditorView, tableNode: PmNode, tableStart: number, col
     for (let r = 0; r < tableNode.childCount; r++) allRows.push(tableNode.child(r))
     const isHeader = (row: PmNode) => row.firstChild?.type.spec['tableRole'] === 'header_cell'
     const headerRows = allRows.filter(isHeader)
-    const bodyRows   = allRows.filter(r => !isHeader(r))
+    const bodyRows = allRows.filter(r => !isHeader(r))
 
     const getText = (row: PmNode): string => {
       const rowIdx = allRows.indexOf(row)
@@ -79,12 +82,13 @@ function sortColumn(view: EditorView, tableNode: PmNode, tableStart: number, col
     const tr = state.tr.replaceWith(tablePos, tablePos + tableNode.nodeSize, newTable)
     view.dispatch(tr)
     view.dom.focus()
-  } catch { /* no-op */ }
+  } catch { /* no-op */
+  }
 }
 
 function clearColumn(view: EditorView, editor: Editor, tableNode: PmNode, tableStart: number, col: number): void {
   clearCells(view, editor, tableNode, tableStart,
-    map => Array.from({ length: map.height }, (_, r) => map.positionAt(r, col, tableNode))
+    map => Array.from({length: map.height}, (_, r) => map.positionAt(r, col, tableNode))
   )
 }
 
@@ -110,14 +114,14 @@ class ColumnHandleView {
 
   private readonly onScroll: () => void
 
-  private readonly itemSortAsc:   HTMLButtonElement
-  private readonly itemSortDesc:  HTMLButtonElement
-  private readonly itemBg:        HTMLButtonElement
-  private readonly itemAddLeft:   HTMLButtonElement
-  private readonly itemAddRight:  HTMLButtonElement
-  private readonly itemClear:     HTMLButtonElement
-  private readonly itemDelete:    HTMLButtonElement
-  private readonly itemMoveLeft:  HTMLButtonElement
+  private readonly itemSortAsc: HTMLButtonElement
+  private readonly itemSortDesc: HTMLButtonElement
+  private readonly itemBg: HTMLButtonElement
+  private readonly itemAddLeft: HTMLButtonElement
+  private readonly itemAddRight: HTMLButtonElement
+  private readonly itemClear: HTMLButtonElement
+  private readonly itemDelete: HTMLButtonElement
+  private readonly itemMoveLeft: HTMLButtonElement
   private readonly itemMoveRight: HTMLButtonElement
 
   constructor(
@@ -138,14 +142,14 @@ class ColumnHandleView {
     this.menuDom.setAttribute('role', 'menu')
     this.menuDom.hidden = true
 
-    this.itemSortAsc   = mkItem('Sort increasing', CSS_ITEM)
-    this.itemSortDesc  = mkItem('Sort decreasing', CSS_ITEM)
-    this.itemBg        = mkItem('Background colour', CSS_ITEM)
-    this.itemAddLeft   = mkItem('Add column left', CSS_ITEM)
-    this.itemAddRight  = mkItem('Add column right', CSS_ITEM)
-    this.itemClear     = mkItem('Clear cells', CSS_ITEM)
-    this.itemDelete    = mkItem('Delete column', CSS_ITEM)
-    this.itemMoveLeft  = mkItem('Move column left', CSS_ITEM)
+    this.itemSortAsc = mkItem('Sort increasing', CSS_ITEM)
+    this.itemSortDesc = mkItem('Sort decreasing', CSS_ITEM)
+    this.itemBg = mkItem('Background colour', CSS_ITEM)
+    this.itemAddLeft = mkItem('Add column left', CSS_ITEM)
+    this.itemAddRight = mkItem('Add column right', CSS_ITEM)
+    this.itemClear = mkItem('Clear cells', CSS_ITEM)
+    this.itemDelete = mkItem('Delete column', CSS_ITEM)
+    this.itemMoveLeft = mkItem('Move column left', CSS_ITEM)
     this.itemMoveRight = mkItem('Move column right', CSS_ITEM)
 
     this.menuDom.append(
@@ -168,7 +172,7 @@ class ColumnHandleView {
     document.body.appendChild(this.colourPicker.dom)
 
     this.onScroll = () => this.update(this.editorView)
-    editorView.dom.parentElement?.addEventListener('scroll', this.onScroll, { passive: true })
+    editorView.dom.parentElement?.addEventListener('scroll', this.onScroll, {passive: true})
 
     this.bindEvents()
     this.update(editorView)
@@ -200,12 +204,13 @@ class ColumnHandleView {
   private refreshState(view: EditorView): void {
     try {
       const $cell = selectionCell(view.state)
-      const { tableNode, tableStart } = tableNodeAt($cell)
-      this.tableNode  = tableNode
+      const {tableNode, tableStart} = tableNodeAt($cell)
+      this.tableNode = tableNode
       this.tableStart = tableStart
-      this.map        = TableMap.get(this.tableNode)
-      this.col        = currentCol($cell, this.map, this.tableStart)
-    } catch { /* keep previous state */ }
+      this.map = TableMap.get(this.tableNode)
+      this.col = currentCol($cell, this.map, this.tableStart)
+    } catch { /* keep previous state */
+    }
   }
 
   private updateHandlePosition(view: EditorView): void {
@@ -217,18 +222,19 @@ class ColumnHandleView {
       const topCellDom = view.nodeDOM(this.tableStart + topOffset)
       if (!(topCellDom instanceof HTMLElement)) return
       const tRect = topCellDom.getBoundingClientRect()
-      this.handleDom.style.top   = `${tRect.top}px`
-      this.handleDom.style.left  = `${tRect.left}px`
+      this.handleDom.style.top = `${tRect.top}px`
+      this.handleDom.style.left = `${tRect.left}px`
       this.handleDom.style.width = `${tRect.width}px`
-    } catch { /* leave position unchanged */ }
+    } catch { /* leave position unchanged */
+    }
   }
 
   private updateMenuPosition(): void {
-    const hRect    = this.handleDom.getBoundingClientRect()
+    const hRect = this.handleDom.getBoundingClientRect()
     const areaRect = this.editorView.dom.parentElement?.getBoundingClientRect()
     const menuRect = this.menuDom.getBoundingClientRect()
 
-    let top  = hRect.bottom + 4
+    let top = hRect.bottom + 4
     let left = hRect.left
 
     if (areaRect && menuRect.width > 0) {
@@ -238,12 +244,12 @@ class ColumnHandleView {
       }
     }
 
-    this.menuDom.style.top  = `${top}px`
+    this.menuDom.style.top = `${top}px`
     this.menuDom.style.left = `${left}px`
   }
 
   private openMenu(): void {
-    document.dispatchEvent(new CustomEvent('te:context-menu-open', { detail: this }))
+    document.dispatchEvent(new CustomEvent('te:context-menu-open', {detail: this}))
     this.menuOpen = true
     this.menuDom.hidden = false
     this.handleDom.classList.add(CSS_OPEN)
@@ -259,7 +265,7 @@ class ColumnHandleView {
 
   private updateMenuItemStates(): void {
     const map = this.map
-    setDisabled(this.itemMoveLeft,  !map || this.col <= 0)
+    setDisabled(this.itemMoveLeft, !map || this.col <= 0)
     setDisabled(this.itemMoveRight, !map || this.col >= (map.width - 1))
   }
 
@@ -268,12 +274,13 @@ class ColumnHandleView {
     const tableNode = this.tableNode
     if (!map || !tableNode) return
     try {
-      const { state } = this.editorView
+      const {state} = this.editorView
       const anchor = this.tableStart + map.positionAt(0, this.col, tableNode)
-      const head   = this.tableStart + map.positionAt(map.height - 1, this.col, tableNode)
+      const head = this.tableStart + map.positionAt(map.height - 1, this.col, tableNode)
       const sel = CellSelection.create(state.doc, anchor, head)
       this.editorView.dispatch(state.tr.setSelection(sel))
-    } catch { /* no-op */ }
+    } catch { /* no-op */
+    }
   }
 
   // -- Drag ------------------------------------------------------------------
@@ -378,16 +385,17 @@ class ColumnHandleView {
       }
 
       this.dragTargetCol = targetCol <= this.col ? targetCol : targetCol - 1
-      this.dropLineDom.style.left   = `${lineX}px`
-      this.dropLineDom.style.top    = `${lineTop}px`
+      this.dropLineDom.style.left = `${lineX}px`
+      this.dropLineDom.style.top = `${lineTop}px`
       this.dropLineDom.style.height = `${lineHeight}px`
       this.dropLineDom.hidden = false
-    } catch { /* no-op */ }
+    } catch { /* no-op */
+    }
   }
 
   private dropColumn(targetCol: number): void {
-    const { state } = this.editorView
-    moveTableColumn({ from: this.col, to: targetCol })(state, tr => this.editorView.dispatch(tr))
+    const {state} = this.editorView
+    moveTableColumn({from: this.col, to: targetCol})(state, tr => this.editorView.dispatch(tr))
     this.editor.commands.focus()
   }
 
@@ -424,19 +432,19 @@ class ColumnHandleView {
     }))
 
     this.itemBg.addEventListener('mousedown', run(() => {
-      const { tableNode, tableStart, col, map } = this
+      const {tableNode, tableStart, col, map} = this
       if (!tableNode || !map) return
       const offset = map.positionAt(0, col, tableNode)
       const initialColour = (tableNode.nodeAt(offset)?.attrs['background'] as string | null) ?? '#ffffff'
       const nearRect = this.itemBg.getBoundingClientRect()
       this.colourPicker.open(nearRect, initialColour, colour => {
-        const { state } = this.editorView
+        const {state} = this.editorView
         const tr = state.tr
         for (let r = 0; r < map.height; r++) {
           const cellOff = map.positionAt(r, col, tableNode)
           const cellNode = tableNode.nodeAt(cellOff)
           if (!cellNode) continue
-          tr.setNodeMarkup(tableStart + cellOff, undefined, { ...cellNode.attrs, background: colour })
+          tr.setNodeMarkup(tableStart + cellOff, undefined, {...cellNode.attrs, background: colour})
         }
         this.editorView.dispatch(tr)
         this.editor.commands.focus()
@@ -464,22 +472,23 @@ class ColumnHandleView {
           this.editorView.dispatch(
             newState.tr.setSelection(TextSelection.create(newState.doc, $cell.pos + 2))
           )
-        } catch { /* no-op */ }
+        } catch { /* no-op */
+        }
       }
     }))
 
     this.itemMoveLeft.addEventListener('mousedown', run(() => {
       if (!this.map || this.col <= 0) return
-      const { state } = this.editorView
-      moveTableColumn({ from: this.col, to: this.col - 1 })(state, tr => this.editorView.dispatch(tr))
+      const {state} = this.editorView
+      moveTableColumn({from: this.col, to: this.col - 1})(state, tr => this.editorView.dispatch(tr))
       this.editor.commands.focus()
     }))
 
     this.itemMoveRight.addEventListener('mousedown', run(() => {
       const map = this.map
       if (!map || this.col >= map.width - 1) return
-      const { state } = this.editorView
-      moveTableColumn({ from: this.col, to: this.col + 1 })(state, tr => this.editorView.dispatch(tr))
+      const {state} = this.editorView
+      moveTableColumn({from: this.col, to: this.col + 1})(state, tr => this.editorView.dispatch(tr))
       this.editor.commands.focus()
     }))
   }

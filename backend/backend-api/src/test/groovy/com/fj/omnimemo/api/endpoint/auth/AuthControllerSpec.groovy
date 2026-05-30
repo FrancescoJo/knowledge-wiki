@@ -5,13 +5,13 @@
  */
 package com.fj.omnimemo.api.endpoint.auth
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fj.omnimemo.api.endpoint.test.ApiFixture
 import com.fj.omnimemo.api.endpoint.test.CookieSupport
 import com.fj.omnimemo.api.endpoint.test.auth.AuthApiClient
 import com.fj.omnimemo.core.test.annotation.LargeTest
 import com.fj.omnimemo.core.user.usecase.CreateUserUseCase
 import com.fj.omnimemo.infrastructure.test.PostgresContainerSupport
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -47,20 +47,24 @@ class AuthControllerSpec extends Specification {
             System.setProperty("liquibase.duplicateFileMode", "WARN")
             container.start()
             def source = new MapPropertySource("testcontainers", [
-                "spring.datasource.url"     : container.jdbcUrl,
-                "spring.datasource.username": container.username,
-                "spring.datasource.password": container.password,
+                    "spring.datasource.url"     : container.jdbcUrl,
+                    "spring.datasource.username": container.username,
+                    "spring.datasource.password": container.password,
             ])
             ctx.environment.propertySources.addFirst(source)
         }
     }
 
-    @Autowired TestRestTemplate restTemplate
-    @Autowired CreateUserUseCase createUserUseCase
-    @Autowired JdbcTemplate jdbcTemplate
-    @Autowired ObjectMapper objectMapper
+    @Autowired
+    TestRestTemplate restTemplate
+    @Autowired
+    CreateUserUseCase createUserUseCase
+    @Autowired
+    JdbcTemplate jdbcTemplate
+    @Autowired
+    ObjectMapper objectMapper
 
-    private static final String TEST_EMAIL    = "auth-smoke@example.com"
+    private static final String TEST_EMAIL = "auth-smoke@example.com"
     private static final String TEST_PASSWORD = "AuthSmoke1!"
 
     AuthApiClient authApiClient
@@ -68,7 +72,7 @@ class AuthControllerSpec extends Specification {
 
     def setup() {
         authApiClient = new AuthApiClient(restTemplate)
-        apiFixture    = new ApiFixture(createUserUseCase, jdbcTemplate)
+        apiFixture = new ApiFixture(createUserUseCase, jdbcTemplate)
         apiFixture.resetWithUser(TEST_EMAIL, TEST_PASSWORD)
     }
 
@@ -79,31 +83,31 @@ class AuthControllerSpec extends Specification {
 
         then:
         response.statusCode.value() == 200
-        CookieSupport.cookieValue(response, "access_token")  != null
+        CookieSupport.cookieValue(response, "access_token") != null
         CookieSupport.cookieValue(response, "refresh_token") != null
-        envelope.body.accessToken  != null
+        envelope.body.accessToken != null
         envelope.body.refreshToken != null
     }
 
     def "POST auth/logout returns 200 and expires both token cookies"() {
         given:
         def loginResponse = authApiClient.login(TEST_EMAIL, TEST_PASSWORD)
-        def accessToken   = CookieSupport.cookieValue(loginResponse, "access_token")
-        def refreshToken  = CookieSupport.cookieValue(loginResponse, "refresh_token")
+        def accessToken = CookieSupport.cookieValue(loginResponse, "access_token")
+        def refreshToken = CookieSupport.cookieValue(loginResponse, "refresh_token")
 
         when:
         def response = authApiClient.logout(accessToken, refreshToken)
 
         then:
         response.statusCode.value() == 200
-        CookieSupport.cookieMaxAge(response, "access_token")  == 0
+        CookieSupport.cookieMaxAge(response, "access_token") == 0
         CookieSupport.cookieMaxAge(response, "refresh_token") == 0
     }
 
     def "POST auth/refresh returns 200 and rotates access and refresh token cookies"() {
         given:
         def loginResponse = authApiClient.login(TEST_EMAIL, TEST_PASSWORD)
-        def refreshToken  = CookieSupport.cookieValue(loginResponse, "refresh_token")
+        def refreshToken = CookieSupport.cookieValue(loginResponse, "refresh_token")
 
         when:
         def response = authApiClient.refresh(refreshToken)
@@ -111,9 +115,9 @@ class AuthControllerSpec extends Specification {
 
         then:
         response.statusCode.value() == 200
-        CookieSupport.cookieValue(response, "access_token")  != null
+        CookieSupport.cookieValue(response, "access_token") != null
         CookieSupport.cookieValue(response, "refresh_token") != null
-        envelope.body.accessToken  != null
+        envelope.body.accessToken != null
         envelope.body.refreshToken != null
     }
 }

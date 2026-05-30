@@ -44,15 +44,16 @@ class HealthControllerSpec extends Specification {
             System.setProperty("liquibase.duplicateFileMode", "WARN")
             container.start()
             def source = new MapPropertySource("testcontainers", [
-                "spring.datasource.url"     : container.jdbcUrl,
-                "spring.datasource.username": container.username,
-                "spring.datasource.password": container.password,
+                    "spring.datasource.url"     : container.jdbcUrl,
+                    "spring.datasource.username": container.username,
+                    "spring.datasource.password": container.password,
             ])
             ctx.environment.propertySources.addFirst(source)
         }
     }
 
-    @Autowired TestRestTemplate restTemplate
+    @Autowired
+    TestRestTemplate restTemplate
 
     HealthApiClient healthApiClient
 

@@ -1,55 +1,57 @@
-<header xmlns:th="http://www.thymeleaf.org" th:fragment="header" class="site-header">
-    <a class="site-logo" href="/">Omnimemo</a>
-    <span th:if="${buildPhase != 'release'}"
-          class="build-phase-badge"
-          th:classappend="'build-phase-' + ${buildPhase}"
-          th:text="${buildPhase}"></span>
-    <nav class="site-nav" aria-label="Main navigation">
-        <ul th:replace="~{fragments/menu/menu-bar :: menuBar}"></ul>
-    </nav>
-    <div class="lang-switcher" th:attr="aria-label=#{header.lang.select}">
-        <button class="lang-btn" type="button"
-                onclick="this.closest('.lang-switcher').classList.toggle('open')"
-                th:attr="aria-expanded=${#locale.language != null ? 'false' : 'false'}">
-            <img th:src="${#locale.language == 'ko'} ? '/flags/kr.svg' : '/flags/gb.svg'"
-                 th:alt="${#locale.language == 'ko'} ? '한국어' : 'English'"
-                 class="flag-icon">
-            <span th:text="${#locale.language == 'ko'} ? #{header.lang.ko} : #{header.lang.en}">English</span>
-            <span class="lang-arrow" aria-hidden="true">▾</span>
+<header class="site-header" th:fragment="header" xmlns:th="http://www.thymeleaf.org">
+  <a class="site-logo" href="/">Omnimemo</a>
+  <span class="build-phase-badge"
+        th:classappend="'build-phase-' + ${buildPhase}"
+        th:if="${buildPhase != 'release'}"
+        th:text="${buildPhase}"></span>
+  <nav aria-label="Main navigation" class="site-nav">
+    <ul th:replace="~{fragments/menu/menu-bar :: menuBar}"></ul>
+  </nav>
+  <div class="lang-switcher" th:attr="aria-label=#{header.lang.select}">
+    <button class="lang-btn" onclick="this.closest('.lang-switcher').classList.toggle('open')"
+            th:attr="aria-expanded=${#locale.language != null ? 'false' : 'false'}"
+            type="button">
+      <img class="flag-icon"
+           th:alt="${#locale.language == 'ko'} ? '한국어' : 'English'"
+           th:src="${#locale.language == 'ko'} ? '/flags/kr.svg' : '/flags/gb.svg'">
+      <span th:text="${#locale.language == 'ko'} ? #{header.lang.ko} : #{header.lang.en}">English</span>
+      <span aria-hidden="true" class="lang-arrow">▾</span>
+    </button>
+    <ul class="lang-dropdown" role="listbox">
+      <li role="option" th:classappend="${#locale.language == 'en'} ? ' selected'">
+        <a href="?lang=en" onclick="this.closest('.lang-switcher').classList.remove('open')">
+          <img alt="English" class="flag-icon" src="/flags/gb.svg">
+          <span th:text="#{header.lang.en}">English</span>
+        </a>
+      </li>
+      <li role="option" th:classappend="${#locale.language == 'ko'} ? ' selected'">
+        <a href="?lang=ko" onclick="this.closest('.lang-switcher').classList.remove('open')">
+          <img alt="한국어" class="flag-icon" src="/flags/kr.svg">
+          <span th:text="#{header.lang.ko}">한국어</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="user-menu" th:if="${currentUserEmail}">
+    <button aria-expanded="false" aria-haspopup="true"
+            class="user-btn"
+            onclick="this.closest('.user-menu').classList.toggle('open')" type="button">
+      <span class="user-email" th:text="${currentUserEmail}">user@example.com</span>
+      <span aria-hidden="true" class="user-arrow">▾</span>
+    </button>
+    <ul class="user-dropdown" role="menu">
+      <li role="none">
+        <button class="user-dropdown-item" hx-post="/api/v1/auth/logout"
+                hx-swap="none"
+                role="menuitem"
+                th:attr='hx-headers=|{"X-XSRF-TOKEN":"${_csrf.token}"}|'
+                th:text="#{user.logout}">Logout
         </button>
-        <ul class="lang-dropdown" role="listbox">
-            <li role="option" th:classappend="${#locale.language == 'en'} ? ' selected'">
-                <a href="?lang=en" onclick="this.closest('.lang-switcher').classList.remove('open')">
-                    <img src="/flags/gb.svg" alt="English" class="flag-icon">
-                    <span th:text="#{header.lang.en}">English</span>
-                </a>
-            </li>
-            <li role="option" th:classappend="${#locale.language == 'ko'} ? ' selected'">
-                <a href="?lang=ko" onclick="this.closest('.lang-switcher').classList.remove('open')">
-                    <img src="/flags/kr.svg" alt="한국어" class="flag-icon">
-                    <span th:text="#{header.lang.ko}">한국어</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-    <div th:if="${currentUserEmail}" class="user-menu">
-        <button class="user-btn" type="button"
-                onclick="this.closest('.user-menu').classList.toggle('open')"
-                aria-haspopup="true" aria-expanded="false">
-            <span class="user-email" th:text="${currentUserEmail}">user@example.com</span>
-            <span class="user-arrow" aria-hidden="true">▾</span>
-        </button>
-        <ul class="user-dropdown" role="menu">
-            <li role="none">
-                <button class="user-dropdown-item" role="menuitem"
-                        hx-post="/api/v1/auth/logout"
-                        hx-swap="none"
-                        th:attr='hx-headers=|{"X-XSRF-TOKEN":"${_csrf.token}"}|'
-                        th:text="#{user.logout}">Logout</button>
-            </li>
-        </ul>
-    </div>
-    <button th:unless="${currentUserEmail}" class="login-btn" type="button"
-            onclick="document.getElementById('login-popup').showModal()"
-            th:text="#{header.login}">Log In</button>
+      </li>
+    </ul>
+  </div>
+  <button class="login-btn" onclick="document.getElementById('login-popup').showModal()" th:text="#{header.login}"
+          th:unless="${currentUserEmail}"
+          type="button">Log In
+  </button>
 </header>

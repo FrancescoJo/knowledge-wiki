@@ -69,14 +69,19 @@ class SecurityConfiguration(private val jwtTokenService: JwtTokenService) {
             CsrfCookieFilter(),
             UsernamePasswordAuthenticationFilter::class.java,
         )
-        .authorizeHttpRequests {
-            it
+        .authorizeHttpRequests { customiser ->
+            // Happens only once during server startup
+            @Suppress("SpreadOperator")
+            customiser
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .requestMatchers("/error").permitAll()
-                .requestMatchers(HttpMethod.GET, "/", "/health", "/lib/**", "/flags/**").permitAll()
+                .requestMatchers(
+                    HttpMethod.GET,
+                    "/", "/health", *WEB_STATIC_PATHS.map { "$it/**" }.toTypedArray()
+                ).permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/health").permitAll()
                 .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("${ApiPathsV1.AUTH}/**").permitAll()
                 .requestMatchers(HttpMethod.POST, ApiPathsV1.BOOTSTRAP_USERS).access(localhostOnly())
                 .anyRequest().authenticated()
         }
@@ -90,14 +95,9 @@ class SecurityConfiguration(private val jwtTokenService: JwtTokenService) {
         // making the token baked into the page HTML diverge from the live cookie value.
         override fun shouldNotFilter(request: HttpServletRequest): Boolean {
             val path = request.servletPath
-            return path.startsWith("/flags/") ||
-                path.startsWith("/lib/") ||
-                path.startsWith("/css/") ||
-                path.startsWith("/js/") ||
-                path.startsWith("/images/") ||
-                path.startsWith("/webjars/") ||
-                path == "/health" ||
-                path == "/favicon.ico"
+
+            return WEB_STATIC_PATHS.any { path.startsWith("$it/") } ||
+                    ALLOWED_RESOURCE_PATHS.any { path == it }
         }
 
         override fun doFilterInternal(
@@ -124,5 +124,20 @@ class SecurityConfiguration(private val jwtTokenService: JwtTokenService) {
                 ipv4.matches(addr) || ipv6.matches(addr),
             )
         }
+    }
+
+    companion object {
+        private val WEB_STATIC_PATHS = listOf(
+            "/flags",
+            "/lib",
+            "/css",
+            "/js",
+            "/images",
+            "/webjars",
+        )
+        private val ALLOWED_RESOURCE_PATHS = listOf(
+            "/health",
+            "/favicon.ico",
+        )
     }
 }

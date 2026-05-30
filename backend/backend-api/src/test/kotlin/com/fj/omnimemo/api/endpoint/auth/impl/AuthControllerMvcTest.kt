@@ -6,13 +6,14 @@
 package com.fj.omnimemo.api.endpoint.auth.impl
 
 import com.fj.omnimemo.api.endpoint.ApiPathsV1
+import com.fj.omnimemo.core.test.annotation.MediumTest
+import com.fj.omnimemo.core.user.UserProfileCache
 import com.fj.omnimemo.core.user.exception.PasswordMismatchException
 import com.fj.omnimemo.core.user.exception.RefreshTokenNotFoundException
-import com.fj.omnimemo.core.test.annotation.MediumTest
 import com.fj.omnimemo.core.user.model.LoginResult
-import com.fj.omnimemo.core.user.UserProfileCache
 import com.fj.omnimemo.core.user.usecase.LoginUseCase
 import com.fj.omnimemo.infrastructure.security.JwtTokenService
+import jakarta.servlet.http.Cookie
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito
@@ -23,11 +24,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import jakarta.servlet.http.Cookie
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 /**
  * Medium Tests for [AuthControllerImpl]: verifies HTTP path routing, cookie handling,
@@ -49,13 +46,18 @@ class AuthControllerMvcTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    @MockBean private lateinit var loginUseCase: LoginUseCase
+    @MockBean
+    private lateinit var loginUseCase: LoginUseCase
+
     // Required by SecurityConfiguration; not referenced in test methods directly.
     @Suppress("UnusedPrivateProperty")
-    @MockBean private lateinit var jwtTokenService: JwtTokenService
+    @MockBean
+    private lateinit var jwtTokenService: JwtTokenService
+
     // Required by GlobalModelAdvice; not referenced in test methods directly.
     @Suppress("UnusedPrivateProperty")
-    @MockBean private lateinit var userProfileCache: UserProfileCache
+    @MockBean
+    private lateinit var userProfileCache: UserProfileCache
 
     @Test
     fun `POST auth login returns 200 and sets cookies on valid credentials`() {

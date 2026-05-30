@@ -28,7 +28,9 @@ class MockUserRepository : UserRepository {
 
     override fun save(user: User): User = user.also { store[user.id] = user }
 
-    override fun delete(id: UserId) { store.remove(id) }
+    override fun delete(id: UserId) {
+        store.remove(id)
+    }
 
     override fun hasAny(): Boolean = store.isNotEmpty()
 

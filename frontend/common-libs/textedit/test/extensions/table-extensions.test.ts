@@ -196,7 +196,8 @@ describe('CustomTable — tableWidth attribute:', () => {
   afterEach(() => {
     try {
       editor?.destroy()
-    } catch { /* already destroyed */ }
+    } catch { /* already destroyed */
+    }
     editor = undefined
     element.remove()
   })

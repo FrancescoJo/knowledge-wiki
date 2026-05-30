@@ -6,12 +6,18 @@
  * $Since: 2026-05-09
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { TextEdit } from '@src/TextEdit'
-import { TextSelection } from '@tiptap/pm/state'
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
+import {TextEdit} from '@src/TextEdit'
+import {TextSelection} from '@tiptap/pm/state'
 import {
-  mountElement, getDoc, setCursorInCell, pmView, TABLE_DOC, PARA_DOC, TABLE_AND_PARA_DOC,
-  setTextSelectedAtCell0_0
+  getDoc,
+  mountElement,
+  PARA_DOC,
+  pmView,
+  setCursorInCell,
+  setTextSelectedAtCell0_0,
+  TABLE_AND_PARA_DOC,
+  TABLE_DOC
 } from '../test-utils'
 
 // -- Helpers -------------------------------------------------------------------
@@ -37,7 +43,7 @@ function rowBtn(): HTMLButtonElement | null {
 }
 
 function click(btn: HTMLButtonElement): void {
-  btn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }))
+  btn.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true}))
 }
 
 // -- Tests: InsertColumnHandle -------------------------------------------------
@@ -46,11 +52,16 @@ describe('InsertColumnHandle:', () => {
   let element: HTMLElement
   let editor: TextEdit | undefined
 
-  beforeEach(() => { element = mountElement() })
+  beforeEach(() => {
+    element = mountElement()
+  })
 
   // noinspection DuplicatedCode: teardown is local to each suite to capture its own editor and element bindings
   afterEach(() => {
-    try { editor?.destroy() } catch { /* already destroyed */ }
+    try {
+      editor?.destroy()
+    } catch { /* already destroyed */
+    }
     editor = undefined
     element.remove()
   })
@@ -59,7 +70,7 @@ describe('InsertColumnHandle:', () => {
 
   describe('when TextEdit is created:', () => {
     it('should add the wrapper element to the DOM', () => {
-      editor = new TextEdit({ element })
+      editor = new TextEdit({element})
       expect(colWrap()).not.toBeNull()
     })
   })
@@ -69,14 +80,14 @@ describe('InsertColumnHandle:', () => {
   describe('visibility:', () => {
     describe('when the cursor is outside a table:', () => {
       it('should be hidden', () => {
-        editor = new TextEdit({ element, content: PARA_DOC })
+        editor = new TextEdit({element, content: PARA_DOC})
         expect(colWrap()!.hidden).toBe(true)
       })
     })
 
     describe('when the cursor is inside a table:', () => {
       it('should become visible', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 0, 0)
         expect(colWrap()!.hidden).toBe(false)
       })
@@ -87,7 +98,7 @@ describe('InsertColumnHandle:', () => {
 
   describe('when inside a table:', () => {
     it('should render a button for the current column', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       expect(colBtn()).not.toBeNull()
     })
@@ -97,7 +108,7 @@ describe('InsertColumnHandle:', () => {
 
   describe('clicking the column button:', () => {
     it('should insert a column after the current column', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       const colsBefore = getDoc(editor).content[0].content[0].content.length
       click(colBtn()!)
@@ -112,11 +123,13 @@ describe('InsertColumnHandle:', () => {
 
   describe('when dispatch throws during insertAfterColumn:', () => {
     it('should silently absorb the error and leave the table unchanged', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       const colsBefore = getDoc(editor).content[0].content[0].content.length
       // Mock dispatch to throw once — fires when insertAfterColumn calls dispatch.
-      vi.spyOn(pmView(editor), 'dispatch').mockImplementationOnce(() => { throw new Error('mock') })
+      vi.spyOn(pmView(editor), 'dispatch').mockImplementationOnce(() => {
+        throw new Error('mock')
+      })
       click(colBtn()!)
       vi.restoreAllMocks()
       // Catch absorbed the error; no column was inserted.
@@ -128,7 +141,7 @@ describe('InsertColumnHandle:', () => {
 
   describe('when the editor is destroyed:', () => {
     it('should remove the wrapper from the DOM', () => {
-      editor = new TextEdit({ element })
+      editor = new TextEdit({element})
       editor.destroy()
       editor = undefined
       expect(colWrap()).toBeNull()
@@ -142,11 +155,16 @@ describe('InsertRowHandle:', () => {
   let element: HTMLElement
   let editor: TextEdit | undefined
 
-  beforeEach(() => { element = mountElement() })
+  beforeEach(() => {
+    element = mountElement()
+  })
 
   // noinspection DuplicatedCode: teardown is local to each suite to capture its own editor and element bindings
   afterEach(() => {
-    try { editor?.destroy() } catch { /* already destroyed */ }
+    try {
+      editor?.destroy()
+    } catch { /* already destroyed */
+    }
     editor = undefined
     element.remove()
   })
@@ -155,7 +173,7 @@ describe('InsertRowHandle:', () => {
 
   describe('when TextEdit is created:', () => {
     it('should add the wrapper element to the DOM', () => {
-      editor = new TextEdit({ element })
+      editor = new TextEdit({element})
       expect(rowWrap()).not.toBeNull()
     })
   })
@@ -165,14 +183,14 @@ describe('InsertRowHandle:', () => {
   describe('visibility:', () => {
     describe('when the cursor is outside a table:', () => {
       it('should be hidden', () => {
-        editor = new TextEdit({ element, content: PARA_DOC })
+        editor = new TextEdit({element, content: PARA_DOC})
         expect(rowWrap()!.hidden).toBe(true)
       })
     })
 
     describe('when the cursor is inside a table:', () => {
       it('should become visible', () => {
-        editor = new TextEdit({ element, content: TABLE_DOC })
+        editor = new TextEdit({element, content: TABLE_DOC})
         setCursorInCell(editor, 0, 0)
         expect(rowWrap()!.hidden).toBe(false)
       })
@@ -183,7 +201,7 @@ describe('InsertRowHandle:', () => {
 
   describe('when inside a table:', () => {
     it('should render a button for the current row', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       expect(rowBtn()).not.toBeNull()
     })
@@ -193,7 +211,7 @@ describe('InsertRowHandle:', () => {
 
   describe('clicking the row button:', () => {
     it('should insert a row after the current row', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       const rowsBefore = getDoc(editor).content[0].content.length
       click(rowBtn()!)
@@ -208,11 +226,13 @@ describe('InsertRowHandle:', () => {
 
   describe('when dispatch throws during insertAfterRow:', () => {
     it('should silently absorb the error and leave the table unchanged', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       const rowsBefore = getDoc(editor).content[0].content.length
       // Mock dispatch to throw once — fires when insertAfterRow calls dispatch.
-      vi.spyOn(pmView(editor), 'dispatch').mockImplementationOnce(() => { throw new Error('mock') })
+      vi.spyOn(pmView(editor), 'dispatch').mockImplementationOnce(() => {
+        throw new Error('mock')
+      })
       click(rowBtn()!)
       vi.restoreAllMocks()
       // Catch absorbed the error; no row was inserted.
@@ -224,7 +244,7 @@ describe('InsertRowHandle:', () => {
 
   describe('when the editor is destroyed:', () => {
     it('should remove the wrapper from the DOM', () => {
-      editor = new TextEdit({ element })
+      editor = new TextEdit({element})
       editor.destroy()
       editor = undefined
       expect(rowWrap()).toBeNull()
@@ -237,10 +257,15 @@ describe('InsertColumnHandle — rebuild catch block:', () => {
   let element: HTMLElement
   let editor: TextEdit | undefined
 
-  beforeEach(() => { element = mountElement() })
+  beforeEach(() => {
+    element = mountElement()
+  })
 
   afterEach(() => {
-    try { editor?.destroy() } catch { /* already destroyed */ }
+    try {
+      editor?.destroy()
+    } catch { /* already destroyed */
+    }
     editor = undefined
     element.remove()
     vi.restoreAllMocks()
@@ -251,7 +276,7 @@ describe('InsertColumnHandle — rebuild catch block:', () => {
   // and leaves the overlay wrapper empty (no button/line rendered).
   describe('rebuild catch block:', () => {
     it('should silently absorb errors thrown by getBoundingClientRect', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       // Mock AFTER construction so the initial render succeeds.
       vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => {
         throw new Error('mock layout error')
@@ -265,7 +290,7 @@ describe('InsertColumnHandle — rebuild catch block:', () => {
 
   describe('insertAfterColumn guard (cursor outside table)', () => {
     it('should leave the table unchanged when the cursor is no longer in the table', () => {
-      editor = new TextEdit({ element, content: TABLE_AND_PARA_DOC })
+      editor = new TextEdit({element, content: TABLE_AND_PARA_DOC})
       setCursorInCell(editor, 0, 0)
       const colsBefore = getDoc(editor).content[0].content[0].content.length
 
@@ -289,7 +314,7 @@ describe('InsertColumnHandle — rebuild catch block:', () => {
   //   3. Click the (now hidden) button → insertAfterColumn/Row fires →
   //      !isInTable check returns early, table unchanged.
   it('should leave the table unchanged when the cursor is no longer in the table', () => {
-    editor = new TextEdit({ element, content: TABLE_AND_PARA_DOC })
+    editor = new TextEdit({element, content: TABLE_AND_PARA_DOC})
     setCursorInCell(editor, 0, 0)
     const rowsBefore = setTextSelectedAtCell0_0(editor)
 
@@ -301,7 +326,7 @@ describe('InsertColumnHandle — rebuild catch block:', () => {
   // When view.nodeDOM() returns a non-HTMLElement (e.g. null) inside rebuild(),
   // the guard on line 77 fires (return) and the button is not rendered.
   it('should not render the button when nodeDOM does not return an HTMLElement', () => {
-    editor = new TextEdit({ element, content: TABLE_DOC })
+    editor = new TextEdit({element, content: TABLE_DOC})
     // Mock AFTER construction so the initial render succeeds.
     vi.spyOn(pmView(editor), 'nodeDOM').mockReturnValue(document.createTextNode('x'))
     // setCursorInCell triggers rebuild(); nodeDOM returns a TextNode → line 77 fires.

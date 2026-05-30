@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.api.config
 
+import com.fj.omnimemo.api.config.WebConfiguration.Companion.SUPPORTED_LOCALES
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.i18n.CookieLocaleResolver
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor
-import java.util.Locale
+import java.util.*
 
 /**
  * Configures locale resolution for browser-facing UI.

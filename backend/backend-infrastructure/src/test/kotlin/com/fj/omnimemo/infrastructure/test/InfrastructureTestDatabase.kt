@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.infrastructure.test
 
+import com.fj.omnimemo.infrastructure.test.InfrastructureTestDatabase.CHANGELOG
 import liquibase.Contexts
 import liquibase.GlobalConfiguration
 import liquibase.Liquibase

@@ -6,13 +6,13 @@
 package com.fj.omnimemo.infrastructure.user.persistence
 
 import com.fj.omnimemo.core.user.model.RefreshToken
-import com.fj.omnimemo.core.user.repository.RefreshTokenRepository
 import com.fj.omnimemo.core.user.model.UserId
+import com.fj.omnimemo.core.user.repository.RefreshTokenRepository
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
 import java.sql.Timestamp
-import java.util.UUID
+import java.util.*
 
 /**
  * Spring JDBC implementation of [RefreshTokenRepository].

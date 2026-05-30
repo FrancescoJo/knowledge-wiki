@@ -27,8 +27,8 @@ class UserTableFixture(private val jdbc: JdbcTemplate) {
     fun findEmailEncryptedBytes(id: UserId): ByteArray =
         jdbc.queryForMap(
             "SELECT ${UserRepositoryImpl.COL_EMAIL_ENCRYPTED}" +
-                " FROM ${UserRepositoryImpl.TABLE_NAME}" +
-                " WHERE ${UserRepositoryImpl.COL_ID} = ?",
+                    " FROM ${UserRepositoryImpl.TABLE_NAME}" +
+                    " WHERE ${UserRepositoryImpl.COL_ID} = ?",
             id.value,
         )[UserRepositoryImpl.COL_EMAIL_ENCRYPTED] as ByteArray
 }

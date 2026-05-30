@@ -14,7 +14,7 @@ import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import java.util.UUID
+import java.util.*
 
 /**
  * Small tests for [LruUserProfileCache].

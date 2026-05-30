@@ -10,7 +10,7 @@ import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Test
-import java.util.UUID
+import java.util.*
 
 @SmallTest
 class ParsingTest {

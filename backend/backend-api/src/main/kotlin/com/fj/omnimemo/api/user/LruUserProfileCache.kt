@@ -6,10 +6,10 @@
 package com.fj.omnimemo.api.user
 
 import com.fj.omnimemo.core.user.UserProfileCache
-import com.fj.omnimemo.core.user.model.UserProfile
 import com.fj.omnimemo.core.user.model.UserId
+import com.fj.omnimemo.core.user.model.UserProfile
 import com.fj.omnimemo.core.user.repository.UserRepository
-import java.util.Collections
+import java.util.*
 
 /**
  * In-memory LRU cache of [UserProfile] entries, bounded to [maxSize] entries.
@@ -34,12 +34,10 @@ class LruUserProfileCache(
         }
     )
 
-    override fun get(id: UserId): UserProfile? {
-        cache[id]?.let { return it }
-        val profile = userRepository.findById(id)?.let { UserProfile(it.id, it.email) } ?: return null
-        cache[id] = profile
-        return profile
-    }
+    override fun get(id: UserId): UserProfile? =
+        cache[id] ?: userRepository.findById(id)
+            ?.let { UserProfile(it.id, it.email) }
+            ?.also { cache[id] = it }
 
     override fun invalidate(id: UserId) {
         cache.remove(id)

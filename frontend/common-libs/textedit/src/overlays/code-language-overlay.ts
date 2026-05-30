@@ -7,36 +7,36 @@
  * $Since: 2026-05-15
  */
 
-import { Extension } from '@tiptap/core'
-import { Plugin, PluginKey } from '@tiptap/pm/state'
-import type { EditorState } from '@tiptap/pm/state'
-import type { EditorView } from '@tiptap/pm/view'
-import type { Node as PmNode } from '@tiptap/pm/model'
-import type { Editor } from '@tiptap/core'
-import type { LanguageItem } from '../extensions/code-block-extension'
+import type {Editor} from '@tiptap/core'
+import {Extension} from '@tiptap/core'
+import type {EditorState} from '@tiptap/pm/state'
+import {Plugin, PluginKey} from '@tiptap/pm/state'
+import type {EditorView} from '@tiptap/pm/view'
+import type {Node as PmNode} from '@tiptap/pm/model'
+import type {LanguageItem} from '../extensions/code-block-extension'
 
 const KEY = new PluginKey<null>('codeLanguageOverlay')
 
-const CSS_WRAP         = 'te-code-lang'
-const CSS_BTN          = 'te-code-lang__btn'
-const CSS_MENU         = 'te-code-lang__menu'
-const CSS_SEARCH       = 'te-code-lang__search'
-const CSS_SEARCH_TEXT  = 'te-code-lang__search-text'
+const CSS_WRAP = 'te-code-lang'
+const CSS_BTN = 'te-code-lang__btn'
+const CSS_MENU = 'te-code-lang__menu'
+const CSS_SEARCH = 'te-code-lang__search'
+const CSS_SEARCH_TEXT = 'te-code-lang__search-text'
 const CSS_SEARCH_INPUT = 'te-code-lang__search-input'
-const CSS_LIST         = 'te-code-lang__list'
-const CSS_ITEM         = 'te-code-lang__item'
-const CSS_ACTIVE       = 'is-active'
+const CSS_LIST = 'te-code-lang__list'
+const CSS_ITEM = 'te-code-lang__item'
+const CSS_ACTIVE = 'is-active'
 
-const PLAIN: LanguageItem = { label: 'Plain text', value: '' }
+const PLAIN: LanguageItem = {label: 'Plain text', value: ''}
 
 // -- Helpers -------------------------------------------------------------------
 
 function findCodeBlock(state: EditorState): { node: PmNode; pos: number } | null {
-  const { $from } = state.selection
+  const {$from} = state.selection
   for (let depth = $from.depth; depth >= 0; depth--) {
     const node = $from.node(depth)
     if (node.type.name === 'codeBlock') {
-      return { node, pos: $from.before(depth) }
+      return {node, pos: $from.before(depth)}
     }
   }
   return null
@@ -171,7 +171,7 @@ class CodeLanguageView {
     document.addEventListener('mousedown', this.onDocMousedown)
 
     this.onScroll = () => this.update(this.editorView)
-    editorView.dom.parentElement?.addEventListener('scroll', this.onScroll, { passive: true })
+    editorView.dom.parentElement?.addEventListener('scroll', this.onScroll, {passive: true})
 
     this.update(editorView)
   }
@@ -245,7 +245,9 @@ class CodeLanguageView {
     this.menuOpen = true
     this.syncMenuPosition()
     // Transfer focus to the search input so IME events go there, not the editor.
-    requestAnimationFrame(() => { this.searchInput.focus() })
+    requestAnimationFrame(() => {
+      this.searchInput.focus()
+    })
   }
 
   private closeMenu(): void {
@@ -256,16 +258,17 @@ class CodeLanguageView {
   private syncMenuPosition(): void {
     try {
       const btnRect = this.triggerBtn.getBoundingClientRect()
-      const menuH   = this.menuDom.getBoundingClientRect().height
-      const vph     = window.innerHeight
+      const menuH = this.menuDom.getBoundingClientRect().height
+      const vph = window.innerHeight
 
       // Open upward when the menu would extend beyond the viewport bottom.
       const fitsBelow = btnRect.bottom + 2 + menuH <= vph
-      this.menuDom.style.top  = fitsBelow
+      this.menuDom.style.top = fitsBelow
         ? `${btnRect.bottom + 2}px`
         : `${btnRect.top - 2 - menuH}px`
       this.menuDom.style.left = `${btnRect.left}px`
-    } catch { /* leave unchanged */ }
+    } catch { /* leave unchanged */
+    }
   }
 
   private updatePosition(view: EditorView, pos: number): void {
@@ -273,13 +276,14 @@ class CodeLanguageView {
       const domNode = view.nodeDOM(pos)
       const el = domNode instanceof HTMLElement ? domNode : null
       if (!el) return
-      const rect    = el.getBoundingClientRect()
+      const rect = el.getBoundingClientRect()
       const areaDom = view.dom.parentElement ?? view.dom
       const areaRect = areaDom.getBoundingClientRect()
-      this.dom.style.top       = `${rect.bottom + 4}px`
-      this.dom.style.left      = `${areaRect.left + areaRect.width / 2}px`
+      this.dom.style.top = `${rect.bottom + 4}px`
+      this.dom.style.left = `${areaRect.left + areaRect.width / 2}px`
       this.dom.style.transform = 'translateX(-50%)'
-    } catch { /* leave unchanged */ }
+    } catch { /* leave unchanged */
+    }
   }
 
   private syncLabel(language: string): void {
@@ -306,7 +310,7 @@ class CodeLanguageView {
     this.editor
       .chain()
       .focus()
-      .updateAttributes('codeBlock', { language: value || null })
+      .updateAttributes('codeBlock', {language: value || null})
       .run()
     this.closeMenu()
   }
@@ -322,11 +326,11 @@ export const CodeLanguageOverlay = Extension.create<CodeLanguageOverlayOptions>(
   name: 'codeLanguageOverlay',
 
   addOptions() {
-    return { languages: [] }
+    return {languages: []}
   },
 
   addProseMirrorPlugins() {
-    const { languages } = this.options
+    const {languages} = this.options
     const editor = this.editor
     let overlayView: CodeLanguageView | null = null
 
@@ -337,8 +341,13 @@ export const CodeLanguageOverlay = Extension.create<CodeLanguageOverlayOptions>(
           const v = new CodeLanguageView(editorView, editor, languages)
           overlayView = v
           return {
-            update(view: EditorView) { v.update(view) },
-            destroy() { v.destroy(); overlayView = null },
+            update(view: EditorView) {
+              v.update(view)
+            },
+            destroy() {
+              v.destroy();
+              overlayView = null
+            },
           }
         },
         props: {

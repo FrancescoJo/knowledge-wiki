@@ -4,17 +4,17 @@
  * $Since: 2026-05-15
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { TextSelection } from '@tiptap/pm/state'
-import { TextEdit } from '@src/TextEdit'
-import { NodeType, type TextEditContent } from '@src/types'
-import { mountElement, pmView } from '../test-utils'
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
+import {TextSelection} from '@tiptap/pm/state'
+import {TextEdit} from '@src/TextEdit'
+import {NodeType, type TextEditContent} from '@src/types'
+import {mountElement, pmView} from '../test-utils'
 
 // -- Fixtures ------------------------------------------------------------------
 
 const PARA_DOC: TextEditContent = {
   type: NodeType.Doc,
-  content: [{ type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'outside' }] }],
+  content: [{type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'outside'}]}],
 }
 
 // codeBlock at pos 0 (nodeSize=3 for single char), paragraph follows.
@@ -23,10 +23,10 @@ const CODE_DOC: TextEditContent = {
   content: [
     {
       type: NodeType.CodeBlock,
-      attrs: { language: 'javascript' },
-      content: [{ type: NodeType.Text, text: 'x' }],
+      attrs: {language: 'javascript'},
+      content: [{type: NodeType.Text, text: 'x'}],
     },
-    { type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'outside' }] },
+    {type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'outside'}]},
   ],
 }
 
@@ -36,10 +36,10 @@ const CODE_PLAIN_DOC: TextEditContent = {
   content: [
     {
       type: NodeType.CodeBlock,
-      attrs: { language: null },
-      content: [{ type: NodeType.Text, text: 'x' }],
+      attrs: {language: null},
+      content: [{type: NodeType.Text, text: 'x'}],
     },
-    { type: NodeType.Paragraph, content: [{ type: NodeType.Text, text: 'outside' }] },
+    {type: NodeType.Paragraph, content: [{type: NodeType.Text, text: 'outside'}]},
   ],
 }
 
@@ -80,7 +80,7 @@ function menuItem(label: string): HTMLButtonElement | null {
 }
 
 function clickBtn(btn: HTMLButtonElement): void {
-  btn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }))
+  btn.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true}))
 }
 
 function getCodeBlockLanguage(editor: TextEdit): string | null {
@@ -95,10 +95,15 @@ describe('CodeLanguageOverlay:', () => {
   let element: HTMLElement
   let editor: TextEdit | undefined
 
-  beforeEach(() => { element = mountElement() })
+  beforeEach(() => {
+    element = mountElement()
+  })
 
   afterEach(() => {
-    try { editor?.destroy() } catch { /* already destroyed */ }
+    try {
+      editor?.destroy()
+    } catch { /* already destroyed */
+    }
     editor = undefined
     element.remove()
     vi.restoreAllMocks()
@@ -108,7 +113,7 @@ describe('CodeLanguageOverlay:', () => {
 
   describe('when TextEdit is created:', () => {
     it('should add the overlay element to the DOM', () => {
-      editor = new TextEdit({ element })
+      editor = new TextEdit({element})
       expect(overlay()).not.toBeNull()
     })
   })
@@ -118,14 +123,14 @@ describe('CodeLanguageOverlay:', () => {
   describe('visibility:', () => {
     describe('when the cursor is outside a code block:', () => {
       it('should be hidden', () => {
-        editor = new TextEdit({ element, content: PARA_DOC })
+        editor = new TextEdit({element, content: PARA_DOC})
         expect(overlay()!.style.display).toBe('none')
       })
     })
 
     describe('when the cursor is placed inside a code block:', () => {
       it('should become visible', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         expect(overlay()!.style.display).toBe('')
       })
@@ -133,7 +138,7 @@ describe('CodeLanguageOverlay:', () => {
 
     describe('when the cursor moves from inside to outside a code block:', () => {
       it('should become hidden', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         expect(overlay()!.style.display).toBe('')
         setCursorOutside(editor)
@@ -143,7 +148,7 @@ describe('CodeLanguageOverlay:', () => {
 
     describe('when the editor loses focus:', () => {
       it('should become hidden', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         expect(overlay()!.style.display).toBe('')
         pmView(editor).dom.dispatchEvent(new Event('blur'))
@@ -153,7 +158,7 @@ describe('CodeLanguageOverlay:', () => {
 
     describe('when the editor loses focus while the menu is open:', () => {
       it('should keep the overlay visible so the search input can receive focus', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)   // open the menu
         pmView(editor).dom.dispatchEvent(new Event('blur'))
@@ -168,7 +173,7 @@ describe('CodeLanguageOverlay:', () => {
   describe('trigger button label:', () => {
     describe('when the code block has language="javascript":', () => {
       it('should show "JavaScript ▾"', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         expect(triggerBtn()!.textContent).toBe('JavaScript ▾')
       })
@@ -176,7 +181,7 @@ describe('CodeLanguageOverlay:', () => {
 
     describe('when the code block has no language (null):', () => {
       it('should show "Plain text ▾"', () => {
-        editor = new TextEdit({ element, content: CODE_PLAIN_DOC })
+        editor = new TextEdit({element, content: CODE_PLAIN_DOC})
         setCursorInCode(editor)
         expect(triggerBtn()!.textContent).toBe('Plain text ▾')
       })
@@ -190,11 +195,11 @@ describe('CodeLanguageOverlay:', () => {
           type: NodeType.Doc,
           content: [{
             type: NodeType.CodeBlock,
-            attrs: { language: 'cobol' },
-            content: [{ type: NodeType.Text, text: 'x' }],
+            attrs: {language: 'cobol'},
+            content: [{type: NodeType.Text, text: 'x'}],
           }],
         }
-        editor = new TextEdit({ element, content: UNKNOWN_LANG_DOC })
+        editor = new TextEdit({element, content: UNKNOWN_LANG_DOC})
         setCursorInCode(editor)
         expect(triggerBtn()!.textContent).toBe('Plain text ▾')
       })
@@ -205,7 +210,7 @@ describe('CodeLanguageOverlay:', () => {
 
   describe('when getBoundingClientRect throws during position update:', () => {
     it('should silently absorb the error', () => {
-      editor = new TextEdit({ element, content: CODE_DOC })
+      editor = new TextEdit({element, content: CODE_DOC})
       const spy = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => {
         throw new Error('mock getBoundingClientRect error')
       })
@@ -224,7 +229,7 @@ describe('CodeLanguageOverlay:', () => {
   describe('dropdown menu:', () => {
     describe('when the trigger button is clicked:', () => {
       it('should open the menu', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         expect(menu()!.style.display).toBe('none')
         clickBtn(triggerBtn()!)
@@ -234,7 +239,7 @@ describe('CodeLanguageOverlay:', () => {
 
     describe('when the trigger button is clicked again (menu is open):', () => {
       it('should close the menu', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         expect(menu()!.style.display).toBe('')
@@ -245,7 +250,7 @@ describe('CodeLanguageOverlay:', () => {
 
     describe('menu contents:', () => {
       it('should include "Plain text" as the first item', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         const items = document.body.querySelectorAll<HTMLButtonElement>('.te-code-lang__item')
@@ -253,7 +258,7 @@ describe('CodeLanguageOverlay:', () => {
       })
 
       it('should include "JavaScript", "TypeScript", and "Markdown" items', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         expect(menuItem('JavaScript')).not.toBeNull()
@@ -264,7 +269,7 @@ describe('CodeLanguageOverlay:', () => {
 
     describe('active item state:', () => {
       it('should mark the current language item as active', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         expect(menuItem('JavaScript')!.classList.contains('is-active')).toBe(true)
@@ -272,7 +277,7 @@ describe('CodeLanguageOverlay:', () => {
       })
 
       it('should mark "Plain text" as active when no language is set', () => {
-        editor = new TextEdit({ element, content: CODE_PLAIN_DOC })
+        editor = new TextEdit({element, content: CODE_PLAIN_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         const items = document.body.querySelectorAll<HTMLButtonElement>('.te-code-lang__item')
@@ -282,7 +287,7 @@ describe('CodeLanguageOverlay:', () => {
 
     describe('when the cursor exits a code block while the menu is open:', () => {
       it('should close the menu', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         expect(menu()!.style.display).toBe('')
@@ -297,7 +302,7 @@ describe('CodeLanguageOverlay:', () => {
   describe('language selection:', () => {
     describe('clicking "TypeScript" in the menu:', () => {
       it('should set language="typescript" on the code block', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         clickBtn(menuItem('TypeScript')!)
@@ -305,7 +310,7 @@ describe('CodeLanguageOverlay:', () => {
       })
 
       it('should close the menu after selection', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         clickBtn(menuItem('TypeScript')!)
@@ -313,7 +318,7 @@ describe('CodeLanguageOverlay:', () => {
       })
 
       it('should update the trigger button label to "TypeScript ▾"', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         clickBtn(menuItem('TypeScript')!)
@@ -323,7 +328,7 @@ describe('CodeLanguageOverlay:', () => {
 
     describe('clicking "Plain text" in the menu:', () => {
       it('should set language to null on the code block', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         const items = document.body.querySelectorAll<HTMLButtonElement>('.te-code-lang__item')
@@ -337,9 +342,9 @@ describe('CodeLanguageOverlay:', () => {
 
   describe('mousedown on overlay container:', () => {
     it('should call ev.preventDefault() to keep editor focus', () => {
-      editor = new TextEdit({ element, content: CODE_DOC })
+      editor = new TextEdit({element, content: CODE_DOC})
       setCursorInCode(editor)
-      const ev = new MouseEvent('mousedown', { bubbles: true, cancelable: true })
+      const ev = new MouseEvent('mousedown', {bubbles: true, cancelable: true})
       overlay()!.dispatchEvent(ev)
       expect(ev.defaultPrevented).toBe(true)
     })
@@ -347,10 +352,10 @@ describe('CodeLanguageOverlay:', () => {
 
   describe('mousedown on dropdown menu:', () => {
     it('should call ev.preventDefault() to keep editor focus', () => {
-      editor = new TextEdit({ element, content: CODE_DOC })
+      editor = new TextEdit({element, content: CODE_DOC})
       setCursorInCode(editor)
       clickBtn(triggerBtn()!)
-      const ev = new MouseEvent('mousedown', { bubbles: true, cancelable: true })
+      const ev = new MouseEvent('mousedown', {bubbles: true, cancelable: true})
       menu()!.dispatchEvent(ev)
       expect(ev.defaultPrevented).toBe(true)
     })
@@ -365,7 +370,7 @@ describe('CodeLanguageOverlay:', () => {
 
     function typeKey(ed: TextEdit, key: string): void {
       pmView(ed).dom.dispatchEvent(
-        new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }),
+        new KeyboardEvent('keydown', {key, bubbles: true, cancelable: true}),
       )
     }
 
@@ -378,14 +383,14 @@ describe('CodeLanguageOverlay:', () => {
 
     describe('when the menu is open:', () => {
       it('should show the search display element', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         expect(searchEl()).not.toBeNull()
       })
 
       it('should update the search display text when typing', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         typeKey(editor, 'p')
@@ -394,7 +399,7 @@ describe('CodeLanguageOverlay:', () => {
       })
 
       it('should filter items to those whose labels contain the query', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         typeKey(editor, 'j')
@@ -402,7 +407,7 @@ describe('CodeLanguageOverlay:', () => {
       })
 
       it('should remove a character on Backspace', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         typeKey(editor, 'p')
@@ -412,7 +417,7 @@ describe('CodeLanguageOverlay:', () => {
       })
 
       it('should close the menu on Escape', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         typeKey(editor, 'Escape')
@@ -420,7 +425,7 @@ describe('CodeLanguageOverlay:', () => {
       })
 
       it('should clear the search query when the menu is reopened', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         typeKey(editor, 'j')
@@ -430,7 +435,7 @@ describe('CodeLanguageOverlay:', () => {
       })
 
       it('should restore all items after the search is cleared on reopen', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         typeKey(editor, 'j')
@@ -444,7 +449,7 @@ describe('CodeLanguageOverlay:', () => {
 
     describe('when the search input receives an input event directly:', () => {
       it('should filter items by the typed value', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         const searchInput = document.body.querySelector<HTMLInputElement>('.te-code-lang__search-input')!
@@ -456,20 +461,20 @@ describe('CodeLanguageOverlay:', () => {
 
     describe('when Escape is pressed directly on the search input while the menu is open:', () => {
       it('should close the menu via the search-input keydown listener', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         const searchInput = document.body.querySelector<HTMLInputElement>('.te-code-lang__search-input')!
-        searchInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+        searchInput.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true, cancelable: true}))
         expect(menu()!.style.display).toBe('none')
       })
     })
 
     describe('when the menu is closed:', () => {
       it('should not consume printable keystrokes', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
-        const ev = new KeyboardEvent('keydown', { key: 'j', bubbles: true, cancelable: true })
+        const ev = new KeyboardEvent('keydown', {key: 'j', bubbles: true, cancelable: true})
         pmView(editor).dom.dispatchEvent(ev)
         expect(ev.defaultPrevented).toBe(false)
       })
@@ -477,11 +482,11 @@ describe('CodeLanguageOverlay:', () => {
 
     describe('when a non-printable, non-navigation key is pressed while the menu is open:', () => {
       it('should not consume the event (handleKey returns false)', () => {
-        editor = new TextEdit({ element, content: CODE_DOC })
+        editor = new TextEdit({element, content: CODE_DOC})
         setCursorInCode(editor)
         clickBtn(triggerBtn()!)
         // Tab is non-printable, non-Escape, non-Backspace → handleKey line 226: return false
-        const ev = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true })
+        const ev = new KeyboardEvent('keydown', {key: 'Tab', bubbles: true, cancelable: true})
         pmView(editor).dom.dispatchEvent(ev)
         expect(ev.defaultPrevented).toBe(false)
       })
@@ -492,11 +497,11 @@ describe('CodeLanguageOverlay:', () => {
 
   describe('when extra languages are passed via TextEditOptions.codeLanguages:', () => {
     it('should include the extra language in the dropdown menu', async () => {
-      const { default: cssGrammar } = await import('highlight.js/lib/languages/css')
+      const {default: cssGrammar} = await import('highlight.js/lib/languages/css')
       editor = new TextEdit({
         element,
         content: CODE_DOC,
-        codeLanguages: [{ label: 'CSS', value: 'css', grammar: cssGrammar }],
+        codeLanguages: [{label: 'CSS', value: 'css', grammar: cssGrammar}],
       })
       setCursorInCode(editor)
       clickBtn(triggerBtn()!)
@@ -508,7 +513,7 @@ describe('CodeLanguageOverlay:', () => {
 
   describe('when the menu would overflow the viewport bottom:', () => {
     it('should open the menu upward instead of downward', () => {
-      editor = new TextEdit({ element, content: CODE_DOC })
+      editor = new TextEdit({element, content: CODE_DOC})
       setCursorInCode(editor)
       // Stub getBoundingClientRect so the button appears near the bottom of the
       // viewport (window.innerHeight=768 in jsdom).  menuH=0 in jsdom, so:
@@ -529,7 +534,7 @@ describe('CodeLanguageOverlay:', () => {
 
   describe('when getBoundingClientRect throws inside syncMenuPosition:', () => {
     it('should silently absorb the error and still open the menu', () => {
-      editor = new TextEdit({ element, content: CODE_DOC })
+      editor = new TextEdit({element, content: CODE_DOC})
       setCursorInCode(editor)
       vi.spyOn(triggerBtn()!, 'getBoundingClientRect').mockImplementationOnce(() => {
         throw new Error('mock layout')
@@ -545,7 +550,7 @@ describe('CodeLanguageOverlay:', () => {
 
   describe('when nodeDOM returns a non-HTMLElement in updatePosition:', () => {
     it('should leave the overlay position unchanged', () => {
-      editor = new TextEdit({ element, content: CODE_DOC })
+      editor = new TextEdit({element, content: CODE_DOC})
       setCursorInCode(editor)
       vi.spyOn(pmView(editor), 'nodeDOM').mockReturnValue(null)
       const view = pmView(editor)
@@ -558,7 +563,7 @@ describe('CodeLanguageOverlay:', () => {
 
   describe('when the editor is destroyed:', () => {
     it('should remove the overlay and menu from the DOM', () => {
-      editor = new TextEdit({ element })
+      editor = new TextEdit({element})
       editor.destroy()
       editor = undefined
       expect(overlay()).toBeNull()

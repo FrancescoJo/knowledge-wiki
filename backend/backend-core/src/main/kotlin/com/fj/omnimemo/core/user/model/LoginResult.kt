@@ -5,6 +5,7 @@
  */
 package com.fj.omnimemo.core.user.model
 
+import com.fj.omnimemo.core.user.model.LoginResult.Companion.create
 import com.fj.omnimemo.core.user.model.snapshot.LoginResultData
 
 /**

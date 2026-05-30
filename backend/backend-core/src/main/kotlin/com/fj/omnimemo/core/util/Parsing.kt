@@ -5,7 +5,7 @@
  */
 package com.fj.omnimemo.core.util
 
-import java.util.UUID
+import java.util.*
 
 /**
  * Returns the [UUID] represented by [raw], or `null` if the string is not a valid UUID.
@@ -15,5 +15,8 @@ import java.util.UUID
  * @version 0.1.1
  */
 fun parseUuidOrNull(raw: String): UUID? =
-    try { UUID.fromString(raw) }
-    catch (e: IllegalArgumentException) { null }
+    try {
+        UUID.fromString(raw)
+    } catch (e: IllegalArgumentException) {
+        null
+    }

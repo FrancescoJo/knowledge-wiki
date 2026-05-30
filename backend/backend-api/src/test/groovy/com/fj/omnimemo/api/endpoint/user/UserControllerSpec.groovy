@@ -5,13 +5,13 @@
  */
 package com.fj.omnimemo.api.endpoint.user
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fj.omnimemo.api.endpoint.test.ApiFixture
 import com.fj.omnimemo.api.endpoint.test.auth.AuthApiClient
 import com.fj.omnimemo.api.endpoint.test.user.UserApiClient
 import com.fj.omnimemo.core.test.annotation.LargeTest
 import com.fj.omnimemo.core.user.usecase.CreateUserUseCase
 import com.fj.omnimemo.infrastructure.test.PostgresContainerSupport
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -50,20 +50,24 @@ class UserControllerSpec extends Specification {
             System.setProperty("liquibase.duplicateFileMode", "WARN")
             container.start()
             def source = new MapPropertySource("testcontainers", [
-                "spring.datasource.url"     : container.jdbcUrl,
-                "spring.datasource.username": container.username,
-                "spring.datasource.password": container.password,
+                    "spring.datasource.url"     : container.jdbcUrl,
+                    "spring.datasource.username": container.username,
+                    "spring.datasource.password": container.password,
             ])
             ctx.environment.propertySources.addFirst(source)
         }
     }
 
-    @Autowired TestRestTemplate restTemplate
-    @Autowired CreateUserUseCase createUserUseCase
-    @Autowired JdbcTemplate jdbcTemplate
-    @Autowired ObjectMapper objectMapper
+    @Autowired
+    TestRestTemplate restTemplate
+    @Autowired
+    CreateUserUseCase createUserUseCase
+    @Autowired
+    JdbcTemplate jdbcTemplate
+    @Autowired
+    ObjectMapper objectMapper
 
-    private static final String TEST_EMAIL    = "user-smoke@example.com"
+    private static final String TEST_EMAIL = "user-smoke@example.com"
     private static final String TEST_PASSWORD = "UserSmoke1!"
 
     AuthApiClient authApiClient
@@ -76,10 +80,10 @@ class UserControllerSpec extends Specification {
     def setup() {
         authApiClient = new AuthApiClient(restTemplate)
         userApiClient = new UserApiClient(restTemplate, objectMapper)
-        apiFixture    = new ApiFixture(createUserUseCase, jdbcTemplate)
+        apiFixture = new ApiFixture(createUserUseCase, jdbcTemplate)
 
-        def user  = apiFixture.resetWithUser(TEST_EMAIL, TEST_PASSWORD)
-        testUserId  = user.id.value.toString()
+        def user = apiFixture.resetWithUser(TEST_EMAIL, TEST_PASSWORD)
+        testUserId = user.id.value.toString()
         accessToken = authApiClient.loginAndGetAccessToken(TEST_EMAIL, TEST_PASSWORD)
     }
 

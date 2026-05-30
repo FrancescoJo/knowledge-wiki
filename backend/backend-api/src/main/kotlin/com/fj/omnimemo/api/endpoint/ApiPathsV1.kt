@@ -5,6 +5,8 @@
  */
 package com.fj.omnimemo.api.endpoint
 
+import com.fj.omnimemo.api.endpoint.ApiPathsV1.BASE
+
 /**
  * Compile-time URL path constants for API version 1.
  *

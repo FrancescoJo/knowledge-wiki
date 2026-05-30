@@ -1,20 +1,21 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout/base :: layout(~{::main})}">
+<html th:replace="~{layout/base :: layout(~{::main})}"
+      xmlns:th="http://www.thymeleaf.org">
 <main>
-    <section class="health-panel">
-        <h2 th:text="#{status.title}">Server Status</h2>
-        <div class="status-row">
-            <span id="status"
-                  hx-get="/health"
-                  hx-trigger="load"
+  <section class="health-panel">
+    <h2 th:text="#{status.title}">Server Status</h2>
+    <div class="status-row">
+            <span hx-get="/health"
                   hx-swap="outerHTML"
+                  hx-trigger="load"
+                  id="status"
                   th:text="#{status.checking}">Checking…</span>
-            <button hx-get="/health"
-                    hx-target="#status"
-                    hx-swap="outerHTML"
-                    th:text="#{status.refresh}">Refresh</button>
-        </div>
-    </section>
+      <button hx-get="/health"
+              hx-swap="outerHTML"
+              hx-target="#status"
+              th:text="#{status.refresh}">Refresh
+      </button>
+    </div>
+  </section>
 </main>
 </html>

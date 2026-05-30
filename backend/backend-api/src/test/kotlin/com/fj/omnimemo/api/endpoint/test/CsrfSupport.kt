@@ -7,7 +7,7 @@ package com.fj.omnimemo.api.endpoint.test
 
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import java.util.UUID
+import java.util.*
 
 /**
  * Builds HTTP headers that satisfy the double-submit cookie CSRF pattern used by

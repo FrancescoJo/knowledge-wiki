@@ -6,11 +6,11 @@
  * $Since: 2026-05-18
  */
 
-import type { Editor } from '@tiptap/core'
-import type { Node as PmNode } from '@tiptap/pm/model'
-import type { EditorView } from '@tiptap/pm/view'
-import { TableMap } from '@tiptap/pm/tables'
-import type { selectionCell } from '@tiptap/pm/tables'
+import type {Editor} from '@tiptap/core'
+import type {Node as PmNode} from '@tiptap/pm/model'
+import type {EditorView} from '@tiptap/pm/view'
+import type {selectionCell} from '@tiptap/pm/tables'
+import {TableMap} from '@tiptap/pm/tables'
 
 export function tableDepthOf($cell: ReturnType<typeof selectionCell>): number {
   let d = $cell.depth
@@ -23,7 +23,7 @@ export function tableNodeAt($cell: ReturnType<typeof selectionCell>): {
   tableStart: number
 } {
   const depth = tableDepthOf($cell)
-  return { tableNode: $cell.node(depth), tableStart: $cell.start(depth) }
+  return {tableNode: $cell.node(depth), tableStart: $cell.start(depth)}
 }
 
 export function mkItem(label: string, className: string, title?: string): HTMLButtonElement {
@@ -46,7 +46,7 @@ export function bindMenuCloseListeners(opts: {
   close: () => void
   identity: unknown
 }): void {
-  const { anchors, isOpen, close, identity } = opts
+  const {anchors, isOpen, close, identity} = opts
   document.addEventListener('mousedown', ev => {
     if (anchors.every(el => !el.contains(ev.target as Node))) close()
   })
@@ -81,7 +81,7 @@ export function updateDragGhost(ghost: HTMLElement | null, x: number, y: number)
   const w = ghost.offsetWidth
   const h = ghost.offsetHeight
   ghost.style.left = `${x - w / 2}px`
-  ghost.style.top  = `${y - h / 2}px`
+  ghost.style.top = `${y - h / 2}px`
 }
 
 export function removeDragGhost(ghost: HTMLElement | null): void {
@@ -97,7 +97,7 @@ export function clearCells(
   tableStart: number,
   getOffsets: (map: TableMap) => number[],
 ): void {
-  const { state } = view
+  const {state} = view
   const paragraphType = state.schema.nodes['paragraph']
   if (!paragraphType) return
   try {
@@ -118,7 +118,8 @@ export function clearCells(
     }
     if (modified) view.dispatch(tr)
     editor.commands.focus()
-  } catch { /* no-op */ }
+  } catch { /* no-op */
+  }
 }
 
 // -- Colour helpers ------------------------------------------------------------
@@ -128,12 +129,31 @@ function hsvToRgb(h: number, s: number, v: number): [number, number, number] {
   const x = c * (1 - Math.abs(((h / 60) % 2) - 1))
   const m = v - c
   let r = 0, g = 0, b = 0
-  if      (h < 60)  { r = c; g = x; b = 0 }
-  else if (h < 120) { r = x; g = c; b = 0 }
-  else if (h < 180) { r = 0; g = c; b = x }
-  else if (h < 240) { r = 0; g = x; b = c }
-  else if (h < 300) { r = x; g = 0; b = c }
-  else              { r = c; g = 0; b = x }
+  if (h < 60) {
+    r = c;
+    g = x;
+    b = 0
+  } else if (h < 120) {
+    r = x;
+    g = c;
+    b = 0
+  } else if (h < 180) {
+    r = 0;
+    g = c;
+    b = x
+  } else if (h < 240) {
+    r = 0;
+    g = x;
+    b = c
+  } else if (h < 300) {
+    r = x;
+    g = 0;
+    b = c
+  } else {
+    r = c;
+    g = 0;
+    b = x
+  }
   return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)]
 }
 
@@ -144,9 +164,9 @@ function rgbToHsv(r: number, g: number, b: number): [number, number, number] {
   const delta = max - min
   let h = 0
   if (delta > 0) {
-    if      (max === rn) h = 60 * (((gn - bn) / delta) % 6)
+    if (max === rn) h = 60 * (((gn - bn) / delta) % 6)
     else if (max === gn) h = 60 * ((bn - rn) / delta + 2)
-    else                 h = 60 * ((rn - gn) / delta + 4)
+    else h = 60 * ((rn - gn) / delta + 4)
   }
   if (h < 0) h += 360
   return [h, max === 0 ? 0 : delta / max, max]
@@ -169,7 +189,10 @@ function mkNumInput(min: string, max: string): HTMLInputElement {
   const inp = document.createElement('input')
   inp.type = 'number'
   inp.className = 'te-colour-picker__rgb-input'
-  inp.min = min; inp.max = max; inp.step = '1'; inp.value = '0'
+  inp.min = min;
+  inp.max = max;
+  inp.step = '1';
+  inp.value = '0'
   return inp
 }
 
@@ -188,15 +211,15 @@ function mkRgbGroup(inp: HTMLInputElement, label: string): HTMLElement {
 export class ColourPickerPopup {
   readonly dom: HTMLElement
 
-  private readonly canvas:    HTMLCanvasElement
-  private readonly cursor:    HTMLElement
+  private readonly canvas: HTMLCanvasElement
+  private readonly cursor: HTMLElement
   private readonly hueSlider: HTMLInputElement
-  private readonly swatch:    HTMLElement
-  private readonly inputR:    HTMLInputElement
-  private readonly inputG:    HTMLInputElement
-  private readonly inputB:    HTMLInputElement
-  private readonly hexInput:  HTMLInputElement
-  private readonly applyBtn:  HTMLButtonElement
+  private readonly swatch: HTMLElement
+  private readonly inputR: HTMLInputElement
+  private readonly inputG: HTMLInputElement
+  private readonly inputB: HTMLInputElement
+  private readonly hexInput: HTMLInputElement
+  private readonly applyBtn: HTMLButtonElement
   private readonly cancelBtn: HTMLButtonElement
 
   private hue = 0
@@ -236,8 +259,10 @@ export class ColourPickerPopup {
     this.hueSlider = document.createElement('input')
     this.hueSlider.type = 'range'
     this.hueSlider.className = 'te-colour-picker__hue'
-    this.hueSlider.min = '0'; this.hueSlider.max = '360'
-    this.hueSlider.step = '1'; this.hueSlider.value = '0'
+    this.hueSlider.min = '0';
+    this.hueSlider.max = '360'
+    this.hueSlider.step = '1';
+    this.hueSlider.value = '0'
 
     controlsRow.append(this.swatch)
 
@@ -254,7 +279,8 @@ export class ColourPickerPopup {
       eyedropperBtn.addEventListener('click', () => {
         new EyeDropperCtor().open()
           .then(r => this.setColour(r.sRGBHex))
-          .catch(() => { /* user cancelled */ })
+          .catch(() => { /* user cancelled */
+          })
       })
     }
 
@@ -336,7 +362,8 @@ export class ColourPickerPopup {
     this.hexInput.addEventListener('input', () => {
       const rgb = hexToRgb(this.hexInput.value)
       if (!rgb) return
-      ;[this.hue, this.sat, this.val] = rgbToHsv(...rgb)
+        ;
+      [this.hue, this.sat, this.val] = rgbToHsv(...rgb)
       this.hueSlider.value = String(Math.round(this.hue))
       this.drawCanvas()
       this.updateCursor()
@@ -356,7 +383,10 @@ export class ColourPickerPopup {
     })
 
     document.addEventListener('mousedown', ev => {
-      if (this.skipNextClose) { this.skipNextClose = false; return }
+      if (this.skipNextClose) {
+        this.skipNextClose = false;
+        return
+      }
       if (!this.dom.hidden && !this.dom.contains(ev.target as Node)) this.close()
     })
     document.addEventListener('keydown', ev => {
@@ -367,7 +397,9 @@ export class ColourPickerPopup {
     })
   }
 
-  get isOpen(): boolean { return !this.dom.hidden }
+  get isOpen(): boolean {
+    return !this.dom.hidden
+  }
 
   open(nearRect: DOMRect, initialColour: string, onApply: (colour: string) => void): void {
     this.skipNextClose = true
@@ -387,7 +419,8 @@ export class ColourPickerPopup {
   private setColour(hex: string): void {
     const rgb = hexToRgb(hex)
     if (!rgb) return
-    ;[this.hue, this.sat, this.val] = rgbToHsv(...rgb)
+      ;
+    [this.hue, this.sat, this.val] = rgbToHsv(...rgb)
     this.hueSlider.value = String(Math.round(this.hue))
     this.drawCanvas()
     this.updateCursor()
@@ -404,7 +437,7 @@ export class ColourPickerPopup {
 
   private pickFromCanvas(ev: MouseEvent): void {
     const rect = this.canvas.getBoundingClientRect()
-    const w = rect.width  || this.canvas.width
+    const w = rect.width || this.canvas.width
     const h = rect.height || this.canvas.height
     this.sat = clamp((ev.clientX - rect.left) / w, 0, 1)
     this.val = clamp(1 - (ev.clientY - rect.top) / h, 0, 1)
@@ -424,7 +457,7 @@ export class ColourPickerPopup {
   private drawCanvas(): void {
     const ctx = this.canvas.getContext('2d')
     if (!ctx) return
-    const { width: w, height: h } = this.canvas
+    const {width: w, height: h} = this.canvas
 
     ctx.fillStyle = `hsl(${this.hue}, 100%, 50%)`
     ctx.fillRect(0, 0, w, h)
@@ -443,10 +476,10 @@ export class ColourPickerPopup {
   }
 
   private updateCursor(): void {
-    const w = this.canvas.getBoundingClientRect().width  || this.canvas.width
+    const w = this.canvas.getBoundingClientRect().width || this.canvas.width
     const h = this.canvas.getBoundingClientRect().height || this.canvas.height
     this.cursor.style.left = `${this.sat * w}px`
-    this.cursor.style.top  = `${(1 - this.val) * h}px`
+    this.cursor.style.top = `${(1 - this.val) * h}px`
   }
 
   private updateSwatch(): void {
@@ -455,18 +488,18 @@ export class ColourPickerPopup {
 
   private position(nearRect: DOMRect): void {
     const r = this.dom.getBoundingClientRect()
-    const pickerW = r.width  || 244
+    const pickerW = r.width || 244
     const pickerH = r.height || 320
 
-    let top  = nearRect.bottom + 4
+    let top = nearRect.bottom + 4
     let left = nearRect.left
 
-    if (left + pickerW > window.innerWidth)  left = window.innerWidth - pickerW - 8
+    if (left + pickerW > window.innerWidth) left = window.innerWidth - pickerW - 8
     left = Math.max(8, left)
-    if (top  + pickerH > window.innerHeight) top  = nearRect.top - pickerH - 4
-    top  = Math.max(8, top)
+    if (top + pickerH > window.innerHeight) top = nearRect.top - pickerH - 4
+    top = Math.max(8, top)
 
-    this.dom.style.top  = `${top}px`
+    this.dom.style.top = `${top}px`
     this.dom.style.left = `${left}px`
   }
 }

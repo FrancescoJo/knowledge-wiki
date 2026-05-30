@@ -12,11 +12,11 @@ Spring Boot backend for Knowledge Wiki.
 
 ## Modules
 
-| Module | Role |
-|---|---|
-| `backend-core` | Domain model and repository interfaces. Pure Kotlin — no Spring dependency. |
+| Module                   | Role                                                                         |
+|--------------------------|------------------------------------------------------------------------------|
+| `backend-core`           | Domain model and repository interfaces. Pure Kotlin — no Spring dependency.  |
 | `backend-infrastructure` | Spring JDBC implementations, AES-GCM / HMAC utilities, Liquibase changelogs. |
-| `backend-api` | Spring Boot entry point, HTTP controllers, Thymeleaf templates. |
+| `backend-api`            | Spring Boot entry point, HTTP controllers, Thymeleaf templates.              |
 
 ---
 
@@ -65,12 +65,12 @@ Generate each key with:
 openssl rand -base64 32
 ```
 
-| Property | Description |
-|---|---|
-| `spring.datasource.password` | PostgreSQL password |
-| `app.security.aes-key` | AES-256 key for email encryption (base64) |
-| `app.security.hmac-key` | HMAC-SHA256 key for blind index (base64) |
-| `app.security.jwt-signing-key` | JWT signing key (base64) |
+| Property                       | Description                               |
+|--------------------------------|-------------------------------------------|
+| `spring.datasource.password`   | PostgreSQL password                       |
+| `app.security.aes-key`         | AES-256 key for email encryption (base64) |
+| `app.security.hmac-key`        | HMAC-SHA256 key for blind index (base64)  |
+| `app.security.jwt-signing-key` | JWT signing key (base64)                  |
 
 `application.yml` sets the database URL and username; override them in the secrets file if needed.
 
@@ -94,11 +94,11 @@ cp config/infrastructure/.env.template config/infrastructure/.env
 bash config/infrastructure/up.sh
 ```
 
-| Property | Value |
-|---|---|
-| Host | `localhost:5432` |
-| Database | `omnimemo` |
-| Username | `omnimemo` |
+| Property | Value                                     |
+|----------|-------------------------------------------|
+| Host     | `localhost:5432`                          |
+| Database | `omnimemo`                                |
+| Username | `omnimemo`                                |
 | Password | value of `OMNIMEMO_DB_PASSWORD` in `.env` |
 
 To stop and remove containers (data is preserved in a named volume):
@@ -126,11 +126,11 @@ cd backend
 
 The app starts on `http://localhost:8080`.
 
-| URL | Description |
-|---|---|
-| `http://localhost:8080` | Application root |
-| `http://localhost:8080/swagger-ui/index.html` | Swagger UI (API explorer) |
-| `http://localhost:8080/v3/api-docs` | OpenAPI specification (JSON) |
+| URL                                           | Description                  |
+|-----------------------------------------------|------------------------------|
+| `http://localhost:8080`                       | Application root             |
+| `http://localhost:8080/swagger-ui/index.html` | Swagger UI (API explorer)    |
+| `http://localhost:8080/v3/api-docs`           | OpenAPI specification (JSON) |
 
 To build a runnable JAR:
 
@@ -159,11 +159,11 @@ Or per-module:
 
 ### Test sizes
 
-| Size | Description |
-|---|---|
-| Small | Pure unit tests. No network, no filesystem, no database. Mocks for all external dependencies. |
+| Size   | Description                                                                                            |
+|--------|--------------------------------------------------------------------------------------------------------|
+| Small  | Pure unit tests. No network, no filesystem, no database. Mocks for all external dependencies.          |
 | Medium | Integration tests. Testcontainers spins up a real PostgreSQL instance per test class. Docker required. |
-| Large | End-to-end tests against production-like infrastructure. |
+| Large  | End-to-end tests against production-like infrastructure.                                               |
 
 Test-size annotations (`@SmallTest`, `@MediumTest`, `@LargeTest`) are defined in `backend-core`'s
 `testFixtures` source set and are available to all modules via:
@@ -174,8 +174,8 @@ testImplementation(testFixtures(project(":backend-core")))
 
 ### Test framework by module
 
-| Module | Framework |
-|---|---|
-| `backend-core` | JUnit 5 + kotlin-test |
+| Module                   | Framework                              |
+|--------------------------|----------------------------------------|
+| `backend-core`           | JUnit 5 + kotlin-test                  |
 | `backend-infrastructure` | JUnit 5 + kotlin-test + Testcontainers |
-| `backend-api` | Spock (Groovy 4 / JUnit Platform) |
+| `backend-api`            | Spock (Groovy 4 / JUnit Platform)      |

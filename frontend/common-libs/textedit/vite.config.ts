@@ -4,12 +4,12 @@
  * $Since: 2026-05-07
  */
 
-import { defineConfig } from 'vite'
-import { resolve } from 'path'
+import {defineConfig} from 'vite'
+import {resolve} from 'path'
 
 const EXTERNAL_PREFIXES = ['@tiptap/', 'lowlight', 'highlight.js']
 
-export default defineConfig(({ command }) => ({
+export default defineConfig(({command}) => ({
   root: command === 'serve' ? 'dev' : '.',
   build: {
     lib: {

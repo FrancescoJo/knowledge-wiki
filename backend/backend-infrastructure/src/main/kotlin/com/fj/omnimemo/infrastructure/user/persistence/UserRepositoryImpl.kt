@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
 import java.sql.Timestamp
-import java.util.UUID
+import java.util.*
 
 /**
  * Spring JDBC implementation of [UserRepository].
@@ -118,10 +118,12 @@ class UserRepositoryImpl(
     }
 
     override fun delete(id: UserId) {
-        jdbc.update("""
+        jdbc.update(
+            """
             DELETE FROM $TABLE_NAME
             WHERE $COL_ID = ?
-        """.trimIndent(), id.value)
+        """.trimIndent(), id.value
+        )
     }
 
     override fun hasAny(): Boolean =

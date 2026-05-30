@@ -10,7 +10,7 @@
 import Table from '@tiptap/extension-table'
 import TableCell from '@tiptap/extension-table-cell'
 import TableHeader from '@tiptap/extension-table-header'
-import { Plugin, PluginKey } from '@tiptap/pm/state'
+import {Plugin, PluginKey} from '@tiptap/pm/state'
 
 const fixedWidthsResizeBlockerKey = new PluginKey('fixedWidthsResizeBlocker')
 
@@ -67,7 +67,7 @@ export const CustomTable = Table.extend({
       fixedColumnWidths: {
         default: false,
         parseHTML: el => el.getAttribute('data-fixed-column-widths') === 'true',
-        renderHTML: attrs => attrs.fixedColumnWidths ? { 'data-fixed-column-widths': 'true' } : {},
+        renderHTML: attrs => attrs.fixedColumnWidths ? {'data-fixed-column-widths': 'true'} : {},
       },
       tableWidth: {
         default: null,
@@ -77,7 +77,7 @@ export const CustomTable = Table.extend({
         },
         renderHTML: attrs => {
           if (!attrs.tableWidth) return {}
-          return { style: `width: ${attrs.tableWidth}px` }
+          return {style: `width: ${attrs.tableWidth}px`}
         },
       },
     }
@@ -94,7 +94,7 @@ export const CustomTableCell = TableCell.extend({
         parseHTML: el => el.style.backgroundColor || null,
         renderHTML: attrs => {
           if (!attrs.background) return {}
-          return { style: `background-color: ${attrs.background}` }
+          return {style: `background-color: ${attrs.background}`}
         },
       },
     }
@@ -111,7 +111,7 @@ export const CustomTableHeader = TableHeader.extend({
         parseHTML: el => el.style.backgroundColor || null,
         renderHTML: attrs => {
           if (!attrs.background) return {}
-          return { style: `background-color: ${attrs.background}` }
+          return {style: `background-color: ${attrs.background}`}
         },
       },
     }

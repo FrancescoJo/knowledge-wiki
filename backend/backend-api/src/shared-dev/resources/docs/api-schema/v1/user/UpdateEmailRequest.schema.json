@@ -3,7 +3,9 @@
   "title": "UpdateEmailRequest",
   "description": "Payload to change the email address of an existing user account.",
   "type": "object",
-  "required": ["email"],
+  "required": [
+    "email"
+  ],
   "properties": {
     "email": {
       "type": "string",

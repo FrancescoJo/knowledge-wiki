@@ -3,7 +3,10 @@
   "title": "LoginRequest",
   "description": "Credentials submitted as application/x-www-form-urlencoded.",
   "type": "object",
-  "required": ["email", "password"],
+  "required": [
+    "email",
+    "password"
+  ],
   "properties": {
     "email": {
       "type": "string",

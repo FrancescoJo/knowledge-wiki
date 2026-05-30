@@ -23,7 +23,9 @@ class MockRefreshTokenRepository : RefreshTokenRepository {
 
     override fun findByToken(token: String): RefreshToken? = store[token]
 
-    override fun delete(token: String) { store.remove(token) }
+    override fun delete(token: String) {
+        store.remove(token)
+    }
 
     fun clear() = store.clear()
 }

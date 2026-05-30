@@ -21,11 +21,11 @@
  * $Since: 2026-05-14
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { NodeSelection, TextSelection } from '@tiptap/pm/state'
-import { CellSelection, TableMap } from '@tiptap/pm/tables'
-import { TextEdit } from '@src/TextEdit'
-import { mountElement, pmView, pmState, setCursorInCell, setCellSelection, TABLE_DOC } from '../test-utils'
+import {afterEach, beforeEach, describe, expect, it} from 'vitest'
+import {NodeSelection, TextSelection} from '@tiptap/pm/state'
+import {CellSelection, TableMap} from '@tiptap/pm/tables'
+import {TextEdit} from '@src/TextEdit'
+import {mountElement, pmState, pmView, setCellSelection, setCursorInCell, TABLE_DOC} from '../test-utils'
 
 // -- Helpers -------------------------------------------------------------------
 
@@ -39,13 +39,13 @@ function cursorIsInCell(editor: TextEdit, row: number, col: number): boolean {
   const cellNode = tableNode.nodeAt(cellOffset)
   if (!cellNode) return false
   const cellStart = 1 + cellOffset          // absolute start of cell node
-  const cellEnd   = cellStart + cellNode.nodeSize
+  const cellEnd = cellStart + cellNode.nodeSize
   return state.selection.from > cellStart && state.selection.from < cellEnd
 }
 
 function pressEscape(editor: TextEdit): void {
   pmView(editor).dom.dispatchEvent(
-    new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+    new KeyboardEvent('keydown', {key: 'Escape', bubbles: true, cancelable: true}),
   )
 }
 
@@ -55,11 +55,16 @@ describe('CellSelectionEscape:', () => {
   let element: HTMLElement
   let editor: TextEdit | undefined
 
-  beforeEach(() => { element = mountElement() })
+  beforeEach(() => {
+    element = mountElement()
+  })
 
   // noinspection DuplicatedCode: teardown is local to each suite to capture its own editor and element bindings
   afterEach(() => {
-    try { editor?.destroy() } catch { /* already destroyed */ }
+    try {
+      editor?.destroy()
+    } catch { /* already destroyed */
+    }
     editor = undefined
     element.remove()
   })
@@ -68,7 +73,7 @@ describe('CellSelectionEscape:', () => {
 
   describe('when a CellSelection is active:', () => {
     it('should produce a TextSelection after Escape', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 1, 1)
       setCellSelection(editor, 0, 0, 1, 1)
       expect(pmState(editor).selection).toBeInstanceOf(CellSelection)
@@ -83,7 +88,7 @@ describe('CellSelectionEscape:', () => {
 
   describe('column-handle simulation — cursor at (1,1), column CellSelection anchored at (0,1):', () => {
     it('should restore the cursor to cell (1,1), not to the anchor row (0,1)', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 1, 1)
       // Column handle selects entire column: anchor = top row, head = bottom row
       setCellSelection(editor, 0, 1, 1, 1)
@@ -96,7 +101,7 @@ describe('CellSelectionEscape:', () => {
 
   describe('row-handle simulation — cursor at (1,1), row CellSelection anchored at (1,0):', () => {
     it('should restore the cursor to cell (1,1), not to the anchor column (1,0)', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 1, 1)
       // Row handle selects entire row: anchor = leftmost col, head = rightmost col
       setCellSelection(editor, 1, 0, 1, 1)
@@ -109,7 +114,7 @@ describe('CellSelectionEscape:', () => {
 
   describe('drag-selection simulation — cursor at (0,0) before drag, selection spans to (1,1):', () => {
     it('should restore the cursor to cell (0,0) where the drag started', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       setCellSelection(editor, 0, 0, 1, 1)
 
@@ -127,7 +132,7 @@ describe('CellSelectionEscape:', () => {
 
   describe('when a CellSelection is entered from a NodeSelection (savedPos is null):', () => {
     it('should fall back to $anchorCell.pos + 1 and produce a TextSelection', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       const view = pmView(editor)
 
       // NodeSelection on the table: plugin processes TextSel → NodeSel as
@@ -150,7 +155,7 @@ describe('CellSelectionEscape:', () => {
 
   describe('when no CellSelection is active:', () => {
     it('should not change the selection', () => {
-      editor = new TextEdit({ element, content: TABLE_DOC })
+      editor = new TextEdit({element, content: TABLE_DOC})
       setCursorInCell(editor, 0, 0)
       const posBefore = pmState(editor).selection.from
 

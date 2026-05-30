@@ -20,7 +20,7 @@
  * $Since: 2026-05-09
  */
 
-import { Extension } from '@tiptap/core'
+import {Extension} from '@tiptap/core'
 
 export const BlockDefaultShortcuts = Extension.create({
   name: 'blockDefaultShortcuts',

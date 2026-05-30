@@ -7,8 +7,8 @@ package com.fj.omnimemo.api.view
 
 import com.fj.omnimemo.core.test.annotation.MediumTest
 import com.fj.omnimemo.core.user.UserProfileCache
-import com.fj.omnimemo.core.user.model.UserProfile
 import com.fj.omnimemo.core.user.model.UserId
+import com.fj.omnimemo.core.user.model.UserProfile
 import com.fj.omnimemo.infrastructure.security.JwtTokenService
 import com.fj.omnimemo.view.RootViewController
 import org.hamcrest.CoreMatchers.containsString
@@ -54,10 +54,13 @@ class RootViewControllerMvcTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    @MockBean private lateinit var userProfileCache: UserProfileCache
+    @MockBean
+    private lateinit var userProfileCache: UserProfileCache
+
     // Required by SecurityConfiguration.
     @Suppress("UnusedPrivateProperty")
-    @MockBean private lateinit var jwtTokenService: JwtTokenService
+    @MockBean
+    private lateinit var jwtTokenService: JwtTokenService
 
     @AfterEach
     fun tearDown() {

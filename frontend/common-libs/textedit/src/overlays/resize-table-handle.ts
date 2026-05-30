@@ -4,15 +4,15 @@
  * $Since: 2026-05-09
  */
 
-import { Extension } from '@tiptap/core'
-import { Plugin, PluginKey } from '@tiptap/pm/state'
-import { Decoration, DecorationSet } from '@tiptap/pm/view'
-import type { EditorView } from '@tiptap/pm/view'
-import type { Editor } from '@tiptap/core'
+import type {Editor} from '@tiptap/core'
+import {Extension} from '@tiptap/core'
+import {Plugin, PluginKey} from '@tiptap/pm/state'
+import type {EditorView} from '@tiptap/pm/view'
+import {Decoration, DecorationSet} from '@tiptap/pm/view'
 
 const KEY = new PluginKey<null>('resizeTableHandle')
 
-const CSS_HANDLE   = 'te-resize-table-handle'
+const CSS_HANDLE = 'te-resize-table-handle'
 const CSS_RESIZING = 'is-resizing'
 
 const MIN_TABLE_WIDTH = 80
@@ -48,7 +48,7 @@ class ResizeTableHandleView {
     this.onScroll = () => this.repositionIfHovered()
 
     document.addEventListener('mousemove', this.onDocMouseMove)
-    editorView.dom.parentElement?.addEventListener('scroll', this.onScroll, { passive: true })
+    editorView.dom.parentElement?.addEventListener('scroll', this.onScroll, {passive: true})
 
     this.bindEvents()
   }
@@ -90,8 +90,8 @@ class ResizeTableHandleView {
     const tRect = tableDom.getBoundingClientRect()
     if (ev.clientX >= tRect.right - HOVER_THRESHOLD) {
       this.hoveredTableDom = tableDom
-      this.dom.style.top    = `${tRect.top}px`
-      this.dom.style.left   = `${tRect.right}px`
+      this.dom.style.top = `${tRect.top}px`
+      this.dom.style.left = `${tRect.right}px`
       this.dom.style.height = `${tRect.height}px`
       this.dom.hidden = false
     } else {
@@ -106,7 +106,7 @@ class ResizeTableHandleView {
   // in sync with the DOM, we also write table.style.width here — after node views
   // have updated, so we overwrite whatever updateColumnsOnResize just set.
   private syncTableWidths(): void {
-    const { state } = this.editorView
+    const {state} = this.editorView
     state.doc.descendants((node, pos) => {
       if (node.type.name !== 'table') return
       const w: number | null = node.attrs['tableWidth'] ?? null
@@ -121,8 +121,8 @@ class ResizeTableHandleView {
   private repositionIfHovered(): void {
     if (!this.hoveredTableDom) return
     const tRect = this.hoveredTableDom.getBoundingClientRect()
-    this.dom.style.top    = `${tRect.top}px`
-    this.dom.style.left   = `${tRect.right}px`
+    this.dom.style.top = `${tRect.top}px`
+    this.dom.style.left = `${tRect.right}px`
     this.dom.style.height = `${tRect.height}px`
   }
 
@@ -162,7 +162,7 @@ class ResizeTableHandleView {
   }
 
   private findTablePos(tableDom: HTMLTableElement): number | null {
-    const { state } = this.editorView
+    const {state} = this.editorView
     let pos: number | null = null
     state.doc.descendants((node, nodePos) => {
       if (pos !== null) return false
@@ -180,7 +180,7 @@ class ResizeTableHandleView {
   // Intermediate drag moves use addToHistory:false so undo collapses them into
   // a single step; the final mouseup commit uses addToHistory:true.
   private applyWidth(tablePos: number, width: number, addToHistory: boolean): void {
-    const { state } = this.editorView
+    const {state} = this.editorView
     const tableNode = state.doc.nodeAt(tablePos)
     if (!tableNode || tableNode.type.name !== 'table') return
     try {
@@ -191,7 +191,8 @@ class ResizeTableHandleView {
       if (!addToHistory) tr.setMeta('addToHistory', false)
       this.editorView.dispatch(tr)
       if (addToHistory) this.editor.commands.focus()
-    } catch { /* state may have changed; no-op */ }
+    } catch { /* state may have changed; no-op */
+    }
   }
 }
 

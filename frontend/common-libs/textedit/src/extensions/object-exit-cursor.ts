@@ -14,13 +14,13 @@
  * $Since: 2026-05-08
  */
 
-import { Extension } from '@tiptap/core'
-import { Plugin, PluginKey, TextSelection, NodeSelection } from '@tiptap/pm/state'
-import { GapCursor } from '@tiptap/pm/gapcursor'
-import { Decoration, DecorationSet } from '@tiptap/pm/view'
-import type { EditorState } from '@tiptap/pm/state'
-import type { ResolvedPos } from '@tiptap/pm/model'
-import type { EditorView } from '@tiptap/pm/view'
+import {Extension} from '@tiptap/core'
+import type {EditorState} from '@tiptap/pm/state'
+import {NodeSelection, Plugin, PluginKey, TextSelection} from '@tiptap/pm/state'
+import {GapCursor} from '@tiptap/pm/gapcursor'
+import type {EditorView} from '@tiptap/pm/view'
+import {Decoration, DecorationSet} from '@tiptap/pm/view'
+import type {ResolvedPos} from '@tiptap/pm/model'
 
 /** Node types that trigger the object-exit-cursor behaviour. */
 export const BLOCK_OBJECT_TYPES = ['codeBlock', 'table', 'blockquote'] as const
@@ -68,14 +68,14 @@ function findObjectAtEnd(
   state: EditorState,
   objectTypes: readonly string[],
 ): { depth: number } | null {
-  const { selection } = state
+  const {selection} = state
   if (!(selection instanceof TextSelection)) return null
   const $pos = selection.$head
 
   for (let d = $pos.depth; d >= 1; d--) {
     const node = $pos.node(d)
     if (objectTypes.includes(node.type.name) && isAtVeryEndOfNode($pos, d)) {
-      return { depth: d }
+      return {depth: d}
     }
   }
   return null
@@ -90,7 +90,7 @@ function findObjectBeforeGap(
   state: EditorState,
   objectTypes: readonly string[],
 ): { nodeStart: number; nodeSize: number } | null {
-  const { selection } = state
+  const {selection} = state
   if (!(selection instanceof GapCursor)) return null
   const $pos = selection.$head
   const nodeBefore = $pos.nodeBefore
@@ -110,7 +110,7 @@ function findObjectBeforeStart(
   state: EditorState,
   objectTypes: readonly string[],
 ): { gapPos: number } | null {
-  const { selection } = state
+  const {selection} = state
   if (!(selection instanceof TextSelection)) return null
   const $pos = selection.$head
 
@@ -119,7 +119,7 @@ function findObjectBeforeStart(
     const nodePos = $pos.before(d)
     const nodeBefore = state.doc.resolve(nodePos).nodeBefore
     if (nodeBefore && objectTypes.includes(nodeBefore.type.name)) {
-      return { gapPos: nodePos }
+      return {gapPos: nodePos}
     }
   }
   return null
@@ -133,11 +133,11 @@ export const ObjectExitCursor = Extension.create<ObjectExitCursorOptions>({
   priority: 200,
 
   addOptions() {
-    return { objectTypes: BLOCK_OBJECT_TYPES }
+    return {objectTypes: BLOCK_OBJECT_TYPES}
   },
 
   addProseMirrorPlugins() {
-    const { objectTypes } = this.options
+    const {objectTypes} = this.options
 
     return [
       new Plugin({
@@ -145,7 +145,7 @@ export const ObjectExitCursor = Extension.create<ObjectExitCursorOptions>({
 
         props: {
           handleKeyDown(view: EditorView, event: KeyboardEvent): boolean {
-            const { state } = view
+            const {state} = view
 
             // ArrowRight/Down at end of object → GapCursor after the object
             if ((event.key === 'ArrowRight' || event.key === 'ArrowDown') && !event.shiftKey) {

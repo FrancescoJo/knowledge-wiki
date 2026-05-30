@@ -6,7 +6,7 @@
 package com.fj.omnimemo.core.user.model
 
 import com.github.f4b6a3.uuid.UuidCreator
-import java.util.UUID
+import java.util.*
 
 /**
  * Typed identity for a [User].

@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 /**
  * Medium Tests for [RefreshTokenRepositoryImpl]: verifies persistence behaviour

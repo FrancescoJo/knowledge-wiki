@@ -16,8 +16,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.context.support.StaticMessageSource
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import java.util.Locale
-import java.util.UUID
+import java.util.*
 
 /**
  * Small tests for [GlobalModelAdvice.currentUserEmail].

@@ -14,8 +14,7 @@ import org.springframework.context.MessageSource
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ModelAttribute
-import java.util.Locale
-import java.util.UUID
+import java.util.*
 
 /**
  * Supplies common model attributes to every view render.

@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
-import { resolve } from 'path'
-import { readFileSync } from 'fs'
+import {defineConfig} from 'vite'
+import {resolve} from 'path'
+import {readFileSync} from 'fs'
 
 const pkg = JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf-8'))
 const versionTag = `v${(pkg.version as string).replace(/\./g, '_')}`
