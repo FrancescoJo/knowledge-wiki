@@ -41,8 +41,8 @@ tasks.named<ProcessResources>("processResources") {
     from(omnimemoDir.resolve("dist-bundle")) { include(omnimemoFileName); into("static/lib") }
     filesMatching("templates/fragments/head.html") {
         filter { line ->
-            line.replace("@textedit.script@", "lib/$texteditFileName")
-                .replace("@omnimemo.script@", "lib/$omnimemoFileName")
+            line.replace("@textedit.script@", "/lib/$texteditFileName")
+                .replace("@omnimemo.script@", "/lib/$omnimemoFileName")
         }
     }
 }

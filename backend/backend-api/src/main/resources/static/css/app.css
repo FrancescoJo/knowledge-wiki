@@ -35,7 +35,7 @@ body {
 
 .site-nav {
     flex: 1;
-    overflow: hidden;
+    overflow: visible;
 }
 
 /* Navigation */
@@ -45,7 +45,8 @@ body {
     height: 56px;
 }
 
-.nav-item > a {
+.nav-item > a,
+.nav-item > .nav-btn {
     display: flex;
     align-items: center;
     padding: 0 1rem;
@@ -56,7 +57,14 @@ body {
     white-space: nowrap;
 }
 
-.nav-item > a:hover {
+.nav-item > .nav-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.nav-item > a:hover,
+.nav-item > .nav-btn:hover {
     color: #fff;
     background: rgba(255, 255, 255, 0.08);
 }
@@ -66,10 +74,21 @@ body {
     position: relative;
 }
 
-.nav-item.has-dropdown > a::after {
+.nav-item.has-dropdown > .nav-btn::after {
     content: ' ▾';
-    font-size: 0.7em;
-    opacity: 0.7;
+    font-size: 1em;
+    opacity: 0.85;
+    display: inline-block;
+    transition: transform 0.18s ease;
+}
+
+.nav-item.has-dropdown.open > .nav-btn {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-item.has-dropdown.open > .nav-btn::after {
+    transform: rotate(180deg);
 }
 
 .dropdown {
@@ -81,19 +100,26 @@ body {
     background: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
     list-style: none;
+    padding: 0.25rem 0;
     z-index: 200;
 }
 
-.nav-item.has-dropdown:hover .dropdown {
+.nav-item.has-dropdown.open .dropdown {
     display: block;
+    animation: dropdown-appear 0.13s ease;
+}
+
+@keyframes dropdown-appear {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 .dropdown li a {
     display: block;
-    padding: 0.55rem 1rem;
-    color: #333;
+    padding: 0.55rem 1.1rem;
+    color: #222;
     text-decoration: none;
     font-size: 0.875rem;
     white-space: nowrap;
@@ -101,9 +127,11 @@ body {
 
 .dropdown li a:hover {
     background: #f5f5f5;
+    color: #000;
 }
 
-.nav-item > a.is-disabled {
+.nav-item > a.is-disabled,
+.nav-item > .nav-btn.is-disabled {
     opacity: 0.45;
     cursor: not-allowed;
 }

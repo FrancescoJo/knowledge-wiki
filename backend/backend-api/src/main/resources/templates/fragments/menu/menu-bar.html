@@ -2,16 +2,18 @@
   <th:block th:each="item : ${menuBar.items}">
     <!-- MenuDivider: vertical separator -->
     <li class="nav-divider" role="separator" th:if="${item.class.simpleName == 'MenuDivider'}"></li>
-    <!-- MenuItem: expandable with children -->
+    <!-- MenuItem: expandable with children — button prevents page navigation -->
     <li class="nav-item has-dropdown" th:if="${item.class.simpleName == 'MenuItem' and item.visible}">
-      <a th:href="${item.href}" th:text="${item.label}"
-         th:classappend="${!item.enabled} ? ' is-disabled'"
-         th:attr="aria-disabled=${!item.enabled} ? 'true' : null">Label</a>
-      <ul class="dropdown">
+      <button class="nav-btn" type="button"
+              th:text="${item.label}"
+              th:classappend="${!item.enabled} ? ' is-disabled'"
+              th:attr="aria-expanded='false',aria-haspopup='true',aria-disabled=${!item.enabled} ? 'true' : null"
+              onclick="toggleNavDropdown(this)">Label</button>
+      <ul class="dropdown" role="menu">
         <th:block th:each="child : ${item.children}">
           <li class="dropdown-divider" role="separator" th:if="${child.class.simpleName == 'MenuDivider'}"></li>
-          <li th:if="${child.class.simpleName != 'MenuDivider' and child.visible}">
-            <a th:href="${child.href}" th:text="${child.label}"
+          <li role="none" th:if="${child.class.simpleName != 'MenuDivider' and child.visible}">
+            <a role="menuitem" th:href="${child.href}" th:text="${child.label}"
                th:classappend="${!child.enabled} ? ' is-disabled'"
                th:attr="aria-disabled=${!child.enabled} ? 'true' : null">Child</a>
           </li>
