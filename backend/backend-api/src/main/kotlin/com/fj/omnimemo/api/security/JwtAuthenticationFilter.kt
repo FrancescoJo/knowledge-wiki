@@ -24,11 +24,6 @@ import org.springframework.web.filter.OncePerRequestFilter
 class JwtAuthenticationFilter(
     private val tokenService: JwtTokenService,
 ) : OncePerRequestFilter() {
-
-    companion object {
-        const val ACCESS_TOKEN_COOKIE = "access_token"
-    }
-
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -36,8 +31,7 @@ class JwtAuthenticationFilter(
     ) {
         val subject = request.cookies
             ?.find { it.name == ACCESS_TOKEN_COOKIE }
-            ?.value
-            ?.let { tokenService.verify(it) }
+            ?.let { tokenService.verify(it.value) }
 
         if (subject != null) {
             SecurityContextHolder.getContext().authentication =
@@ -45,5 +39,9 @@ class JwtAuthenticationFilter(
         }
 
         filterChain.doFilter(request, response)
+    }
+
+    companion object {
+        const val ACCESS_TOKEN_COOKIE = "access_token"
     }
 }

@@ -3,9 +3,21 @@
 OmniMemo project–specific rules for the TypeScript frontend.
 Read `00-coding_guide.md` and `01-coding_guide_frontend.md` first; the rules there take precedence where they overlap.
 
-**Utility & helper index** — consult this before writing any new helper code, and keep it up to date whenever a utility is added, changed, or removed:
+## Utility Conventions
 
-- [`docs/02-coding_guide_utilities_and_helpers_frontend.md`](02-coding_guide_utilities_and_helpers_frontend.md)
+### Workflow for adding a utility
+
+Follow these steps in order every time you need a utility or helper function:
+
+1. **Read the index first.**
+   Open [`docs/02-coding_guide_utilities_and_helpers_frontend.md`](02-coding_guide_utilities_and_helpers_frontend.md) and check whether an equivalent already exists.
+2. **Reuse if found.**
+   Use the existing implementation. Do not duplicate it.
+3. **Implement if not found.**
+   Write the new utility following the general conventions in `00-coding_guide.md` and `01-coding_guide_frontend.md`.
+4. **Update the index. This step is mandatory.**
+   Add an entry to `02-coding_guide_utilities_and_helpers_frontend.md` before the work is considered done.
+   A utility that exists in code but not in the index is treated as undocumented and will be rejected in review.
 
 
 ## Server Response Wrapping

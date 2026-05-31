@@ -26,13 +26,20 @@
     },
     "accessLevel": {
       "type": "string",
-      "enum": ["PUBLIC", "RESTRICTED", "PRIVATE"],
+      "enum": [
+        "PUBLIC",
+        "RESTRICTED",
+        "PRIVATE"
+      ],
       "description": "Who can read this note. Omit to leave unchanged.",
       "example": "PUBLIC"
     },
     "status": {
       "type": "string",
-      "enum": ["DRAFT", "PUBLISHED"],
+      "enum": [
+        "DRAFT",
+        "PUBLISHED"
+      ],
       "description": "Publication status. Omit to leave unchanged.",
       "example": "PUBLISHED"
     },

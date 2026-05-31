@@ -28,7 +28,6 @@ internal class AuthControllerImpl(
     @param:Value("\${app.security.token-ttl-seconds}") private val tokenTtlSeconds: Int,
     @param:Value("\${app.security.refresh-token-ttl-seconds}") private val refreshTtlSeconds: Int,
 ) : AuthController {
-
     override fun login(email: String, password: String, response: HttpServletResponse): AuthTokenResponse {
         val result = loginUseCase.login(email, password)
         response.addCookie(accessTokenCookie(result.accessToken))
@@ -49,11 +48,9 @@ internal class AuthControllerImpl(
     }
 
     override fun refresh(request: HttpServletRequest, response: HttpServletResponse): AuthTokenResponse {
-        val refreshToken = request.cookies
-            ?.find { it.name == REFRESH_TOKEN_COOKIE }
-            ?.value
+        val cookie = request.cookies?.find { it.name == REFRESH_TOKEN_COOKIE }
             ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        val result = loginUseCase.refresh(refreshToken)
+        val result = loginUseCase.refresh(cookie.value)
         response.addCookie(accessTokenCookie(result.accessToken))
         response.addCookie(refreshTokenCookie(result.refreshToken))
         return AuthTokenResponse(result.accessToken, result.refreshToken)

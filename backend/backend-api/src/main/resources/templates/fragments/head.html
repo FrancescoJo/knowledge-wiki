@@ -32,7 +32,10 @@
         document.querySelectorAll('.nav-item.has-dropdown.open').forEach(function (el) {
           el.classList.remove('open');
           var b = el.querySelector('.nav-btn');
-          if (b) { b.setAttribute('aria-expanded', 'false'); b.focus(); }
+          if (b) {
+            b.setAttribute('aria-expanded', 'false');
+            b.focus();
+          }
         });
       }
     });

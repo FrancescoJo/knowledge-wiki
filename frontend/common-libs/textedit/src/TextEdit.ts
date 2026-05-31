@@ -629,6 +629,20 @@ export class TextEdit implements TextEditHandle {
     this.doSortColumn('desc')
   }
 
+  /**
+   * Destroys the editor instance and removes it from the DOM.
+   * Must be called when the host element is removed from the page.
+   *
+   * @since 0.1.0
+   * @version 0.1.0
+   */
+  destroy(): void {
+    window.removeEventListener('beforeunload', this.beforeUnloadHandler)
+    this.editor.destroy()
+  }
+
+  // -- Lifecycle --------------------------------------------------------------
+
   private doSortColumn(direction: 'asc' | 'desc'): void {
     const {state} = this.editor
     if (!isInTable(state)) return
@@ -662,19 +676,5 @@ export class TextEdit implements TextEditHandle {
     const tableNodePos = tableStart - 1
     const tr = state.tr.replaceWith(tableNodePos, tableNodePos + table.nodeSize, table.copy(Fragment.from(children)))
     this.editor.view.dispatch(tr)
-  }
-
-  // -- Lifecycle --------------------------------------------------------------
-
-  /**
-   * Destroys the editor instance and removes it from the DOM.
-   * Must be called when the host element is removed from the page.
-   *
-   * @since 0.1.0
-   * @version 0.1.0
-   */
-  destroy(): void {
-    window.removeEventListener('beforeunload', this.beforeUnloadHandler)
-    this.editor.destroy()
   }
 }

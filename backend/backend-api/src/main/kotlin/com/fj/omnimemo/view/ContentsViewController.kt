@@ -9,7 +9,7 @@ import org.springframework.context.MessageSource
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
-import java.util.Locale
+import java.util.*
 
 /**
  * View endpoint for the contents index page.
@@ -19,7 +19,6 @@ import java.util.Locale
  */
 @Controller
 class ContentsViewController(private val messageSource: MessageSource) {
-
     @GetMapping("/contents")
     fun contents(locale: Locale, model: Model): String {
         model.addAttribute(

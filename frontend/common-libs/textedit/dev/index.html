@@ -2,10 +2,10 @@
 <html lang="en-GB">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>TextEdit — Development</title>
   <meta name="darkreader-lock">
-  <link rel="stylesheet" href="./style.css">
+  <link href="./style.css" rel="stylesheet">
 </head>
 <body>
 <div class="layout">
@@ -23,9 +23,9 @@
 
       <label>
         <input
-          type="text"
           class="title-input"
           placeholder="Document title"
+          type="text"
           value="Formatting Reference"
         />
       </label>
@@ -33,12 +33,12 @@
       <!-- Toolbar (represents the wiki's formatting toolbar) -->
       <div class="toolbar" id="toolbar">
         <!-- Group: Heading -->
-        <button data-cmd="heading" data-arg="1" title="Heading 1 (Ctrl+Alt+1)">H1</button>
-        <button data-cmd="heading" data-arg="2" title="Heading 2 (Ctrl+Alt+2)">H2</button>
-        <button data-cmd="heading" data-arg="3" title="Heading 3 (Ctrl+Alt+3)">H3</button>
-        <button data-cmd="heading" data-arg="4" title="Heading 4 (Ctrl+Alt+4)">H4</button>
-        <button data-cmd="heading" data-arg="5" title="Heading 5 (Ctrl+Alt+5)">H5</button>
-        <button data-cmd="heading" data-arg="6" title="Heading 6 (Ctrl+Alt+6)">H6</button>
+        <button data-arg="1" data-cmd="heading" title="Heading 1 (Ctrl+Alt+1)">H1</button>
+        <button data-arg="2" data-cmd="heading" title="Heading 2 (Ctrl+Alt+2)">H2</button>
+        <button data-arg="3" data-cmd="heading" title="Heading 3 (Ctrl+Alt+3)">H3</button>
+        <button data-arg="4" data-cmd="heading" title="Heading 4 (Ctrl+Alt+4)">H4</button>
+        <button data-arg="5" data-cmd="heading" title="Heading 5 (Ctrl+Alt+5)">H5</button>
+        <button data-arg="6" data-cmd="heading" title="Heading 6 (Ctrl+Alt+6)">H6</button>
 
         <div class="toolbar-separator"></div>
 
@@ -48,9 +48,9 @@
         <button data-cmd="strike" title="Strikethrough (Ctrl+Alt+S)"><s>S</s></button>
         <button data-cmd="underline" title="Underline (Ctrl+Alt+U)"><u>U</u></button>
         <button data-cmd="code" title="Inline code (Ctrl+Alt+Z)">‹›</button>
-        <button id="colour-fg-btn" class="toolbar-colour-btn" title="Text colour (Ctrl+Alt+C)"><span
+        <button class="toolbar-colour-btn" id="colour-fg-btn" title="Text colour (Ctrl+Alt+C)"><span
           class="toolbar-colour-swatch" id="colour-fg-swatch" style="background:#000000"></span></button>
-        <button id="colour-bg-btn" class="toolbar-colour-btn" title="Highlight colour (Ctrl+Alt+V)"><span
+        <button class="toolbar-colour-btn" id="colour-bg-btn" title="Highlight colour (Ctrl+Alt+V)"><span
           class="toolbar-colour-swatch" id="colour-bg-swatch" style="background:#ffff00"></span></button>
 
         <div class="toolbar-separator"></div>
@@ -69,9 +69,9 @@
         <div class="toolbar-separator"></div>
 
         <!-- Group: Alignment -->
-        <button data-cmd="align" data-arg="left" title="Align left (Ctrl+Alt+J)">←</button>
-        <button data-cmd="align" data-arg="centre" title="Align centre (Ctrl+Alt+K)">↔</button>
-        <button data-cmd="align" data-arg="right" title="Align right (Ctrl+Alt+L)">→</button>
+        <button data-arg="left" data-cmd="align" title="Align left (Ctrl+Alt+J)">←</button>
+        <button data-arg="centre" data-cmd="align" title="Align centre (Ctrl+Alt+K)">↔</button>
+        <button data-arg="right" data-cmd="align" title="Align right (Ctrl+Alt+L)">→</button>
 
         <div class="toolbar-separator"></div>
 
@@ -83,13 +83,13 @@
         <!-- Table split button: left = insert default, right = open size picker -->
         <div class="toolbar-table-wrap" id="table-picker-wrap">
           <button data-cmd="insertTable" title="Insert table (2 × 2 with header)">⊞</button>
-          <span class="toolbar-table-sep" aria-hidden="true"></span>
-          <button class="toolbar-table-arrow" id="table-picker-toggle" title="Table size picker"
-                  aria-haspopup="true" aria-expanded="false">▼
+          <span aria-hidden="true" class="toolbar-table-sep"></span>
+          <button aria-expanded="false" aria-haspopup="true" class="toolbar-table-arrow"
+                  id="table-picker-toggle" title="Table size picker">▼
           </button>
-          <div class="table-picker" id="table-picker" hidden>
+          <div class="table-picker" hidden id="table-picker">
             <label class="table-picker-header-option">
-              <input type="checkbox" id="table-include-header" checked>
+              <input checked id="table-include-header" type="checkbox">
               Include Header
             </label>
             <div class="table-picker-grid" id="table-picker-grid"></div>
@@ -152,6 +152,6 @@
     })
   })
 </script>
-<script type="module" src="./main.ts"></script>
+<script src="./main.ts" type="module"></script>
 </body>
 </html>

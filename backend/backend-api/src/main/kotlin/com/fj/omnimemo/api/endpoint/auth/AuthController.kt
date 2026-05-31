@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestParam
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 @Tag(name = "Auth", description = "Authentication management")
 interface AuthController {
-
     @Operation(
         summary = "Login",
         requestBody = RequestBody(

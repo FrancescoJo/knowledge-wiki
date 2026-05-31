@@ -36,7 +36,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver
  */
 @Configuration
 class SpringdocConfig(private val objectMapper: ObjectMapper) {
-
     private val log = LoggerFactory.getLogger(javaClass)
 
     private fun attachSchemas(components: Components) {

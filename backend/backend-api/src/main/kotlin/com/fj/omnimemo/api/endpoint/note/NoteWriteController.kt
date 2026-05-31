@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 @Tag(name = "Note", description = "Wiki note management")
 interface NoteWriteController {
-
     @Operation(
         summary = "Create a new note",
         requestBody = RequestBody(

@@ -25,7 +25,7 @@ enum class NoteLanguage(val code: String) {
         override fun extractTitleIndex(title: String): String {
             val first = title.firstOrNull() ?: return FALLBACK
             val charCode = first.code
-            if (charCode < HANGUL_BASE || charCode > HANGUL_END) return FALLBACK
+            if (charCode !in HANGUL_BASE..HANGUL_END) return FALLBACK
             val consonantIndex = (charCode - HANGUL_BASE) / SYLLABLE_BLOCK_SIZE
             return INITIAL_CONSONANT_MAP[consonantIndex].toString()
         }

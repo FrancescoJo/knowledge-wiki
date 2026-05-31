@@ -11,7 +11,6 @@ import com.fj.omnimemo.core.note.repository.NoteVersionRepository
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
-import java.sql.Timestamp
 
 /**
  * Spring JDBC implementation of [NoteVersionRepository].
@@ -29,7 +28,6 @@ import java.sql.Timestamp
  */
 @Repository
 class NoteVersionRepositoryImpl(private val jdbc: JdbcTemplate) : NoteVersionRepository {
-
     private val rowMapper = RowMapper { rs, _ ->
         NoteVersion.reconstitute(
             noteId = NoteId(rs.getObject(COL_NOTE_ID, java.util.UUID::class.java)),

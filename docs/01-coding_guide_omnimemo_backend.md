@@ -192,13 +192,22 @@ A utility is a stateless, context-free, pure function (or a group of closely rel
 
 - Place utilities in a dedicated `util` package within the core module (e.g., `{core}.util`).
 - Group related utilities into sub-packages by concern: `{core}.util.io`, `{core}.util.math`, etc. Utilities that do not fit a named concern live directly in `{core}.util`.
-- Before writing a new utility, check whether an equivalent already exists. Reuse before creating.
 - Before extending or modifying an existing utility, discuss the rationale. Utilities carry high dependency weight — a change affects every call site.
 - Every utility must have exhaustive Small Tests that serve as its living specification.
 
-**Utility & helper index** — consult this before writing any new helper code, and keep it up to date whenever a utility is added, changed, or removed:
+### Workflow for adding a utility
 
-- [`docs/02-coding_guide_utilities_and_helpers_backend.md`](02-coding_guide_utilities_and_helpers_backend.md)
+Follow these steps in order every time you need a utility or helper function:
+
+1. **Read the index first.**
+   Open [`docs/02-coding_guide_utilities_and_helpers_backend.md`](02-coding_guide_utilities_and_helpers_backend.md) and check whether an equivalent already exists.
+2. **Reuse if found.**
+   Use the existing implementation. Do not duplicate it.
+3. **Implement if not found.**
+   Write the new utility following the conventions above.
+4. **Update the index. This step is mandatory.**
+   Add an entry to `02-coding_guide_utilities_and_helpers_backend.md` before the work is considered done.
+   A utility that exists in code but not in the index is treated as undocumented and will be rejected in review.
 
 
 ## Infrastructure Layer Testing

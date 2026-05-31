@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 @Tag(name = "Health", description = "Application health check")
 interface HealthController {
-
     @Operation(
         summary = "Health check",
         responses = [

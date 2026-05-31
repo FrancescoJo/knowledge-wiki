@@ -7,16 +7,11 @@ package com.fj.omnimemo.core.note.usecase
 
 import com.fj.omnimemo.core.annotation.NamedArguments
 import com.fj.omnimemo.core.note.exception.DuplicateNoteTitleException
-import com.fj.omnimemo.core.note.model.Note
-import com.fj.omnimemo.core.note.model.NoteAccessLevel
-import com.fj.omnimemo.core.note.model.NoteAction
-import com.fj.omnimemo.core.note.model.NoteAudit
-import com.fj.omnimemo.core.note.model.NoteLanguage
-import com.fj.omnimemo.core.note.model.NoteStatus
+import com.fj.omnimemo.core.note.model.*
+import com.fj.omnimemo.core.note.mutate
 import com.fj.omnimemo.core.note.repository.NoteAuditRepository
 import com.fj.omnimemo.core.note.repository.NoteRepository
 import com.fj.omnimemo.core.note.repository.NoteVersionRepository
-import com.fj.omnimemo.core.note.mutate
 import com.fj.omnimemo.core.user.model.UserId
 
 /**

@@ -22,7 +22,6 @@ import java.time.format.DateTimeFormatter
  */
 @Controller
 class HealthViewController {
-
     private val formatter = DateTimeFormatter
         .ofPattern("yyyy-MM-dd HH:mm:ss")
         .withZone(ZoneId.systemDefault())

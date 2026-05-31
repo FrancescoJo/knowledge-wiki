@@ -33,7 +33,6 @@ class UserRepositoryImpl(
     private val aesCipher: AesGcmCipher,
     private val hmacIndex: HmacBlindIndex,
 ) : UserRepository {
-
     private val rowMapper = RowMapper { rs, _ ->
         User.reconstitute(
             id = UserId(rs.getObject(COL_ID, UUID::class.java)),
@@ -127,10 +126,7 @@ class UserRepositoryImpl(
     }
 
     override fun hasAny(): Boolean =
-        jdbc.queryForObject(
-            "SELECT EXISTS(SELECT 1 FROM $TABLE_NAME)",
-            Boolean::class.java,
-        ) ?: false
+        jdbc.query("SELECT 1 FROM $TABLE_NAME LIMIT 1") { _, _ -> true }.isNotEmpty()
 
     companion object {
         internal const val TABLE_NAME = "users"

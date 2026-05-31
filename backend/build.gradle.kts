@@ -16,7 +16,7 @@ plugins {
 
 allprojects {
     group = "com.fj.omnimemo"
-    version = "0.1.1"
+    version = "0.2.0"
 
     // Ensures Spring Boot BOM resolves Kotlin artefacts at 2.0.21 rather than its
     // default managed version, keeping all Kotlin artefacts on a single patch version.
@@ -89,6 +89,16 @@ dependencies {
     kover(project(":backend-core"))
     kover(project(":backend-infrastructure"))
     kover(project(":backend-api"))
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                packages("test.*")
+            }
+        }
+    }
 }
 
 tasks.register("test-backend-small") {

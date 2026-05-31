@@ -27,7 +27,6 @@ import javax.crypto.spec.SecretKeySpec
  */
 @Configuration
 class CryptoConfiguration {
-
     @Bean
     fun aesGcmCipher(@Value("\${app.security.aes-key}") aesKeyBase64: String): AesGcmCipher =
         AesGcmCipher(Base64.getDecoder().decode(aesKeyBase64))

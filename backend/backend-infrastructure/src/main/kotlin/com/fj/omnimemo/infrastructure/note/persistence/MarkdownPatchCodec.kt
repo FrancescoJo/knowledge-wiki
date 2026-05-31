@@ -19,7 +19,6 @@ import com.github.difflib.UnifiedDiffUtils
  * @version 0.2.0
  */
 object MarkdownPatchCodec {
-
     private const val CONTEXT_LINES = 3
 
     fun generatePatch(base: String, revised: String): String {

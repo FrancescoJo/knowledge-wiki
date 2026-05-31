@@ -45,7 +45,6 @@ import org.springframework.web.filter.OncePerRequestFilter
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration(private val jwtTokenService: JwtTokenService) {
-
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain = http
         .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }

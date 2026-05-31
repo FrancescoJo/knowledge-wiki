@@ -23,7 +23,6 @@ import java.util.*
  */
 @Repository
 class RefreshTokenRepositoryImpl(private val jdbc: JdbcTemplate) : RefreshTokenRepository {
-
     private val rowMapper = RowMapper { rs, _ ->
         RefreshToken.create(
             token = rs.getString(COL_TOKEN),

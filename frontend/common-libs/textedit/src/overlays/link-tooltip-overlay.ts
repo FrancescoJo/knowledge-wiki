@@ -52,6 +52,19 @@ class LinkTooltipView {
     document.addEventListener('keyup', this.onKeyup)
   }
 
+  update(): void {
+  }
+
+  destroy(): void {
+    this.editorView.dom.removeEventListener('mousemove', this.onMousemove)
+    this.editorView.dom.removeEventListener('mouseleave', this.onMouseleave)
+    this.editorView.dom.removeEventListener('click', this.onClick)
+    document.removeEventListener('keydown', this.onKeydown)
+    document.removeEventListener('keyup', this.onKeyup)
+    this.editorView.dom.classList.remove(CSS_CTRL_HELD)
+    this.dom.remove()
+  }
+
   private handleMousemove(ev: MouseEvent): void {
     const anchor = (ev.target as Element).closest('a[href]')
     if (!anchor) {
@@ -111,19 +124,6 @@ class LinkTooltipView {
 
     this.dom.style.left = `${Math.max(SCREEN_MARGIN, x)}px`
     this.dom.style.top = `${Math.max(SCREEN_MARGIN, y)}px`
-  }
-
-  update(): void {
-  }
-
-  destroy(): void {
-    this.editorView.dom.removeEventListener('mousemove', this.onMousemove)
-    this.editorView.dom.removeEventListener('mouseleave', this.onMouseleave)
-    this.editorView.dom.removeEventListener('click', this.onClick)
-    document.removeEventListener('keydown', this.onKeydown)
-    document.removeEventListener('keyup', this.onKeyup)
-    this.editorView.dom.classList.remove(CSS_CTRL_HELD)
-    this.dom.remove()
   }
 }
 

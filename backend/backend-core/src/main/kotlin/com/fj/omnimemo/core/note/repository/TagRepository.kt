@@ -17,6 +17,8 @@ import com.fj.omnimemo.core.note.model.TagId
  */
 interface TagRepository {
     fun findById(id: TagId): Tag?
+
     fun findByName(name: String): Tag?
+
     fun save(tag: Tag): Tag
 }

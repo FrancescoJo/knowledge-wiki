@@ -31,10 +31,11 @@ internal class UserControllerImpl(
     private val deleteUserUseCase: DeleteUserUseCase,
     private val userProfileCache: UserProfileCache,
 ) : UserController {
-
-    override fun findById(id: String): UserResponse =
-        findUserUseCase.findById(parseUserId(id))?.toResponse()
+    override fun findById(id: String): UserResponse {
+        val user = findUserUseCase.findById(parseUserId(id))
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        return user.toResponse()
+    }
 
     override fun create(request: CreateUserRequest): UserResponse =
         createUserUseCase.create(request.email, request.password).toResponse()

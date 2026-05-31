@@ -2,8 +2,8 @@
   <nav aria-label="Breadcrumb" class="breadcrumb">
     <th:block th:if="${breadcrumbs != null}">
       <th:block th:each="item, stat : ${breadcrumbs}">
-        <span th:if="${!stat.first}" class="breadcrumb-sep" aria-hidden="true"> › </span>
-        <a th:if="${item.href != null}" th:href="${item.href}" th:text="${item.label}">Link</a>
+        <span aria-hidden="true" class="breadcrumb-sep" th:if="${!stat.first}"> › </span>
+        <a th:href="${item.href}" th:if="${item.href != null}" th:text="${item.label}">Link</a>
         <span th:if="${item.href == null}" th:text="${item.label}">Label</span>
       </th:block>
     </th:block>

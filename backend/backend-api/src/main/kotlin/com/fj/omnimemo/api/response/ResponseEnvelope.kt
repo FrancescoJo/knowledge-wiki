@@ -11,7 +11,9 @@ package com.fj.omnimemo.api.response
  * @param T the payload type; null for void responses and error bodies use [ErrorResponse]
  */
 data class ResponseEnvelope<T>(
-    val type: ResponseType,
+    val type: Type,
     val body: T?,
     val timestamp: String,
-)
+) {
+    enum class Type { OK, ERR }
+}

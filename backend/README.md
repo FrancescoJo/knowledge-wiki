@@ -1,22 +1,32 @@
-# backend
+# backend — Omnimemo
 
-Spring Boot backend for Knowledge Wiki.
+Spring Boot backend for Omnimemo.
 
 - Kotlin / JVM, Spring Boot 3.3.0
 - Spring Web MVC + Thymeleaf for server-rendered pages
 - Spring Security with JWT (httpOnly cookie)
 - Spring JDBC + PostgreSQL; schema managed by Liquibase
 - Email encrypted at rest with AES-256-GCM; lookups use an HMAC-SHA256 blind index
+- Notes stored with AES-256-GCM encryption; version history via snapshot + delta patches
 
 ---
 
 ## Modules
 
-| Module                   | Role                                                                         |
-|--------------------------|------------------------------------------------------------------------------|
-| `backend-core`           | Domain model and repository interfaces. Pure Kotlin — no Spring dependency.  |
-| `backend-infrastructure` | Spring JDBC implementations, AES-GCM / HMAC utilities, Liquibase changelogs. |
-| `backend-api`            | Spring Boot entry point, HTTP controllers, Thymeleaf templates.              |
+| Module                   | Role                                                                          |
+|--------------------------|-------------------------------------------------------------------------------|
+| `backend-core`           | Domain model and repository interfaces. Pure Kotlin — no Spring dependency.   |
+| `backend-infrastructure` | Spring JDBC implementations, AES-GCM / HMAC utilities, Liquibase changelogs.  |
+| `backend-api`            | Spring Boot entry point, HTTP controllers, Thymeleaf templates.               |
+
+---
+
+## Domains
+
+| Domain | Description                                                                    |
+|--------|--------------------------------------------------------------------------------|
+| `user` | Account management, authentication (JWT), credential updates                   |
+| `note` | Note creation, editing, soft-deletion, version history, multi-language listing |
 
 ---
 
@@ -24,28 +34,47 @@ Spring Boot backend for Knowledge Wiki.
 
 ```
 backend-core/
-  src/main/kotlin/               — Domain entities, value objects, repository interfaces
-  src/test/kotlin/               — Small tests
-  src/testFixtures/kotlin/       — @SmallTest / @MediumTest / @LargeTest annotations
-                                   MockUserRepository and other test doubles
+  src/main/kotlin/
+    core.user.*          — User domain model, repository interfaces, use cases
+    core.note.*          — Note domain model, repository interfaces, use cases
+  src/test/kotlin/
+    testcase/small/      — Small tests
+  src/testFixtures/kotlin/
+    annotation/          — @SmallTest / @MediumTest / @LargeTest
+    repository/          — AbstractMockRepository (shared backing-store base class)
+    user/repository/     — MockUserRepository, MockRefreshTokenRepository
+    note/repository/     — MockNoteRepository, MockNoteVersionRepository, MockNoteAuditRepository
+    user/                — MockUserProfileCache, randomUser(), randomEmail(), randomUserId()
+    note/                — randomNote(), randomNoteContent()
+    security/            — MockTokenIssuer
+    user/security/       — MockPasswordHasher
 
 backend-infrastructure/
   src/main/kotlin/
-    persistence/user/            — UserRepositoryImpl (Spring JDBC)
-    security/                    — AesGcmCipher, HmacBlindIndex, CryptoConfiguration
+    infrastructure.user.persistence/   — UserRepositoryImpl, RefreshTokenRepositoryImpl
+    infrastructure.note.persistence/   — NoteRepositoryImpl, NoteVersionRepositoryImpl,
+                                         NoteAuditRepositoryImpl, MarkdownPatchCodec
+    infrastructure.security/           — AesGcmCipher, HmacBlindIndex, JwtTokenService
   src/main/resources/
-    db/changelog/                — Liquibase changelogs (SQL format)
-  src/test/kotlin/               — Medium tests (Testcontainers + PostgreSQL)
-  src/testFixtures/kotlin/       — PostgresContainerSupport
+    db/changelog/        — Liquibase changelogs
+  src/test/kotlin/
+    testcase/small/      — Small tests (security utilities, codec)
+    testcase/medium/     — Medium tests (Testcontainers + PostgreSQL)
+  src/testFixtures/kotlin/
+                         — PostgresContainerSupport, NoteTableFixture, UserTableFixture
 
 backend-api/
-  src/main/kotlin/               — OmnimemoApplication, controllers, advice
+  src/main/kotlin/       — OmnimemoApplication, controllers, advice
   src/main/resources/
-    templates/                   — Thymeleaf HTML templates
-    application.yml              — Public configuration (committed)
+    templates/           — Thymeleaf HTML templates
+    application.yml      — Public configuration (committed)
   application-secret.yml         — Secret overrides (gitignored — see Local Setup)
   application-secret.yml.template
-  src/test/groovy/               — Spock specifications
+  src/test/kotlin/
+    testcase/small/      — Small tests (controller logic, filter, cache)
+    testcase/medium/     — MVC slice tests (@WebMvcTest)
+  src/test/groovy/
+    testcase/large/      — Spock end-to-end specifications
 ```
 
 ---
@@ -129,6 +158,7 @@ The app starts on `http://localhost:8080`.
 | URL                                           | Description                  |
 |-----------------------------------------------|------------------------------|
 | `http://localhost:8080`                       | Application root             |
+| `http://localhost:8080/contents`              | Note directory (contents)    |
 | `http://localhost:8080/swagger-ui/index.html` | Swagger UI (API explorer)    |
 | `http://localhost:8080/v3/api-docs`           | OpenAPI specification (JSON) |
 
@@ -147,7 +177,7 @@ java -jar backend-api/build/libs/omnimemo-*.jar
 ./gradlew test-backend-small    # Small tests — no external dependencies
 ./gradlew test-backend-medium   # Medium tests — Testcontainers (requires Docker)
 ./gradlew test-backend-large    # Large tests
-./gradlew test-backend-all      # All backend tests
+./gradlew test-backend-all      # All backend tests + static analysis
 ```
 
 Or per-module:
@@ -155,6 +185,18 @@ Or per-module:
 ```bash
 ./gradlew :backend-infrastructure:testSmall
 ./gradlew :backend-infrastructure:testMedium
+```
+
+### Test organisation
+
+All test classes are placed under `testcase/` inside the module's test source root,
+organised by size:
+
+```
+testcase/
+  small/   — @SmallTest: pure unit tests, mocks only
+  medium/  — @MediumTest: integration tests (real DB via Testcontainers, or @WebMvcTest)
+  large/   — @LargeTest: end-to-end Spock specifications (backend-api only)
 ```
 
 ### Test sizes
@@ -172,10 +214,16 @@ Test-size annotations (`@SmallTest`, `@MediumTest`, `@LargeTest`) are defined in
 testImplementation(testFixtures(project(":backend-core")))
 ```
 
+### Test doubles
+
+Mock repositories and fixtures in `backend-core/src/testFixtures/` are shared across all modules.
+New mock repositories should extend `AbstractMockRepository<K, V>` (in `test.com.fj.omnimemo.core.repository`)
+rather than duplicating the backing-store boilerplate.
+
 ### Test framework by module
 
 | Module                   | Framework                              |
 |--------------------------|----------------------------------------|
-| `backend-core`           | JUnit 5 + kotlin-test                  |
-| `backend-infrastructure` | JUnit 5 + kotlin-test + Testcontainers |
+| `backend-core`           | JUnit 5 + Kotest assertions            |
+| `backend-infrastructure` | JUnit 5 + Kotest + Testcontainers      |
 | `backend-api`            | Spock (Groovy 4 / JUnit Platform)      |

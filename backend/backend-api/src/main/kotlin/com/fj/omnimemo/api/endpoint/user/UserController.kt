@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 @Tag(name = "User", description = "User account management")
 interface UserController {
-
     @Operation(
         summary = "Find user by ID",
         responses = [

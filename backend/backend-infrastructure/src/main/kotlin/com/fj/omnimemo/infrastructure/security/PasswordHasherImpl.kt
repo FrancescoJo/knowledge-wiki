@@ -17,5 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
  */
 class PasswordHasherImpl(private val encoder: PasswordEncoder) : PasswordHasher {
     override fun hash(rawPassword: String): String = encoder.encode(rawPassword)
+
     override fun matches(rawPassword: String, hash: String): Boolean = encoder.matches(rawPassword, hash)
 }

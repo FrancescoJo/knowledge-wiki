@@ -20,7 +20,6 @@ class JwtTokenIssuer(
     private val tokenService: JwtTokenService,
     private val tokenTtl: Duration,
 ) : TokenIssuer {
-
     override fun issue(subject: String): String =
         tokenService.issue(subject, Instant.now().plus(tokenTtl))
 }

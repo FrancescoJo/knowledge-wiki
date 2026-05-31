@@ -19,5 +19,6 @@ import com.fj.omnimemo.core.note.model.NoteId
  */
 interface NoteAuditRepository {
     fun save(audit: NoteAudit)
+
     fun findAllByNoteId(noteId: NoteId): List<NoteAudit>
 }

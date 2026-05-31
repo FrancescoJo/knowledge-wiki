@@ -27,7 +27,6 @@ internal class NoteWriteControllerImpl(
     private val updateNoteUseCase: UpdateNoteUseCase,
     private val softDeleteNoteUseCase: SoftDeleteNoteUseCase,
 ) : NoteWriteController {
-
     override fun create(request: CreateNoteRequest, httpRequest: HttpServletRequest): NoteResponse {
         val authorId = requireAuthenticated()
         val note = createNoteUseCase.create(

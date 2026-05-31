@@ -1,6 +1,6 @@
 # textedit
 
-Rich text editor module for Knowledge Wiki, built on [TipTap core](https://tiptap.dev).
+Rich text editor module for Omnimemo, built on [TipTap core](https://tiptap.dev).
 
 - No UI framework dependency (no React, no Vue)
 - Content serialised as JSON
@@ -16,11 +16,12 @@ src/
   TextEdit.ts            — Public API class
   types.ts               — TypeScript interfaces and type aliases
   utils.ts               — Shared utilities
+  markdown.ts            — Markdown import / export (Tiptap ↔ CommonMark)
   index.ts               — Module entry point
   extensions/            — TipTap extension set and custom extensions
   overlays/              — DOM overlay widgets (handles, menus, tooltips)
 dev/
-  index.html             — Development page (mirrors the wiki edit page structure)
+  index.html             — Development page (mirrors the Omnimemo edit page structure)
   main.ts                — Development bootstrap (toolbar and dev panel wiring)
 ```
 
@@ -47,7 +48,8 @@ npm run lint      # tsc --noEmit
 ## Testing
 
 All tests are **Small** tests (jsdom environment, no network, no filesystem).
-Test files live under `test/` and must not be mixed into `src/`.
+Test files live under `test/testcase/small/` and must not be mixed into `src/`.
+The `test/setup.ts` bootstrap file stays directly under `test/`.
 
 ```bash
 npm test              # run once — default reporter, per-file summary
@@ -100,8 +102,8 @@ Two files are excluded from measurement because they contain no executable code:
 Install the package and its peer dependencies in the consuming app, then import:
 
 ```typescript
-import { TextEdit } from '@wiki/textedit'
-import type { TextEditContent, TextEditHandle } from '@wiki/textedit'
+import {TextEdit} from '@wiki/textedit'
+import type {TextEditContent, TextEditHandle} from '@wiki/textedit'
 
 const editor = new TextEdit({
   element: document.getElementById('editor')!,
@@ -120,7 +122,7 @@ const editor = new TextEdit({
 The same API without type annotations:
 
 ```javascript
-import { TextEdit } from '@wiki/textedit'
+import {TextEdit} from '@wiki/textedit'
 
 const editor = new TextEdit({
   element: document.getElementById('editor'),
@@ -136,6 +138,7 @@ const editor = new TextEdit({
 Wire the editor to a hidden `<input>` so the JSON value is posted with the form:
 
 ```html
+
 <form method="post" action="/pages/1/edit">
   <div id="editor"></div>
   <input type="hidden" name="content" id="content-input">
@@ -147,7 +150,7 @@ Wire the editor to a hidden `<input>` so the JSON value is posted with the form:
 
 ```javascript
 // wiki.js (after your bundler merges textedit + peer deps)
-import { TextEdit } from '@wiki/textedit'
+import {TextEdit} from '@wiki/textedit'
 
 const editor = new TextEdit({
   element: document.getElementById('editor'),
@@ -164,6 +167,7 @@ the editor reads it as its initial content and keeps it in sync on every change.
 ### HTML — HTMX
 
 ```html
+
 <form id="edit-form"
       hx-post="/pages/1/content"
       hx-target="#page-content"
@@ -177,7 +181,7 @@ the editor reads it as its initial content and keeps it in sync on every change.
 ```
 
 ```javascript
-import { TextEdit } from '@wiki/textedit'
+import {TextEdit} from '@wiki/textedit'
 
 const editor = new TextEdit({
   element: document.getElementById('editor'),

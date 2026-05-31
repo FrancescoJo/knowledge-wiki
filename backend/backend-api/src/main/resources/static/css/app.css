@@ -112,8 +112,14 @@ body {
 }
 
 @keyframes dropdown-appear {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .dropdown li a {
@@ -745,11 +751,21 @@ body {
     color: #1a1a2e;
 }
 
-.note-body h1 { font-size: 1.5rem; }
-.note-body h2 { font-size: 1.25rem; }
-.note-body h3 { font-size: 1.1rem; }
+.note-body h1 {
+    font-size: 1.5rem;
+}
 
-.note-body p { margin: 0.75rem 0; }
+.note-body h2 {
+    font-size: 1.25rem;
+}
+
+.note-body h3 {
+    font-size: 1.1rem;
+}
+
+.note-body p {
+    margin: 0.75rem 0;
+}
 
 .note-body ul, .note-body ol {
     padding-left: 1.5rem;
@@ -828,7 +844,9 @@ body {
     cursor: pointer;
 }
 
-.note-save-btn:hover { background: #218838; }
+.note-save-btn:hover {
+    background: #218838;
+}
 
 .note-cancel-btn {
     padding: 0.4rem 1rem;
@@ -840,7 +858,9 @@ body {
     cursor: pointer;
 }
 
-.note-cancel-btn:hover { background: #5a6268; }
+.note-cancel-btn:hover {
+    background: #5a6268;
+}
 
 .note-conflict-warning {
     background: #fff3cd;
@@ -902,7 +922,9 @@ body {
     white-space: nowrap;
 }
 
-.contents-item a:hover { text-decoration: underline; }
+.contents-item a:hover {
+    text-decoration: underline;
+}
 
 .contents-description {
     color: #666;

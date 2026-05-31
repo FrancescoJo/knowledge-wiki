@@ -30,7 +30,6 @@ import java.time.Duration
  */
 @Configuration
 class ServiceConfiguration {
-
     @Bean
     fun bootstrapUserUseCase(repository: UserRepository, hasher: PasswordHasher): BootstrapUserUseCase =
         BootstrapUserUseCase(repository, hasher)

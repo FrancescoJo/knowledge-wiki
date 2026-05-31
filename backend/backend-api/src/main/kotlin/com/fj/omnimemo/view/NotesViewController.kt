@@ -12,15 +12,14 @@ import com.fj.omnimemo.core.note.usecase.FindNoteUseCase
 import com.fj.omnimemo.core.note.usecase.ListNotesUseCase
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.context.MessageSource
-import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.server.ResponseStatusException
-import java.util.Locale
-import java.util.TreeMap
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
+import java.util.*
 
 /**
  * View endpoints for the notes directory and individual note pages.
@@ -40,7 +39,6 @@ class NotesViewController(
     private val listNotesUseCase: ListNotesUseCase,
     private val messageSource: MessageSource,
 ) {
-
     @GetMapping("/notes")
     fun directory(locale: Locale, model: Model): String {
         val language = resolveLanguage(locale)

@@ -6,7 +6,6 @@
 package com.fj.omnimemo.api.advice
 
 import com.fj.omnimemo.api.response.ResponseEnvelope
-import com.fj.omnimemo.api.response.ResponseType
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.MethodParameter
 import org.springframework.http.MediaType
@@ -22,7 +21,7 @@ import java.time.temporal.ChronoUnit
 
 /**
  * Wraps every JSON response from [RestController] and [RestControllerAdvice] beans
- * in a [ResponseEnvelope], setting [ResponseType.OK] for 2xx and [ResponseType.ERR]
+ * in a [ResponseEnvelope], setting [ResponseEnvelope.Type.OK] for 2xx and [ResponseEnvelope.Type.ERR]
  * for all other status codes.
  *
  * View controllers returning [org.springframework.web.servlet.ModelAndView] are
@@ -33,7 +32,6 @@ import java.time.temporal.ChronoUnit
  */
 @RestControllerAdvice
 class ResponseEnvelopeAdvice : ResponseBodyAdvice<Any> {
-
     override fun supports(
         returnType: MethodParameter,
         converterType: Class<out HttpMessageConverter<*>>,
@@ -56,7 +54,7 @@ class ResponseEnvelopeAdvice : ResponseBodyAdvice<Any> {
         val status = (response as? ServletServerHttpResponse)
             ?.servletResponse?.status
             ?: HttpServletResponse.SC_OK
-        val type = if (status in 200..299) ResponseType.OK else ResponseType.ERR
+        val type = if (status in 200..299) ResponseEnvelope.Type.OK else ResponseEnvelope.Type.ERR
         return ResponseEnvelope(
             type = type,
             body = body,

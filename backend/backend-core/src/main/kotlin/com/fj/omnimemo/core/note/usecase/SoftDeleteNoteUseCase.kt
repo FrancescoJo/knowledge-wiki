@@ -12,9 +12,9 @@ import com.fj.omnimemo.core.note.model.Note
 import com.fj.omnimemo.core.note.model.NoteAction
 import com.fj.omnimemo.core.note.model.NoteAudit
 import com.fj.omnimemo.core.note.model.NoteId
+import com.fj.omnimemo.core.note.mutate
 import com.fj.omnimemo.core.note.repository.NoteAuditRepository
 import com.fj.omnimemo.core.note.repository.NoteRepository
-import com.fj.omnimemo.core.note.mutate
 import com.fj.omnimemo.core.user.model.UserId
 import java.time.Instant
 

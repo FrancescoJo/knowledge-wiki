@@ -13,7 +13,10 @@
   "properties": {
     "language": {
       "type": "string",
-      "enum": ["en", "ko"],
+      "enum": [
+        "en",
+        "ko"
+      ],
       "description": "Language of the note. Determines title-index extraction strategy.",
       "example": "en"
     },
@@ -30,13 +33,20 @@
     },
     "accessLevel": {
       "type": "string",
-      "enum": ["PUBLIC", "RESTRICTED", "PRIVATE"],
+      "enum": [
+        "PUBLIC",
+        "RESTRICTED",
+        "PRIVATE"
+      ],
       "description": "Who can read this note. PUBLIC: anyone; RESTRICTED: authenticated users; PRIVATE: author only.",
       "example": "PUBLIC"
     },
     "status": {
       "type": "string",
-      "enum": ["DRAFT", "PUBLISHED"],
+      "enum": [
+        "DRAFT",
+        "PUBLISHED"
+      ],
       "description": "Publication status. DRAFT notes are visible only to the author.",
       "example": "PUBLISHED"
     },

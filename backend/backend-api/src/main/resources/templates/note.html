@@ -7,34 +7,37 @@
   </aside>
   <section class="notes-content">
     <article class="note-article">
-      <input type="hidden" id="note-id" th:value="${note.id}">
-      <input type="hidden" id="note-version" th:value="${note.currentVersion}">
+      <input id="note-id" th:value="${note.id}" type="hidden">
+      <input id="note-version" th:value="${note.currentVersion}" type="hidden">
 
       <header class="note-header">
         <h1 class="note-title" th:text="${note.title}">Note Title</h1>
         <div class="note-meta">
           <time th:datetime="${note.updatedAt}"
-                th:text="${#strings.substring(note.updatedAt.toString(), 0, 10)}">2026-01-01</time>
+                th:text="${#strings.substring(note.updatedAt.toString(), 0, 10)}">2026-01-01
+          </time>
         </div>
         <div class="note-actions" th:if="${canEdit}">
-          <button class="note-edit-btn" th:text="#{notes.edit}" onclick="enterEditMode()">Edit</button>
+          <button class="note-edit-btn" onclick="enterEditMode()" th:text="#{notes.edit}">Edit</button>
         </div>
       </header>
 
-      <div id="note-conflict-warning" class="note-conflict-warning" style="display:none;">
+      <div class="note-conflict-warning" id="note-conflict-warning" style="display:none;">
         <span th:text="#{notes.conflict.warning}">Conflict warning.</span>
       </div>
 
       <div id="note-read-mode">
-        <div id="note-body" class="note-body"></div>
+        <div class="note-body" id="note-body"></div>
       </div>
 
       <div id="note-edit-mode" style="display:none;">
-        <div id="note-draft-notice" class="note-draft-notice" style="display:none;" th:text="#{notes.draft.restored}">Draft restored.</div>
-        <textarea id="note-editor-content" class="note-editor-textarea" th:text="${rawContent}"></textarea>
+        <div class="note-draft-notice" id="note-draft-notice" style="display:none;" th:text="#{notes.draft.restored}">
+          Draft restored.
+        </div>
+        <textarea class="note-editor-textarea" id="note-editor-content" th:text="${rawContent}"></textarea>
         <div class="note-editor-actions">
-          <button class="note-save-btn" th:text="#{notes.save}" onclick="saveNote()">Save</button>
-          <button class="note-cancel-btn" th:text="#{notes.cancel}" onclick="exitEditMode()">Cancel</button>
+          <button class="note-save-btn" onclick="saveNote()" th:text="#{notes.save}">Save</button>
+          <button class="note-cancel-btn" onclick="exitEditMode()" th:text="#{notes.cancel}">Cancel</button>
         </div>
       </div>
     </article>

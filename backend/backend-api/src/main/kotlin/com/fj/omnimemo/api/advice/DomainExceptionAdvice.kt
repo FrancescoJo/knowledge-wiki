@@ -32,7 +32,6 @@ import kotlin.reflect.jvm.jvmName
  */
 @RestControllerAdvice
 class DomainExceptionAdvice {
-
     @ExceptionHandler(OmniMemoException::class)
     fun handleDomainException(exception: OmniMemoException): ResponseEntity<ErrorResponse> {
         val errorCode = OmniMemoErrorCode.of(exception)

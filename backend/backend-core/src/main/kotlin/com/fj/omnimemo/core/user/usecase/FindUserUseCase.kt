@@ -20,5 +20,6 @@ class FindUserUseCase(
     private val repository: UserRepository,
 ) {
     fun findById(id: UserId): User? = repository.findById(id)
+
     fun findByEmail(email: String): User? = repository.findByEmail(email)
 }

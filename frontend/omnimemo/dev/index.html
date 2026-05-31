@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Login Popup — Development</title>
   <style>
       *, *::before, *::after {
@@ -255,11 +255,11 @@
 <header class="site-header">
   <a class="site-logo" href="/">Omnimemo</a>
   <span class="build-phase-badge build-phase-local">dev</span>
-  <nav class="site-nav" aria-label="Main navigation">
+  <nav aria-label="Main navigation" class="site-nav">
     <ul class="nav-items"></ul>
   </nav>
-  <button class="login-btn" type="button"
-          onclick="document.getElementById('login-popup').showModal()">Log In
+  <button class="login-btn" onclick="document.getElementById('login-popup').showModal()"
+          type="button">Log In
   </button>
 </header>
 
@@ -282,38 +282,38 @@
   <p>Omnimemo</p>
 </footer>
 
-<dialog id="login-popup" class="login-dialog" aria-labelledby="login-popup-title">
-  <form id="login-form" class="login-form" onsubmit="return false">
+<dialog aria-labelledby="login-popup-title" class="login-dialog" id="login-popup">
+  <form class="login-form" id="login-form" onsubmit="return false">
     <header class="login-dialog-header">
-      <h2 id="login-popup-title" class="login-dialog-title">Log In</h2>
-      <button type="button" class="login-dialog-close" aria-label="Close login dialog"
-              onclick="document.getElementById('login-popup').close()">&#x2715;
+      <h2 class="login-dialog-title" id="login-popup-title">Log In</h2>
+      <button aria-label="Close login dialog" class="login-dialog-close" onclick="document.getElementById('login-popup').close()"
+              type="button">&#x2715;
       </button>
     </header>
 
     <div class="login-field">
-      <label for="login-email" class="login-label">Email</label>
-      <input id="login-email" name="email" type="email" class="login-input"
-             autocomplete="email" required>
+      <label class="login-label" for="login-email">Email</label>
+      <input autocomplete="email" class="login-input" id="login-email" name="email"
+             required type="email">
     </div>
 
     <div class="login-field">
-      <label for="login-password" class="login-label">Password</label>
+      <label class="login-label" for="login-password">Password</label>
       <div class="login-password-wrapper">
-        <input id="login-password" name="password" type="password" class="login-input"
-               autocomplete="current-password" required>
-        <button type="button" class="login-password-toggle" aria-label="Show password"
-                data-target="login-password">Show
+        <input autocomplete="current-password" class="login-input" id="login-password" name="password"
+               required type="password">
+        <button aria-label="Show password" class="login-password-toggle" data-target="login-password"
+                type="button">Show
         </button>
       </div>
     </div>
 
-    <p id="login-error" class="login-error" aria-live="polite"></p>
+    <p aria-live="polite" class="login-error" id="login-error"></p>
 
-    <button type="submit" class="login-submit">Log In</button>
+    <button class="login-submit" type="submit">Log In</button>
   </form>
 </dialog>
 
-<script type="module" src="./main.ts"></script>
+<script src="./main.ts" type="module"></script>
 </body>
 </html>

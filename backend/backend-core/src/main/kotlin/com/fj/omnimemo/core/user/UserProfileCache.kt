@@ -23,7 +23,6 @@ import com.fj.omnimemo.core.user.model.UserProfile
  * @version 0.1.1
  */
 interface UserProfileCache {
-
     /**
      * Returns the [UserProfile] for [id], loading from the backing store on a cache miss.
      * Returns `null` when no user exists for [id].

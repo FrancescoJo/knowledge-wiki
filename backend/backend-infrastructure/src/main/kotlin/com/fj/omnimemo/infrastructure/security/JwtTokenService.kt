@@ -23,7 +23,6 @@ import javax.crypto.SecretKey
  * @version 0.1.1
  */
 class JwtTokenService(private val signingKey: SecretKey) {
-
     fun issue(subject: String, expiresAt: Instant): String {
         val jwt = SignedJWT(
             JWSHeader(JWSAlgorithm.HS256),

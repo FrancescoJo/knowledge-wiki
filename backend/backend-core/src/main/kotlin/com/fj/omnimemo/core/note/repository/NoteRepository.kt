@@ -18,8 +18,12 @@ import com.fj.omnimemo.core.note.model.NoteLanguage
  */
 interface NoteRepository {
     fun findById(id: NoteId): Note?
+
     fun findByTitle(title: String): Note?
+
     fun findAllByLanguage(language: NoteLanguage): List<Note>
+
     fun existsByTitle(title: String): Boolean
+
     fun save(note: Note): Note
 }

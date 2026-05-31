@@ -24,6 +24,8 @@ import com.fj.omnimemo.core.note.model.NoteVersion
  */
 interface NoteVersionRepository {
     fun saveContent(noteId: NoteId, version: Int, fullContent: String)
+
     fun findContent(noteId: NoteId, version: Int): String?
+
     fun findAllByNoteId(noteId: NoteId): List<NoteVersion>
 }

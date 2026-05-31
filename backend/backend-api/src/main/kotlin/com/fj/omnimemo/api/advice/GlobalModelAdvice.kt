@@ -25,11 +25,10 @@ import java.util.*
  */
 @ControllerAdvice
 class GlobalModelAdvice(
-    @Value("\${app.build-phase}") private val buildPhase: String,
+    @param:Value("\${app.build-phase}") private val buildPhase: String,
     private val messageSource: MessageSource,
     private val userProfileCache: UserProfileCache,
 ) {
-
     @ModelAttribute("menuBar")
     fun menuBar(locale: Locale): MenuBar = MenuBar(
         listOf(

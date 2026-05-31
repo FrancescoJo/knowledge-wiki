@@ -39,7 +39,6 @@ class LoginUseCase(
     private val refreshTokenRepository: RefreshTokenRepository,
     private val refreshTokenTtl: Duration,
 ) {
-
     fun login(email: String, rawPassword: String): LoginResult {
         val user = repository.findByEmail(email) ?: throw PasswordMismatchException()
         if (!hasher.matches(rawPassword, user.passwordHash)) throw PasswordMismatchException()

@@ -21,7 +21,6 @@ import javax.crypto.spec.SecretKeySpec
  * @version 0.1.1
  */
 class AesGcmCipher(key: ByteArray) {
-
     private val secretKey = SecretKeySpec(key, AES_ALGORITHM)
     private val secureRandom = SecureRandom()
 

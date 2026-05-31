@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.ResponseStatus
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 @Tag(name = "Bootstrap", description = "One-time first-user registration (localhost only)")
 interface BootstrapController {
-
     @Operation(
         summary = "Create the first user",
         requestBody = RequestBody(

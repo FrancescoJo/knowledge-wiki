@@ -17,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView
  */
 @Controller
 class RootViewController {
-
     /**
      * Serves the main index page.
      *

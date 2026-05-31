@@ -14,7 +14,10 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 
 /**
  * REST API contract for reading wiki notes.
@@ -31,7 +34,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 @Tag(name = "Note", description = "Wiki note management")
 interface NoteController {
-
     @Operation(
         summary = "List notes by language",
         description = "Returns notes grouped by title index (e.g. A-Z for English, ㄱ-ㅎ for Korean). " +

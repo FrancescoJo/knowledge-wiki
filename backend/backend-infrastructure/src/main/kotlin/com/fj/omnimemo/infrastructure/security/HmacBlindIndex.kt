@@ -19,7 +19,6 @@ import javax.crypto.spec.SecretKeySpec
  * @version 0.1.1
  */
 class HmacBlindIndex(key: ByteArray) {
-
     private val secretKey = SecretKeySpec(key, ALGORITHM)
 
     fun compute(plaintext: String): ByteArray {

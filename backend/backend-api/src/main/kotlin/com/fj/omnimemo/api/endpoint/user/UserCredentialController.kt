@@ -16,7 +16,9 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestMapping
 
 /**
  * REST API contract for user credential management: e-mail and password updates.
@@ -32,7 +34,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 @Tag(name = "User", description = "User account management")
 interface UserCredentialController {
-
     @Operation(
         summary = "Update user email",
         requestBody = RequestBody(

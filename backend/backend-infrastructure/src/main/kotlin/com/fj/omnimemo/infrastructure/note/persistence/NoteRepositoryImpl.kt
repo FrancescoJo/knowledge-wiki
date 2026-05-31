@@ -5,11 +5,7 @@
  */
 package com.fj.omnimemo.infrastructure.note.persistence
 
-import com.fj.omnimemo.core.note.model.Note
-import com.fj.omnimemo.core.note.model.NoteAccessLevel
-import com.fj.omnimemo.core.note.model.NoteId
-import com.fj.omnimemo.core.note.model.NoteLanguage
-import com.fj.omnimemo.core.note.model.NoteStatus
+import com.fj.omnimemo.core.note.model.*
 import com.fj.omnimemo.core.note.repository.NoteRepository
 import com.fj.omnimemo.core.user.model.UserId
 import org.springframework.jdbc.core.JdbcTemplate
@@ -27,7 +23,6 @@ import java.util.*
  */
 @Repository
 class NoteRepositoryImpl(private val jdbc: JdbcTemplate) : NoteRepository {
-
     private val rowMapper = RowMapper { rs, _ ->
         val softDeletedBy = rs.getObject(COL_SOFT_DELETED_BY, UUID::class.java)
         val softDeletedAt = rs.getTimestamp(COL_SOFT_DELETED_AT)
@@ -80,7 +75,7 @@ class NoteRepositoryImpl(private val jdbc: JdbcTemplate) : NoteRepository {
             "SELECT EXISTS(SELECT 1 FROM $TABLE_NAME WHERE $COL_TITLE = ?)",
             Boolean::class.java,
             title,
-        ) ?: false
+        )
 
     override fun save(note: Note): Note {
         if (note.isNew) {

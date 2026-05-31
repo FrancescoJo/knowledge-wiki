@@ -64,6 +64,7 @@ class FindNoteUseCase(
             NoteAccessLevel.RESTRICTED -> {
                 if (requesterId == null) throw NoteAccessDeniedException(note.id)
             }
+
             NoteAccessLevel.PRIVATE -> {
                 if (requesterId != note.authorId) throw NoteAccessDeniedException(note.id)
             }

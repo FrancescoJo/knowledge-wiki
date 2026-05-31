@@ -5,11 +5,7 @@
  */
 package com.fj.omnimemo.core.note.model.snapshot
 
-import com.fj.omnimemo.core.note.model.Note
-import com.fj.omnimemo.core.note.model.NoteAccessLevel
-import com.fj.omnimemo.core.note.model.NoteId
-import com.fj.omnimemo.core.note.model.NoteLanguage
-import com.fj.omnimemo.core.note.model.NoteStatus
+import com.fj.omnimemo.core.note.model.*
 import com.fj.omnimemo.core.user.model.UserId
 import java.time.Instant
 

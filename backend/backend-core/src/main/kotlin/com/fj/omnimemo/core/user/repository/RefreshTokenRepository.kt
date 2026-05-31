@@ -16,6 +16,8 @@ import com.fj.omnimemo.core.user.model.RefreshToken
  */
 interface RefreshTokenRepository {
     fun save(refreshToken: RefreshToken): RefreshToken
+
     fun findByToken(token: String): RefreshToken?
+
     fun delete(token: String)
 }

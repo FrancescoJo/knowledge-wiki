@@ -24,7 +24,6 @@ internal class NoteControllerImpl(
     private val findNoteUseCase: FindNoteUseCase,
     private val listNotesUseCase: ListNotesUseCase,
 ) : NoteController {
-
     override fun list(language: String): Map<String, List<NoteListItemResponse>> {
         val lang = parseLanguage(language)
         val requesterId = resolveRequesterId()

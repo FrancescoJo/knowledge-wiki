@@ -27,7 +27,6 @@ class LruUserProfileCache(
     private val userRepository: UserRepository,
     private val maxSize: Int = DEFAULT_MAX_SIZE,
 ) : UserProfileCache {
-
     private val cache: MutableMap<UserId, UserProfile> = Collections.synchronizedMap(
         object : LinkedHashMap<UserId, UserProfile>(maxSize, 0.75f, true) {
             override fun removeEldestEntry(eldest: Map.Entry<UserId, UserProfile>): Boolean = size > maxSize

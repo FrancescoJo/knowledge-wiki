@@ -26,7 +26,6 @@ import java.util.*
  */
 @Repository
 class NoteAuditRepositoryImpl(private val jdbc: JdbcTemplate) : NoteAuditRepository {
-
     private val rowMapper = RowMapper { rs, _ ->
         NoteAudit.reconstitute(
             id = rs.getObject(COL_ID, UUID::class.java),

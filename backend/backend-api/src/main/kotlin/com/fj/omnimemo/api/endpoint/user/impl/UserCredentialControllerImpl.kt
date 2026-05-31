@@ -30,7 +30,6 @@ internal class UserCredentialControllerImpl(
     private val updateUserPasswordUseCase: UpdateUserPasswordUseCase,
     private val userProfileCache: UserProfileCache,
 ) : UserCredentialController {
-
     override fun updateEmail(id: String, request: UpdateEmailRequest): UserResponse {
         val userId = parseUserId(id)
         val updated = updateUserEmailUseCase.updateEmail(userId, request.email)

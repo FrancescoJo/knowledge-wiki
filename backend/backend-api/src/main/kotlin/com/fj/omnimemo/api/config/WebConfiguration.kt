@@ -31,7 +31,6 @@ import java.util.*
  */
 @Configuration
 class WebConfiguration : WebMvcConfigurer {
-
     @Bean
     fun localeResolver(): LocaleResolver = BrowserAwareLocaleResolver()
 

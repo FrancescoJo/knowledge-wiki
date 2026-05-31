@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController
 internal class BootstrapControllerImpl(
     private val bootstrapUserUseCase: BootstrapUserUseCase,
 ) : BootstrapController {
-
     override fun bootstrapUser(request: BootstrapUserRequest): UserResponse =
         bootstrapUserUseCase.bootstrap(request.email, request.password).toResponse()
 }

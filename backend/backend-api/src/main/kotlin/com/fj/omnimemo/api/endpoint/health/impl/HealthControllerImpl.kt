@@ -16,6 +16,5 @@ import org.springframework.web.bind.annotation.RestController
  */
 @RestController
 internal class HealthControllerImpl : HealthController {
-
     override fun health(): HealthStatus = HealthStatus()
 }
